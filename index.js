@@ -74,4 +74,18 @@ app.get("/template", (req, res) => {
     })
 })
 
+/**
+ * This route will return the HTML for the feed page (home page).
+ * @author Gurshawn Sekhon
+ * @date April-30-2021
+ */
+ app.get("/feed", (req, res) => {
+    readFile("static/html/feed.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
