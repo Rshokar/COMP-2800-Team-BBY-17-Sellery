@@ -88,4 +88,18 @@ app.get("/post_summary", (req, res) => {
   })
 })
 
+/**
+ * This route will return the HTML for the post page.
+ * @author Jimun Jang
+ * @date April-30-2021
+ */
+ app.get("/post", (req, res) => {
+    readFile("static/html/post.html", "utf-8", (err, html) => {
+      if (err) {
+        res.status(500).send("Sorry, out of order.");
+      }
+      res.send(html);
+    })
+  })
+
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
