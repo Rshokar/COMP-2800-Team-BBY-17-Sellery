@@ -1,0 +1,51 @@
+#mobile_nav {
+    background-color: #5fd543;
+    z-index: 1;
+    height: 8vh;
+}
+#new_post_container {
+    height: 50px;
+    width: 50px;
+    background-color: #4e878c;
+    border-radius: 50%;
+    z-index: 2;
+    top: 90%;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: grid;
+    align-content: center;
+}
+
+#new_post_container :hover {
+    height: 50px;
+    width: 50px;
+    background-color: #1b512d;
+    border-radius: 50%;
+    display: grid;
+    align-content: center;
+}
+
+#mobile_head {
+    border-bottom: 1px solid black;
+}
+
+#mobile_head input {
+    margin: .3em;
+    float: right;
+    width: 70%;
+}
+
+#mobile_head h1 {
+    display: inline-block;
+}
+
+#new_post, #feed, #sotrefront {
+    color: black;
+}
+
+#content_section {
+    margin: auto;
+    width: 90%;
+}
+
