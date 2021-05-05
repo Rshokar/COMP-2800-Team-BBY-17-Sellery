@@ -1,0 +1,28 @@
+{
+  "name": "group_project",
+  "version": "1.0.0",
+  "description": "Sellary",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jimun-J/Sellery.git"
+  },
+  "author": "Team 17 2800",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jimun-J/Sellery/issues"
+  },
+  "homepage": "https://github.com/Jimun-J/Sellery#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "mongodb": "^3.6.6",
+    "nodemon": "^2.0.7",
+    "package.json": "^2.0.1"
+  }
+}
