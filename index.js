@@ -74,4 +74,19 @@ app.get("/template", (req, res) => {
     })
 })
 
+/**
+ * This route will return the store front for Sellary. This page is meant 
+ * for development purposes only 
+ * @author Mike Lim 
+ * @date April-30-2021
+ */
+ app.get("/storefront", (req, res) => {
+    readFile("static/html/storefront.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
