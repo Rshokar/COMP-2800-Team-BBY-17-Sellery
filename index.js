@@ -1,8 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readFile } = require('fs');
-const { MongoClient } = require('mongodb');
-const { read } = require('fs/promises');
+const {
+    readFile
+} = require('fs');
+const {
+    MongoClient
+} = require('mongodb');
+const {
+    read
+} = require('fs/promises');
 
 const app = express();
 
@@ -18,7 +24,10 @@ async function main() {
      */
     const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
 
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = new MongoClient(uri, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
     try {
         // Connect to the MongoDB cluster
@@ -67,6 +76,63 @@ app.get("/", (req, res) => {
  */
 app.get("/template", (req, res) => {
     readFile("static/html/template.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
+/**
+ * This route will return the HTML for the post summary.
+ * @author Ravinder Shokar 
+ * @date April-30-2021
+ */
+app.get("/post_summary", (req, res) => {
+    readFile("static/html/post_summary.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
+/**
+ * This route will return the HTML for the post page.
+ * @author Jimun Jang
+ * @date April-30-2021
+ */
+app.get("/post", (req, res) => {
+    readFile("static/html/post.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
+/**
+ * This route will return the HTML for the feed page (home page).
+ * @author Gurshawn Sekhon
+ * @date April-30-2021
+ */
+app.get("/feed", (req, res) => {
+    readFile("static/html/feed.html", "utf-8", (err, html) => {
+        if (err) {
+            res.status(500).send("Sorry, out of order.");
+        }
+        res.send(html);
+    })
+})
+
+/**
+ * This route will return the store front for Sellary. This page is meant 
+ * for development purposes only 
+ * @author Mike Lim 
+ * @date April-30-2021
+ */
+ app.get("/storefront", (req, res) => {
+    readFile("static/html/storefront.html", "utf-8", (err, html) => {
         if (err) {
             res.status(500).send("Sorry, out of order.");
         }
