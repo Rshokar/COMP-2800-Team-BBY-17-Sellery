@@ -12,36 +12,36 @@ app.use("/html", express.static("static/html"));
 
 //Connect App to DB. 
 async function main() {
-    /**
-     * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
-     * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
-     */
-    const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
+  /**
+   * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
+   * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
+   */
+  const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
 
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
+  try {
+    // Connect to the MongoDB cluster
+    await client.connect();
 
-        // Make the appropriate DB calls
-        await listDatabases(client);
+    // Make the appropriate DB calls
+    await listDatabases(client);
 
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await client.close();
+  }
 }
 
 main().catch(console.error);
 
 
 async function listDatabases(client) {
-    databasesList = await client.db().admin().listDatabases();
+  databasesList = await client.db().admin().listDatabases();
 
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+  console.log("Databases:");
+  databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 };
 
 /**
@@ -50,12 +50,12 @@ async function listDatabases(client) {
  * @date April-29-2021
  */
 app.get("/", (req, res) => {
-    readFile("static/html/index.html", "utf-8", (err, html) => {
-        if (err) {
-            res.status(500).send("sorry, out of order");
-        }
-        res.send(html);
-    })
+  readFile("static/html/index.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("sorry, out of order");
+    }
+    res.send(html);
+  })
 })
 
 
@@ -66,12 +66,26 @@ app.get("/", (req, res) => {
  * @date April-30-2021
  */
 app.get("/template", (req, res) => {
-    readFile("static/html/template.html", "utf-8", (err, html) => {
-        if (err) {
-            res.status(500).send("Sorry, out of order.");
-        }
-        res.send(html);
-    })
+  readFile("static/html/template.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+/**
+ * This route will return the HTML for the post summary.
+ * @author Ravinder Shokar 
+ * @date April-30-2021
+ */
+app.get("/post_summary", (req, res) => {
+  readFile("static/html/post_summary.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
 })
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
