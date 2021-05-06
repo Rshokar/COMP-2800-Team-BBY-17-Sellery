@@ -16,6 +16,8 @@
 
   <!-- Custom CSS for template.html -->
   <link href="css/post_summary.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/card.css">
 </head>
 
 <body>
@@ -27,23 +29,26 @@
   <!-- Content goes here -->
   <!-- Content goes here -->
   <!-- Content goes here -->
-  <div id="content_section">
-    <div id="post_summary">
-      <div id="image_container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/220px-Tomato_je.jpg"
-          id="user_img" alt="produce image">
+  <div class="property-card" id="post_details">
+    <a href="#">
+      <div class="property-image1">
+        <div class="property-image-title">
+          <!-- Optional <h5>Card Title</h5> If you want it, turn on the CSS also. -->
+        </div>
       </div>
-      <div id="post_details">
-        <span class="details" id="title">{{ title }}</span>
-        <span class="details" id="addess">{{ address }}</span>
-        <span class="details" id="quantity">{{ quantity }}</span>
-        <span class="details" id="units">{{ units }}</span>
-        <span class="details" id="price">{{ price }}</span>
-      </div>
-      <div>
-        <button>Submit</button>
-      </div>
+    </a>
+    <div class="property-description">
+      <h5>{{ post.title }}</h5>
+      <p>{{ post.description }}</p>
+      <span id="price">Price: {{ post.price }}</span>
+      <span id="units">Units: {{ post.units }}</span>
+      <span id="quantity">quantity: {{ post.quantity }}</span>
     </div>
+    <a href="#">
+      <div class="property-social-icons">
+        <!-- I would usually put multipe divs inside here set to flex. Some people might use Ul li. Multiple Solutions -->
+      </div>
+    </a>
   </div>
   <!-- Content Ends -->
   <!-- Content Ends -->

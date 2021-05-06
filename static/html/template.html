@@ -13,6 +13,8 @@
 
   <!-- Custom CSS for template.html -->
   <link href="css/template.css" rel="stylesheet">
+  <link href="css/post.css" rel="stylesheet">
+  <link href="css/card.css" rel="stylesheet">
 </head>
 
 <body>
@@ -31,6 +33,24 @@
   <!-- Content Ends -->
   <!-- Content Ends -->
   <!-- Content Ends -->
+  <div class="post_card_container">
+    <div class="create-post">
+      <button class="close">&times;</button>
+      <form class="post_form">
+        <label class="title_label" for="title">Post title:</label>
+        <input type="text" id="title" name="title" required>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" min="1" max="100" required>
+        <label for="price">Price:</label>
+        <input type="number" id="price" min="1" max="100" step="0.01" required>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea>
+        <button type="button" id="submit">Confirm</button>
+        <p class="error"></p>  
+      </form>
+    </div>
+  </div>
+
 
   <!--footer-->
   <div id="new_post_container">
@@ -46,6 +66,9 @@
   </footer>
 </body>
 
+<!-- this is for when you click the plus button -->
+<script src="../js/hide_show.js"></script>
+
 <!-- Font Awsome -->
 <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
@@ -54,6 +77,8 @@
 
 <!-- development version, includes helpful console warnings -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<script src="js/client.js"></script>
 
 <!-- production version, optimized for size and speed 
 <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
