@@ -113,6 +113,34 @@ app.get("/post", (req, res) => {
 })
 
 /**
+ * This route will return the HTML for the post summary.
+ * @author Ravinder Shokar 
+ * @date April-30-2021
+ */
+app.get("/post_summary", (req, res) => {
+  readFile("static/html/post_summary.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+/**
+ * This route will return the HTML for the post page.
+ * @author Jimun Jang
+ * @date April-30-2021
+ */
+app.get("/post", (req, res) => {
+  readFile("static/html/post.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+/**
  * This route will return the HTML for the feed page (home page).
  * @author Gurshawn Sekhon
  * @date April-30-2021
@@ -184,24 +212,24 @@ app.post("/post_post", (req, res) => {
  * @date May 06 2021
  */
 app.get("/storefront-data", (req, res) => {
-    let formatOfResponse = req.query['format'];
-    let data = null;
+  let formatOfResponse = req.query['format'];
+  let data = null;
 
-    if (formatOfResponse == 'getJSONBio') {
-        res.setHeader('Content-Type', 'application/json');
-        console.log("hello you made it here");
-        client
-            .db("sellery")
-            .collection("sample_data")
-            .find({"_id" : ObjectID("60956e66db7bf207dbc33255") })
-            .toArray(function(err, result) {
-                if (err) throw err;
-                console.log(result);
-                res.send(result);
-        });
-        // console.log(data);
-        // res.send(data);
-    }
+  if (formatOfResponse == 'getJSONBio') {
+    res.setHeader('Content-Type', 'application/json');
+    console.log("hello you made it here");
+    client
+      .db("sellery")
+      .collection("sample_data")
+      .find({ "_id": ObjectID("60956e66db7bf207dbc33255") })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+      });
+    // console.log(data);
+    // res.send(data);
+  }
 })
 
 /**
@@ -228,6 +256,29 @@ app.post("/update_post", (req, res) => {
     }
   );
   console.log(post);
+})
+/**
+ * This route gets all post from the DB 
+ * @author Gurshawn Sehkon
+ * @date May 07 2021  
+*/
+app.get("/generate_produce", (req, res) => {
+
+  console.log("Sellery is the best!");
+  client
+    .db("sellery")
+    .collection("post")
+    .find({
+
+    })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+  // console.log(data);
+  // res.send(data);
+
 })
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
