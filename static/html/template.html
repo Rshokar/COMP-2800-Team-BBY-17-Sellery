@@ -38,7 +38,7 @@
 
   <!-- New Post -->
   <div class="post_card_container">
-    <div class="create-post">
+    <div id="create-post">
       <button class="close">&times;</button>
       <form class="post_form">
         <label class="title_label" for="title">Post title:</label>
@@ -52,8 +52,29 @@
         <button type="button" id="submit">Confirm</button>
         <p class="error"></p>
       </form>
+
+      <div id="new-card-post">
+        <div class="property-card">
+          <a href="#">
+            <div class="property-image2">
+              <div class="property-image-title">
+              </div>
+            </div>
+          </a>
+          <div class="property-description">
+            <h5 id="title">{{ new_post.title }}</h5>
+            <p id="desc"> {{ new_post.description }}</p>
+            <p id="quantity"> {{ new_post.quantity }}</p>
+            <p id="units"> {{ new_post.units }}</p>
+            <p id="price"> {{ new_post.price }}</p>
+          </div>
+        </div>
+        <button id="done">Submit</button>
+      </div>
     </div>
   </div>
+
+
   <!-- New Post Ends -->
 
   <!--footer-->
@@ -86,30 +107,16 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 -->
 
-<!-- Store the data from Listing form into cosnt which can be used 
-to in different files. -->
-<script src="js/client.js"></script>
-
 <!-- Posts Listings to the node server to be created in DB. In this case use 
 function postOnePost() -->
 <script src="js/post_post.js"></script>
 
-<script>
 
-  postOnePost(buildOBJ());
-
-
-  function buildOBJ() {
-    return {
-      title: title,
-      quantity: quantity,
-      price: price,
-      desc: desc,
-      units: units
-    }
-  }
+<!-- Store the data from Listing form into cosnt which can be used 
+to in different files. -->
+<script src="js/client.js"></script>
 
 
-</script>
+
 
 </html>

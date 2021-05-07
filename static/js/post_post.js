@@ -13,7 +13,6 @@
  * @version 1.0 
  * @date May 06 2021
  */
-
 function postOnePost(post) {
   $.ajax({
     url: "/post_post",

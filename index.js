@@ -149,6 +149,8 @@ app.post("/post_post", (req, res) => {
 
   let post = req.body;
 
+  console.log(post);
+
   // Only for this route. 
   const db = client.db("sellery");
 
