@@ -2,8 +2,6 @@
  * @author Jimun Jang
  * @date May 06 2021
  */
-
-
 const confirm_button = document.querySelector('#submit');
 
 const app = new Vue({
@@ -21,6 +19,7 @@ confirm_button.addEventListener('click', function (event) {
     const price = document.querySelector("#price").value;
     const desc = document.querySelector("#description").value;
     const units = 0
+    const time = new Date().toDateString();
 
     console.log(title);
 
@@ -40,7 +39,8 @@ confirm_button.addEventListener('click', function (event) {
             quantity: quantity,
             price: price,
             description: desc,
-            units: units
+            units: units,
+            time: time
         }
 
         app.new_post = obj
@@ -92,15 +92,17 @@ function getPostData() {
     let q = document.querySelector("#quantity").value
     let u = document.querySelector("#units").value
     let p = document.querySelector("#price").value
+    let timestamp = $("#time").text()
 
-    console.log(t);
+    console.log(time);
 
     obj = {
         title: t,
         description: d,
         quantity: q,
         units: u,
-        price: p
+        price: p,
+        time: timestamp
     }
 
     console.log(obj);
