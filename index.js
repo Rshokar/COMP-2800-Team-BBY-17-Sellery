@@ -9,6 +9,8 @@ const {
 const {
     read
 } = require('fs/promises');
+const { ObjectID } = require("bson");
+
 
 const app = express();
 
@@ -16,42 +18,55 @@ app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
 
+const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
+
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+
 //Connect App to DB. 
 async function main() {
     /**
      * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
      * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
      */
-    const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
+    // const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
 
-    const client = new MongoClient(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
+    // const client = new MongoClient(uri, {
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true
+    // });
 
     try {
         // Connect to the MongoDB cluster
         await client.connect();
 
         // Make the appropriate DB calls
-        await listDatabases(client);
+        // await listDatabases(client);
+
 
     } catch (e) {
         console.error(e);
-    } finally {
-        await client.close();
+    // } finally {
+    //     await client.close();
     }
 }
 
 main().catch(console.error);
 
 
-async function listDatabases(client) {
-    databasesList = await client.db().admin().listDatabases();
+// async function listDatabases(client) {
+//     databasesList = await client.db().admin().listDatabases();
 
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
+//     console.log("Databases:");
+//     databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+// };
+
+// async function getBioSample(client) {
+//     bioSample = await client.db("sellery");
+// };
 
 /**
  * This route returns index page to the client 
@@ -140,4 +155,26 @@ app.get("/feed", (req, res) => {
     })
 })
 
+app.get("/storefront-data", (req, res) => {
+    let formatOfResponse = req.query['format'];
+    let data = null;
+
+    if (formatOfResponse == 'getJSONBio') {
+        res.setHeader('Content-Type', 'application/json');
+        console.log("hello you made it here");
+        client
+            .db("sellery")
+            .collection("sample_data")
+            .find({"_id" : ObjectID("60956e66db7bf207dbc33255") })
+            .toArray(function(err, result) {
+                if (err) throw err;
+                console.log(result);
+                res.send(result);
+        });
+        // console.log(data);
+        // res.send(data);
+    }
+})
+
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
+
