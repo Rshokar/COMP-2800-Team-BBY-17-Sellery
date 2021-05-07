@@ -13,7 +13,8 @@ function genListing() {
     type: "GET",
     success: function (data) {
       console.log("Listing is generated: ", data);
-      return data;
+      app.posts = data;
+      return data
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
