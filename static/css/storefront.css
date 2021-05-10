@@ -1,17 +1,29 @@
-#profile-picture img {
+/* #profile-picture img {
   width: 30%;
   display: inline-block;
   vertical-align: top;
 }
 
-#nane {
+#name {
   display: inline-block;
-}
+} */
 
 body {
   background-color: #f2f2f2;
   font-family: "RobotoDraft", "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+#img-goes-here {
+  border-radius: 40%;
+  display: block;
+  margin: auto;
+  width: 50%;
+}
+
+#post-title {
+  text-align: center;
+  margin-top: 10%;
 }
 
 * {
@@ -30,6 +42,7 @@ p {
 }
 
 .center {
+  margin-top: 10%;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -122,3 +135,65 @@ p {
   background-color: blue;
   cursor: pointer;
 }
+
+/* Start of repeat */
+
+.center-user {
+  margin-top: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* End Non-Essential  */
+
+.property-card-user {
+  background-color: #5fd543;
+  height: 18em;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
+  border-radius: 16px;
+  overflow: hidden;
+  -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
+  box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
+}
+/* ^-- The margin bottom is necessary for the drop shadow otherwise it gets clipped in certain cases. */
+
+/* Top Half of card, image. */
+
+.property-image-user {
+  height: 12em;
+  width: 100%;
+  position: Absolute;
+  top: 0px;
+  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
+}
+
+/* Bottom Card Section */
+
+.property-description-user {
+  background-color: #fafafc;
+  height: 6em;
+  width: 100%;
+  position: absolute;
+  bottom: 0em;
+  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  padding: 0.5em 1em;
+  text-align: center;
+}
+

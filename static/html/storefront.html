@@ -29,15 +29,31 @@
   <!-- Content goes here -->
   <div id="content_section">
     <!-- ALL INFO RIGHT NOW HARD CODED -->
-    <div id="user-info">
-      <div id="profile-picture"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Sir_John_Johnson%2C_2nd_Baronet.png"></div>
-      <div id="name"><span id="name-goes-here">John Johnson</span></div>
-      <div id="address"><span id="address-goes-here">69420 Yourbutt Dr.</span></div>
-      <div id="email"><span id="email-goes-here">your@butt.com</span></div>
-      <div id="phone"><span id="phone-goes-here">694 206 9420</span></div>
-      <div id="bio"><span id="bio-goes-here">Hello there everyone, my name is John Johnson. I'm going to grow so much kale this summer!</span></div>
+    <!-- <div id="user-info">
+      <div id="profile-picture"><img id="img-goes-here"></div>
+      <div id="name"><span id="name-goes-here"></span></div>
+      <div id="bio"><span id="bio-goes-here"></span></div>
+    </div> -->
+
+    <div class="center-user">
+      <div class="property-card-user">
+        <div class="property-image-user">
+          <img id="img-goes-here">
+        </div>
+        <div class="property-description-user">
+          <div id="name">
+            <h5 id="name-goes-here"></h5>
+          </div>
+          <div id="bio"><span id="bio-goes-here"></span></div>
+        </div>
+        </a>
+      </div>
     </div>
-    <div id="Listings"></div> 
+    <div id="Listings"></div>
+
+    <h5>
+      <div id="post-title">Here are your posts!</div>
+    </h5>
 
     <div class="center">
       <div class="property-card">
@@ -46,7 +62,8 @@
             <div class="property-image-title">
               <!-- Optional <h5>Card Title</h5> If you want it, turn on the CSS also. -->
             </div>
-          </div></a>
+          </div>
+        </a>
         <div class="property-description">
           <h5> Card Title </h5>
           <p>Lorem Ipsum Dipsum hortata. Mixcall Horcho. Mixwell Chingo. More Bingo. Lorem Ipum doth be hard.</p>
@@ -76,13 +93,18 @@
       <a id="feed" class="btn fas fa-list fa-2x px-auto" href="#"></a>
     </div>
   </footer>
+
+  <!-- Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="../js/storefront.js"></script>
+
 </body>
 
-<!-- Font Awsome -->
+
+<!-- Font Awesome -->
 <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
-<!-- Jquery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <!-- development version, includes helpful console warnings -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
