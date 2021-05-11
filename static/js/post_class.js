@@ -5,7 +5,7 @@
  * @version 1.0
  * @date May 06 2021 
  */
-"use_strict";
+"use strict";
 
 class Post {
 
@@ -16,12 +16,16 @@ class Post {
    * @param {*} units of meassurement
    * @param {*} description of the produce being sold
    */
-  constructor(title, quantity, units, description, inID) {
+  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID) {
     this.t = title;
     this.q = quantity;
     this.u = units;
     this.d = description;
-    this.uID = inID;
+    this.ID = inID;
+    this.un = userName;
+    this.pri = price;
+    this.posted = datePosted
+    this.HLID = htmlID;
   }
 
   /**
@@ -58,31 +62,49 @@ class Post {
   }
 
   /**
-   * This function sets the unit of sale.
+   * Gets the ID of the post.
+   * @return the ID of the post. 
    */
-  set unit(inU) {
-    this.u = inU;
+  get postID() {
+    return this.ID
   }
 
   /**
-   * This function sets the quantity.
-   */
-  set quantity(inQ) {
-    this.q = inQ;
+ * Gets name of the user who posted post.
+ * @return the name of the user who posted post. 
+ */
+  get userName() {
+    return this.un
   }
 
   /**
-   * This function sets the description.
-   */
-  set description(inD) {
-    this.d = inD;
+* Gets the price of the product sold.
+* @return the price of the product sold. 
+*/
+  get price() {
+    return this.pri
   }
 
   /**
-   * This function sets the title.
-   */
-  set title(inT) {
-    this.t = inT;
+ * Gets the date the post was posted.
+ * @return the date the post was posted. 
+ */
+  get datePosted() {
+    return this.posted
+  }
+
+  /**
+ * This function sets the title.
+ */
+  set htmlID(inID) {
+    this.HLID = inID;
+  }
+
+  /**
+  * This function sets the title.
+  */
+  get htmlID() {
+    return this.HLID;
   }
 
   /**
@@ -92,6 +114,30 @@ class Post {
   update() {
     $.ajax({
       url: "/update_post",
+      type: "POST",
+      dataType: "JSON",
+      data: this.getJSON(),
+      success: (data) => {
+        return data
+      },
+      error: (err) => {
+        let obj = {
+          status: "error",
+          message: "Error posting data",
+          error: err,
+        }
+        return obj;
+      }
+    })
+  }
+
+  /**
+   * This meathod will delete the current object from the DB.
+   * @returns obj with either success or error
+   */
+  delete() {
+    $.ajax({
+      url: "/delete_post",
       type: "POST",
       dataType: "JSON",
       data: this.getJSON(),
@@ -146,10 +192,38 @@ class Post {
     str += this.d + "\n";
     return str;
   }
+}
 
+/**
+ * This function will buiild a list of post. 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date Ma 11 2021
+ */
+function buildPostList(posts) {
+  let lst = []
+  let post;
 
+  for (post in posts) {
+    let newPost = posts[post];
+    lst[post] = new Post(
+      newPost.title,
+      newPost.quantity,
+      newPost.units,
+      newPost.description,
+      newPost._id,
+      newPost.user_name,
+      newPost.price,
+      newPost.time,
+      post
+    )
+    editPostEventListner(post);
+  }
+  console.log(lst);
 
-
-
+  return lst;
 
 }
+
+
+

@@ -13,7 +13,12 @@ function genListing() {
     type: "GET",
     success: function (data) {
       console.log("Listing is generated: ", data);
-      app.posts = data;
+      newData = buildPostList(data);
+      app.posts = newData
+      for (post in newData) {
+        console.log(post)
+        editPostEventListner(post)
+      }
       return data
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -22,4 +27,18 @@ function genListing() {
 
     }
   })
+}
+
+
+/**
+ * This adds an click event listner to post  future use. 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date Mat 11 2021
+ * @param index is the index where it located in the post list.
+ */
+function editPostEventListner(id) {
+  let query = "#" + id + " .edit"
+  let button = document.getElementById(id)
+  console.log(button);
 }

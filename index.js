@@ -257,6 +257,43 @@ app.post("/update_post", (req, res) => {
   );
   console.log(post);
 })
+
+
+/**
+ * This route is responsible for deleting post. 
+ * @author Ravinder Shokar
+ * @version 1.0
+ * @date May 11 2021
+ */
+app.post("/delete_post", (req, res) => {
+  post = req.body;
+
+  const db = client.db("sellary");
+  let myObj;
+
+  db.collection("post").deleteOne(
+    { _id: post.ID }, (err, obj) => {
+      if (err) {
+        console.log(err);
+        myObj = {
+          message: "Success Deleting Post",
+          status: "sucess",
+          obj: obj
+        }
+        res.send(myObj)
+      } else {
+        console.log(err);
+        myObj = {
+          message: "Error Deleting Post",
+          status: "error"
+        }
+        res.send(myObj)
+      }
+    });
+  console.log(post);
+})
+
+
 /**
  * This route gets all post from the DB 
  * @author Gurshawn Sehkon

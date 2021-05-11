@@ -16,6 +16,10 @@
 
   <!-- Custom CSS for storefront..html -->
   <link href="css/storefront.css" rel="stylesheet">
+
+  <!-- Custom CSS for posting cards  -->
+  <link href="css/card.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -55,26 +59,25 @@
       <div id="post-title">Here are your posts!</div>
     </h5>
 
-    <div class="center">
-      <div class="property-card">
-        <a href="#">
-          <div class="property-image">
-            <div class="property-image-title">
-              <!-- Optional <h5>Card Title</h5> If you want it, turn on the CSS also. -->
+    <!-- This is where post start -->
+    <div id="card-listing">
+      <div v-for="post in posts" :id="post.HLID">
+        <div id=" card-holder">
+          <div id="property-card">
+            <div id="property-description">
+              <h5>{{post.userName}}</h5>
+              <h4>{{post.title}}</h4>
+              <p>{{post.description}}</p>
+              <span>${{post.price}}</span>
+              <span>{{post.quantity}} quantity</span>
+              <p>{{post.datePosted}}</p>
+              <i class="edit fas fa-edit"></i>
             </div>
           </div>
-        </a>
-        <div class="property-description">
-          <h5> Card Title </h5>
-          <p>Lorem Ipsum Dipsum hortata. Mixcall Horcho. Mixwell Chingo. More Bingo. Lorem Ipum doth be hard.</p>
         </div>
-        <a href="#">
-          <div class="property-social-icons">
-            <!-- I would usually put multipe divs inside here set to flex. Some people might use Ul li. Multiple Solutions -->
-          </div>
-        </a>
       </div>
     </div>
+  </div>
 
   </div>
   <!-- Content Ends -->
@@ -94,23 +97,41 @@
     </div>
   </footer>
 
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
+
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+  <!-- production version, optimized for size and speed 
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  -->
+
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- This is the post class -->
+  <script src="../js/post_class.js"></script>
+
+  <!-- This scipt contains an Vue app which is responsible for editing 
+  adding listing to our HTML -->
+  <script src="js/card_listing_componet.js"></script>
+
+  <!-- script for generating listing -->
+  <script src="js/generate_produce.js"></script>
+
+
   <script src="../js/storefront.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      let listing = genListing();
+    })
+  </script>
 
 </body>
 
 
-<!-- Font Awesome -->
-<script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
-
-
-<!-- development version, includes helpful console warnings -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-
-<!-- production version, optimized for size and speed 
-<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
--->
 
 </html>
