@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/signup_login.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="login_signup_container">
+        <form action="/signup", method="POST">
+            <h2>Sign up</h2>
+            <label for="email">Email</label>
+            <input type="email" name="email" required>
+            <div class="email error"></div>
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+            <label for="address">Address</label>
+            <input type="text" name="address" required>
+            <div class="password error"></div>
+            <button id="submit">Sign up</button>
+        </form>
+        <hr>
+        <div>
+            <p>Already have an account? <a href="/login">Log in</a></p>
+        </div>
+    </div>
+
+    <!-- Jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+    <script src="js/signup_post.js"></script>
+</body>
+</html>

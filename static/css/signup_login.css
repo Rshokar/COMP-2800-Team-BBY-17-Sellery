@@ -1,0 +1,32 @@
+.login_signup_container {
+    width: 360px;
+    margin: 0 auto;
+    padding: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+input {
+    border: 1px solid black;
+}
+
+label {
+    display: block;
+}
+
+button {
+    margin-top: 20px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    padding: 5px 16px;
+    cursor: pointer;
+    background-color: #38A700;
+    color: white;
+    font-weight: 600;
+}
+
+hr {
+    margin-top: 30px;
+}
