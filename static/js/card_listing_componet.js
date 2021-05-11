@@ -4,6 +4,8 @@
  * @author Gurshawn Sekhon
  * @date May 07 2021
  */
+
+console.log("made it to cardlisting component");
 const app = new Vue({
     el: '#card-listing',
     data: {

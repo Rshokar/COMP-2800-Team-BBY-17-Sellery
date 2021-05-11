@@ -16,6 +16,8 @@
 
   <!-- Custom CSS for storefront..html -->
   <link href="css/storefront.css" rel="stylesheet">
+
+  <link href="css/card.css" rel="stylesheet">
 </head>
 
 <body>
@@ -45,41 +47,51 @@
             <h5 id="name-goes-here"></h5>
           </div>
           <div id="bio"><span id="bio-goes-here"></span></div>
+          <div id="reviews"><a id="check_reviews" href="#">Reviews</a></div>
         </div>
         </a>
       </div>
     </div>
-    <div id="Listings"></div>
+    <!-- <div id="Listings"></div> -->
+
+  <div class="modal">
+    <div class="review_card_container">
+      <div id="review_cards">
+        <button class="close">&times;</button>
+        <h1>Here are where the reviews will be</h1>
+      </div>
+    </div>
+  </div>
 
     <h5>
       <div id="post-title">Here are your posts!</div>
     </h5>
 
-    <div class="center">
-      <div class="property-card">
-        <a href="#">
-          <div class="property-image">
-            <div class="property-image-title">
-              <!-- Optional <h5>Card Title</h5> If you want it, turn on the CSS also. -->
+    <div id="card-listing">
+      <div id="center">
+        <div id="card-holder">
+          <div id="property-card" v-for="post in posts" :key="post.data">
+            <div id="property-description">
+              <h5>{{post.user_name}}</h5>
+              <h4>{{post.title}}</h4>
+              <p>{{post.description}}</p>
+              <p>${{post.price}}</p>
+              <p>{{post.quantity}} quantity</p>
+              <p>{{post.time}}</p>
             </div>
           </div>
-        </a>
-        <div class="property-description">
-          <h5> Card Title </h5>
-          <p>Lorem Ipsum Dipsum hortata. Mixcall Horcho. Mixwell Chingo. More Bingo. Lorem Ipum doth be hard.</p>
         </div>
-        <a href="#">
-          <div class="property-social-icons">
-            <!-- I would usually put multipe divs inside here set to flex. Some people might use Ul li. Multiple Solutions -->
-          </div>
-        </a>
       </div>
     </div>
+    
+    
 
   </div>
   <!-- Content Ends -->
   <!-- Content Ends -->
   <!-- Content Ends -->
+
+  
 
   <!--footer-->
   <div id="new_post_container">
@@ -94,20 +106,24 @@
     </div>
   </footer>
 
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
+
+
+
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="../js/card_listing_componet.js"></script>
+  <script src="../js/generate_produce.js"></script>
   <script src="../js/storefront.js"></script>
+
 
 </body>
 
 
-<!-- Font Awesome -->
-<script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
-
-
-
-<!-- development version, includes helpful console warnings -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
 <!-- production version, optimized for size and speed 
 <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>

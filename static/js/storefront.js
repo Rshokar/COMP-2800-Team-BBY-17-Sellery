@@ -1,6 +1,8 @@
-// const { ObjectID } = require("bson");
+
 
 $(document).ready(function() {
+
+  genStoreFrontListing();
 
   console.log("Made it to document.ready");
 
@@ -23,5 +25,26 @@ $(document).ready(function() {
         console.log("ERROR:", jqXHR, textStatus, errorThrown);
     }
   })
+
+  const reviews_button = document.querySelector("#reviews");
+  const review_card = document.querySelector(".modal");
+  const close = document.querySelector(".close");
+  // const next_button = document.querySelector(".submit");
+
+  reviews_button.addEventListener("click", function() {
+      review_card.style.display = "block";
+  });
+
+  close.addEventListener("click", function() {
+      review_card.style.display = "none";
+  });
+
+  window.onclick = function(event) {
+    if (event.target == review_card) {
+      review_card.style.display = "none";
+    }
+  }
+
+
 })
 

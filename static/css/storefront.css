@@ -49,94 +49,8 @@ p {
   align-items: center;
 }
 
-/* End Non-Essential  */
 
-.property-card {
-  height: 18em;
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  position: relative;
-  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  border-radius: 16px;
-  overflow: hidden;
-  -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
-  box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
-}
-/* ^-- The margin bottom is necessary for the drop shadow otherwise it gets clipped in certain cases. */
-
-/* Top Half of card, image. */
-
-.property-image {
-  height: 6em;
-  width: 100%;
-  padding: 1em 2em;
-  position: Absolute;
-  top: 0px;
-  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  background-image: url("https://cdn.photographylife.com/wp-content/uploads/2017/01/What-is-landscape-photography.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
-/* Bottom Card Section */
-
-.property-description {
-  background-color: #fafafc;
-  height: 12em;
-  width: 100%;
-  position: absolute;
-  bottom: 0em;
-  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  padding: 0.5em 1em;
-  text-align: center;
-}
-
-/* Social Icons */
-
-.property-social-icons {
-  width: 1em;
-  height: 1em;
-  background-color: black;
-  position: absolute;
-  bottom: 1em;
-  left: 1em;
-  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-
-/* Property Cards Hover States */
-
-.property-card:hover .property-description {
-  height: 0em;
-  padding: 0px 1em;
-}
-.property-card:hover .property-image {
-  height: 18em;
-}
-
-.property-card:hover .property-social-icons {
-  background-color: white;
-}
-
-.property-card:hover .property-social-icons:hover {
-  background-color: blue;
-  cursor: pointer;
-}
-
-/* Start of repeat */
+/* Start of User Card */
 
 .center-user {
   margin-top: 10%;
@@ -173,7 +87,7 @@ p {
 /* Top Half of card, image. */
 
 .property-image-user {
-  height: 12em;
+  height: 10em;
   width: 100%;
   position: Absolute;
   top: 0px;
@@ -186,14 +100,57 @@ p {
 
 .property-description-user {
   background-color: #fafafc;
-  height: 6em;
+  height: 8em;
   width: 100%;
   position: absolute;
   bottom: 0em;
-  -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
   -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
   padding: 0.5em 1em;
   text-align: center;
+}
+
+
+
+/* Review Pop Up */
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.review_card_container {
+  width: 80%;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  background-color: rgb(2, 6, 250); /* Fallback color */
+}
+
+#review-cards {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  width: 80%;
+  height: 80%;
+}
+
+#review_cards button.close {
+  cursor: pointer;
+  position: absolute;
+  right: 13%;
+  background-color: white;
+  border: none;
+  font-size: 2em;
 }
 

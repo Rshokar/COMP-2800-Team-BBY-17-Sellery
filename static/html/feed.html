@@ -41,7 +41,7 @@
         <div id="card-holder">
           <div id="property-card" v-for="post in posts" :key="post.data">
             <div id="property-description">
-              <h5>Bob</h5>
+              <h5>{{post.user_name}}</h5>
               <h4>{{post.title}}</h4>
               <p>{{post.description}}</p>
               <p>${{post.price}}</p>
