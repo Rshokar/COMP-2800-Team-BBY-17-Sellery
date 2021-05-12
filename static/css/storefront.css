@@ -119,22 +119,6 @@ p {
 
 /* Property Cards Hover States */
 
-.property-card:hover .property-description {
-  height: 0em;
-  padding: 0px 1em;
-}
-.property-card:hover .property-image {
-  height: 18em;
-}
-
-.property-card:hover .property-social-icons {
-  background-color: white;
-}
-
-.property-card:hover .property-social-icons:hover {
-  background-color: blue;
-  cursor: pointer;
-}
 
 /* Start of repeat */
 

@@ -29,7 +29,7 @@ p {
 }
 
 #center {
-    height: 40vh;
+    height: 30vh;
     width: 100%;
     display: block;
     justify-content: center;
@@ -38,8 +38,8 @@ p {
 
 /* End Non-Essential  */
 
-#property-card {
-    height: 18em;
+.property-card {
+    height: 25em;
     width: 100%;
     margin-top: 1em;
     display: -webkit-box;
@@ -50,9 +50,6 @@ p {
     -ms-flex-direction: column;
     flex-direction: column;
     position: relative;
-    -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
     border-radius: 16px;
     overflow: hidden;
     -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
@@ -63,16 +60,12 @@ p {
 
 /* Top Half of card, image. */
 
-#property-image {
-    height: 6em;
+.property-card-image {
+    height: 15em;
     width: 100%;
     padding: 1em 2em;
     position: Absolute;
     top: 0px;
-    -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    /* background-image: url('https://thumbs.dreamstime.com/b/tomatoe-white-background-55861789.jpg'); */
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -80,70 +73,11 @@ p {
 
 /* Bottom Card Section */
 
-#property-description {
+.property-card-description {
     background-color: #FAFAFC;
-    height: 12em;
     width: 100%;
     position: absolute;
     bottom: 0em;
-    -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
     padding: 0.5em 1em;
     text-align: center;
 }
-
-/* Social Icons */
-
-#property-social-icons {
-    width: 1em;
-    height: 1em;
-    position: absolute;
-    bottom: 1em;
-    left: 1em;
-    -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-    transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-
-/* Property Cards Hover States */
-
-#property-card:hover #property-description {
-    height: 0em;
-    padding: 0px 1em;
-}
-
-#property-card:hover #property-image1 {
-    height: 18em;
-}
-
-
-#property-card:hover #property-social-icons {
-    background-color: white;
-}
-
-#property-card:hover #property-social-icons:hover {
-
-    cursor: pointer;
-}
-
-
-/* Optional
-
-.property-image-title
-{
-text-align:center;
-position:Relative;
-top:30%;
-opacity:0;
-transition:all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1) 0.2s;
-color:black;
-font-size:1.2em;
-}
-
-.property-card:hover .property-image-title
-{
-opacity:1;
-}
-
-*/

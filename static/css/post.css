@@ -1,26 +1,40 @@
-.post_card_container {
+.post_card_container, .edit_card_container, #confirmation {
     width: 100%;
     display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    margin-left: 10vw;
+    margin-top: 10vw;
+    width: 80vw;
+    background-color: rgb(227, 227, 227);
     justify-content: center;
-    height: 100%;
+    height: 55%;
 }
 
-#create-post {
+#confirmation {
+    text-align: center;
+    width: 55%;
+    background-color: #9b9b9b;
+    position: absolute;
+    height: 25%;
+    padding: 1em 1em 1em 1em;
+}
+
+.create-post {
     margin-top: 10px;
     display: flex;
     /* justify-content: center; */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    width: 80%;
-    height: 80%;
 }
 
-#create-post form {
-    max-width: 375px;
+.create-post form {
     margin: 0 auto;
     display: initial;
 }
 
-#create-post textarea{
+.create-post textarea{
     display: block;
     width: 100%;
     margin: 10px 0;
@@ -28,7 +42,8 @@
     height: 75px;
 }
 
-#create-post button.submit{
+.create-post button.submit{
+    margin-top: 1em;
     width: 50%;
     margin: 10px;
     border-radius: 10px;
@@ -37,7 +52,7 @@
     cursor: pointer;
 }
 
-#create-post button.close {
+.create-post button.close {
     cursor: pointer;
     position: absolute;
     right: 13%;
@@ -46,22 +61,28 @@
     font-size: 2em;
 }
 
-#create-post label{
+.create-post button.delete {
+  cursor: pointer;
+  position: absolute;
+  right: 27%;
+  background-color: white;
+  border: none;
+  font-size: 2em;
+}
+
+.create-post label{
     display: block;
     margin-top: 10px;
 }
 
-#create-post label.title_label { margin-top: 40%; }
+.create-post label.title_label { margin-top: 40%; }
 
-body {
-    height: 100vh;
-}
 
 #post_details {
     display: none;
 }
 
-#new-card-post {
+#new-card-post, #edit-card-post {
     display: none;
     width: 100%;
 }

@@ -238,25 +238,33 @@ app.get("/storefront-data", (req, res) => {
  * @version 1.0
  * @date May 06 2021
  */
-app.post("/update_post", (req, res) => {
+app.post("/update_post", async (req, res) => {
   post = req.body;
 
-  const db = client.db("sellary");
+  console.log(post)
 
-  db.collection("post").updateOne(
-    { _id: post.ID },
-    {
-      $set: {
-        title: post.title,
-        description: post.description,
-        units: post.uinits,
-        price: post.price,
-        quantity: post.quantity,
-      }
+  let filter = { title: "Corn" }
+
+  let updateDoc = {
+    $set: {
+      title: post.title,
+      //description: post.description,
+      //units: post.uinits,
+      //price: post.price,
+      //quantity: post.quantity,
     }
+  }
+
+  const options = { upsert: true };
+
+  result = await client.db("sellary").collection("post").updateOne(filter, updateDoc, options);
+
+  console.log(
+    `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
   );
-  console.log(post);
-})
+
+
+});
 
 
 /**
@@ -265,32 +273,38 @@ app.post("/update_post", (req, res) => {
  * @version 1.0
  * @date May 11 2021
  */
-app.post("/delete_post", (req, res) => {
+app.post("/delete_post", async (req, res) => {
   post = req.body;
 
   const db = client.db("sellary");
+  const posts = db.collection("post");
+
+  const query = { _id: post }
   let myObj;
 
-  db.collection("post").deleteOne(
-    { _id: post.ID }, (err, obj) => {
-      if (err) {
-        console.log(err);
-        myObj = {
-          message: "Success Deleting Post",
-          status: "sucess",
-          obj: obj
-        }
-        res.send(myObj)
-      } else {
-        console.log(err);
-        myObj = {
-          message: "Error Deleting Post",
-          status: "error"
-        }
-        res.send(myObj)
-      }
-    });
-  console.log(post);
+  console.log("My Post", post);
+  console.log("Post ID", post.ID);
+  console.log("Query", query);
+
+
+  const result = await posts.deleteOne(query);
+
+  if (result.deletedCount === 1) {
+    console.dir("Successfully deleted one document.");
+    myObj = {
+      message: "Success Deleting Post",
+      status: "sucess",
+    };
+    res.send(myObj);
+
+  } else {
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error Deleting Post",
+      status: "error"
+    }
+    res.send(myObj)
+  }
 })
 
 

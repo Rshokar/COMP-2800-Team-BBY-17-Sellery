@@ -16,7 +16,7 @@ class Post {
    * @param {*} units of meassurement
    * @param {*} description of the produce being sold
    */
-  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID) {
+  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID) {
     this.t = title;
     this.q = quantity;
     this.u = units;
@@ -24,8 +24,9 @@ class Post {
     this.ID = inID;
     this.un = userName;
     this.pri = price;
-    this.posted = datePosted
+    this.posted = datePosted;
     this.HLID = htmlID;
+    this.uID = userID;
   }
 
   /**
@@ -94,18 +95,42 @@ class Post {
   }
 
   /**
- * This function sets the title.
+   * Gets the user ID of who posted the 
+   * Post. 
+   * @return user ID of who posted the Post
+   */
+  get userID() {
+    return this.uID
+  }
+
+  /**
+ * This function sets the HTML ID.
  */
   set htmlID(inID) {
     this.HLID = inID;
   }
 
   /**
-  * This function sets the title.
+  * This function gets the HTML ID.
   */
   get htmlID() {
     return this.HLID;
   }
+
+  /**
+   * This function will allow the post to be updated 
+   * with an obj.
+   * @param {JSON} obj 
+   */
+  updateWithJSON(obj) {
+    this.posted = obj.date_posted;
+    this.pri = obj.price;
+    this.d = obj.description;
+    this.u = obj.units;
+    this.q = obj.quantity;
+    this.t = obj.title;
+  }
+
 
   /**
    * This function will update the current object with its current values. 
@@ -135,16 +160,20 @@ class Post {
    * This meathod will delete the current object from the DB.
    * @returns obj with either success or error
    */
-  delete() {
+  async delete(execute) {
+    console.log("They are trying to delete my", this.ID)
     $.ajax({
       url: "/delete_post",
       type: "POST",
       dataType: "JSON",
       data: this.getJSON(),
       success: (data) => {
+        console.log(data);
+        execute(data)
         return data
       },
       error: (err) => {
+        console.log(err);
         let obj = {
           status: "error",
           message: "Error posting data",
@@ -156,17 +185,12 @@ class Post {
   }
 
 
-  /**
-   * @returns This function will delete the post from the DB
-   * 
-  */
 
   /**
    * This function will return an JSON obj containing all post details. 
    * @returns JSON obj
    */
   getJSON() {
-
     if (this.uID === undefined) {
       throw "Post does not have an ID. Must have ID before update"
     }
@@ -174,10 +198,11 @@ class Post {
       title: this.t,
       quantity: this.q,
       units: this.u,
+      price: this.pri,
       description: this.d,
-      ID: this.uID
+      userID: this.uID,
+      ID: this.ID
     }
-
     return obj
   }
 
@@ -204,8 +229,10 @@ function buildPostList(posts) {
   let lst = []
   let post;
 
+
   for (post in posts) {
     let newPost = posts[post];
+    console.log(newPost);
     lst[post] = new Post(
       newPost.title,
       newPost.quantity,
@@ -215,9 +242,9 @@ function buildPostList(posts) {
       newPost.user_name,
       newPost.price,
       newPost.time,
-      post
+      post,
+      newPost.user_id
     )
-    editPostEventListner(post);
   }
   console.log(lst);
 
