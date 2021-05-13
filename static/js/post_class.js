@@ -219,7 +219,7 @@ class Post {
         </div>
       <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
         <span class='price'>${this.pri}</span>
-        <span class='quantity'>${this.q} quantity</span>
+        <span class='quantity'>${this.q}</span>
         <p class='date-posted'>${this.posted}</p>
         <i class="edit fas fa-edit"></i>
       </div>
