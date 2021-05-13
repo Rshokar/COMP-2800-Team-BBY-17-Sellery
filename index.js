@@ -1,10 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 
 const { readFile } = require('fs');
 const { MongoClient } = require('mongodb');
 const { read } = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
+
+const mongoose = require('mongoose');
+const User = require('./models/user');
+
 
 const app = express();
 
@@ -12,9 +17,8 @@ app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 
 /**
@@ -345,5 +349,70 @@ app.get("/generate_produce", (req, res) => {
   // res.send(data);
 
 })
+
+app.get('/login', (req, res) => {
+  readFile("static/html/login.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  });
+});
+
+app.post('/signup', async (req, res) => {
+  const { email, password, address } = req.body;
+
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // Only for this route. 
+  const db = client.db("sellery");
+
+  db.collection("users").insertOne({email, password: hashedPassword, address})
+    .then((result) => {
+      let obj = {
+        status: "success",
+        message: "message",
+      }
+      console.log(obj);
+      res.send(obj);
+    })
+    .catch((err) => {
+      let obj = {
+        result: {},
+        status: "error",
+        message: "",
+      }
+      console.log(obj);
+      res.send(obj);
+    });
+ });
+
+app.get('/signup', (req, res) => {
+  readFile("static/html/signup.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  });
+});
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const db = client.db("sellery");
+
+  const user = await db.collection("users").findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      res.status(200).json({ user: user._id });
+    } else {
+      res.send('wrong password');
+    }
+  } else {
+    res.send('wrong email');
+  }
+});
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
