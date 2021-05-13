@@ -1,0 +1,80 @@
+.post_card_container {
+    width: 100%;
+    display: none;
+    justify-content: center;
+    height: 100%;
+}
+
+#create-post {
+    margin-top: 10px;
+    display: flex;
+    /* justify-content: center; */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    width: 80%;
+    height: 80%;
+}
+
+#create-post form {
+    max-width: 375px;
+    margin: 0 auto;
+    display: initial;
+}
+
+#create-post textarea{
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 8px;
+    height: 75px;
+}
+
+#create-post button.submit{
+    width: 50%;
+    margin: 10px;
+    border-radius: 10px;
+    padding: 6px;
+    border: 0;
+    cursor: pointer;
+}
+
+#create-post button.close {
+    cursor: pointer;
+    position: absolute;
+    right: 13%;
+    background-color: white;
+    border: none;
+    font-size: 2em;
+}
+
+#create-post label{
+    display: block;
+    margin-top: 10px;
+}
+
+#create-post label.title_label { margin-top: 40%; }
+
+body {
+    height: 100vh;
+}
+
+#post_details {
+    display: none;
+}
+
+#new-card-post {
+    display: none;
+    width: 100%;
+}
+
+#done {
+    margin: auto;
+    margin-top: 1em;
+    width: 100%;
+}
+
+.error {
+    color: red;
+    font-style: italic;
+    display: block;
+    margin-top: 10px;
+}
