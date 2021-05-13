@@ -16,6 +16,9 @@ const app = express();
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
+// for about page pics and favicon
+app.use("/pics", express.static("static/pics"));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -331,8 +334,8 @@ app.post("/delete_post", (req, res) => {
 /**
  * This route gets all post from the DB 
  * @author Gurshawn Sehkon
- * @date May 07 2021  
-*/
+ * @date May-07-2021  
+ */
 app.get("/generate_produce", (req, res) => {
 
   console.log("Hello you made it generate produce.");
@@ -461,10 +464,82 @@ app.get("/generate_reviews", (req, res) => {
       console.log(result);
       res.send(result);
     });
-  // console.log(data);
-  // res.send(data);
-
 })
+
+
+/**
+ * This route will return the about page for Sellary. This page is meant 
+ * for development purposes only 
+ * @author Gurshawn Sekhon
+ * @date May-05-10
+ */
+app.get("/about", (req, res) => {
+  readFile("static/html/about.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+
+/**
+ * This route will return the form for reviews/ratings.. This page is meant 
+ * for development purposes only 
+ * @author Gurshawn Sekhon
+ * @date May-05-11
+ */
+app.get("/review_form", (req, res) => {
+  readFile("static/html/review_form.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+
+
+
+/**
+ * This route will write reviews to the database.
+ * @author Gurshawn Sekhon
+ * @date May-10-2021
+ */
+app.post("/createReviews", (req, res) => {
+
+  const {
+    rating,
+    reviewComment
+  } = req.body;
+
+  const db = client.db("sellery");
+
+  const date = new Date().toDateString();
+
+  db.collection("reviews").insertOne({
+      rating,
+      reviewComment,
+      date
+    }).then(() => {
+      let obj = {
+        status: "success",
+        message: "created reviews successfully",
+      }
+      console.log(obj);
+      res.send(obj);
+    })
+    .catch((err) => {
+      let obj = {
+        result: {},
+        status: "error",
+        message: ""
+      }
+      console.log(obj);
+      res.send(obj);
+    })
+});
+
 
 
 
