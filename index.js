@@ -226,7 +226,7 @@ app.get("/storefront-data", (req, res) => {
     client
       .db("sellery")
       .collection("sample_data")
-      .find({ "_id": ObjectID(user_id) })
+      .find({ "_id": ObjectId(user_id) })
       .toArray(function (err, result) {
         if (err) throw err;
         console.log(result);
@@ -431,7 +431,7 @@ app.get("/generate_user_produce", (req, res) => {
   client
     .db("sellery")
     .collection("post")
-    .find({ "user_id": ObjectID(user_id) })
+    .find({ "user_id": ObjectId(user_id) })
     .toArray(function (err, result) {
       if (err) throw err;
       console.log(result);
@@ -454,7 +454,7 @@ app.get("/generate_reviews", (req, res) => {
     .db("sellery")
     .collection("reviews")
     .find({
-      "user_id": ObjectID(user_id)
+      "user_id": ObjectId(user_id)
     })
     .toArray(function (err, result) {
       if (err) throw err;
