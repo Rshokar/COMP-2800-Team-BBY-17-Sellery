@@ -111,4 +111,36 @@ p {
   text-align: center;
 }
 
+#add_image, #log_out {
+  margin-top: 10px;
+  background-color: rgb(167, 51, 51);
+  border-radius: 50px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  border: none;
+  padding: 7px 0px;
+  font-size: large;
+  font-weight: 700;
+  margin-bottom: 30%;
+}
+
+#add_image {
+  margin-bottom: 0;
+  background-color: rgb(41, 41, 201);
+}
+
+#log_out a {
+  color: white;
+  text-decoration: none;
+}
+
+#feed_search {
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 5px;
+  outline: none;
+}
 

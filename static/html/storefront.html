@@ -82,10 +82,18 @@
       </div>
     <!-- </div> -->
   </div>
+    <button id="add_image">Add image</button>
+    <div id="Listings"></div>
 
     <h5>
       <div id="post-title">Here are your posts!</div>
     </h5>
+
+    <div>
+      <form id="search">
+        <input type="text" name="search" placeholder="filter by title" id="feed_search">
+      </form>
+    </div>
 
     <!-- This is where post start -->
     <div id="card-listing">
@@ -99,6 +107,7 @@
     <div id="edit-posting">
 
     </div>
+    <button id="log_out"><a href="/logout">Log Out</a></button>
   </div>
   </div>
   <!-- Content Ends -->
@@ -145,6 +154,8 @@
 
   <script src="../js/storefront.js"></script>
 
+  <!-- filtering cards by title -->
+  <script src="../js/filterByName.js"></script>
 
 </body>
 
