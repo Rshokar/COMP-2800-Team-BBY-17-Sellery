@@ -16,6 +16,10 @@
 
   <!-- Cust CSS for feed.html -->
   <link href="css/card.css" rel="stylesheet">
+
+  <!-- This is only used for the HTML layover for editing or
+    deleting a produce listing. -->
+  <link href="css/post.css" rel="stylesheet">
 </head>
 
 <body>
@@ -24,42 +28,18 @@
     <input type="test" placeholder="Search" id="feed_search">
   </header>
 
-
-  <!-- Content goes here -->
-  <!-- /**
-   * Card template for produce feed page.. 
-   * I found this code on codepen
-   *
-   * @author markelrayes
-   * @see https://codepen.io/markelrayes/pen/ZEGVBZm
-   */ -->
-  <!-- Card section -->
-  <!-- make each div and add id -->
+  <!-- This is where content starts -->
   <div id="content_section">
+
+    <!-- This is where post start -->
     <div id="card-listing">
-      <div id="center">
-        <div id="card-holder">
-          <div id="property-card" v-for="post in posts" :key="post.data">
-            <div id="property-description">
-              <h5>Bob</h5>
-              <h4>{{post.title}}</h4>
-              <p>{{post.description}}</p>
-              <p>${{post.price}}</p>
-              <p>{{post.quantity}} quantity</p>
-              <p>{{post.time}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <a href="#">
-        <div class="property-social-icons">
-          <!-- I would usually put multipe divs inside here set to flex. Some people might use Ul li. Multiple Solutions -->
-        </div>
-      </a>
     </div>
-  </div>
 
+    <!-- Edit Post -->
+    <div id="edit-posting">
+    </div>
+
+  </div>
   <!-- Content Ends -->
 
   <!--footer-->
@@ -78,10 +58,6 @@
   <!-- production version, optimized for size and speed  -->
   <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
-  <!-- This scipt contains an Vue app which is responsible for editing 
-  adding listing to our HTML -->
-  <script src="js/card_listing_componet.js"></script>
-
   <!-- Font Awsome -->
   <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
@@ -91,8 +67,16 @@
   <!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+  <!-- This script is responsible for editing and deleting post. Must drop in-->
+  <script src="../js/edit_post.js"></script>
+
+  <!-- This is the post class -->
+  <script src="../js/post_class.js"></script>
+
   <!-- script for generating listing -->
-  <script src="js/generate_produce.js"></script>
+  <script src="../js/generate_produce.js"></script>
+
+  <script src="../js/storefront.js"></script>
 
   <script>
     $(document).ready(function () {

@@ -70,55 +70,7 @@
 
     <!-- Edit Post -->
     <div id="edit-posting">
-      <div class="edit_card_container">
-        <div class="create-post">
-          <button class="close"><i class="fas fa-times"></i></button>
-          <button class="delete"><i class="fas fa-trash-alt"></i></button>
 
-          <form class="post_form">
-            <legend>Edit Post</legend>
-            <label class="title_label" for="title">Post title:</label>
-            <input type="text" id="title" name="title" required>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" min="1" max="100" required>
-            <label for="price">Price:</label>
-            <input type="number" id="price" min="1" max="100" step="0.01" required>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
-            <button type="button" class="next">Next</button>
-            <p class="error"></p>
-          </form>
-
-          <div class="center-user" id="edit-card-post">
-            <h3>Preview Post</h3>
-            <div class="property-card">
-              <div class=".property-card-image">
-                <img id="img-goes-here">
-              </div>
-              <div class="property-card-description">
-                <div id="name">
-                  <h3 class="title-preview">{{ new_post.title }}</h3>
-                  <h5 class="name-preview">${data.userName}</h5>
-                </div>
-                <div id="bio"><span class="bio-preview">
-                    <p>{{ new_post.description }}</p>
-                  </span></div>
-                <span class="price-preview">${{ new_post.price }}</span>
-                <span class="quantity-preview">{{ new_post.quantity }} quantity</span>
-                <p class="time-preview">{{ new_post.time }}</p>
-              </div>
-            </div>
-            <button type="button" class="submit">Submit</button>
-          </div>
-
-          <div id="confirmation">
-            <p>Are you sure you want to delete this post?</p>
-            <button class="yes">Yes</button><button class="no">No</button>
-          </div>
-
-
-        </div>
-      </div>
     </div>
   </div>
   </div>
@@ -139,6 +91,7 @@
     </div>
   </footer>
 
+
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
@@ -152,21 +105,20 @@
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+  <!-- This script is responsible for editing and deleting post. Must drop in-->
+  <script src="../js/edit_post.js"></script>
+
   <!-- This is the post class -->
   <script src="../js/post_class.js"></script>
 
-  <!-- This scipt contains an Vue app which is responsible for editing 
-  adding listing to our HTML -->
-  <script src="js/card_listing_componet.js"></script>
-
   <!-- script for generating listing -->
-  <script src="js/generate_produce.js"></script>
+  <script src="../js/generate_produce.js"></script>
 
   <script src="../js/storefront.js"></script>
 
   <script>
     $(document).ready(function () {
-      let listing = genListing();
+      genListing();
     })
   </script>
 

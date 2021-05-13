@@ -21,8 +21,6 @@ confirm_button.addEventListener('click', function (event) {
     const units = 0
     const time = new Date().toDateString();
 
-    console.log(title);
-
 
     if (title != '' && desc != '' && quantity != '' && price != '') {
         $(".post_form").css({
@@ -59,10 +57,9 @@ confirm_button.addEventListener('click', function (event) {
  * @date May 07 2021
  * @version 1.0 
  */
-$("#done").click((e) => {
+$("#post_card_container .submit").click((e) => {
     console.log("I have been clicked");
     e.preventDefault;
-
     data = getPostData();
 
     // Result will contain an OBJ with value error or success. Later 
@@ -87,14 +84,14 @@ $("#done").click((e) => {
  * @date May 07 2021 
  */
 function getPostData() {
-    let t = document.querySelector("#title").value
-    let d = $("#desc").text()
-    let q = document.querySelector("#quantity").value
-    let u = document.querySelector("#units").value
-    let p = document.querySelector("#price").value
-    let timestamp = $("#time").text()
+    let t = $("#new-card-post .title").text()
+    let d = $("#new-card-post .desc").text()
+    let q = $("#new-card-post .quantity").text()
+    let u = $("#new-card-post .units").text()
+    let p = $("#new-card-post .price").text()
+    let timestamp = $("#new-card-post .time").text();
 
-    console.log(time);
+    console.log(timestamp);
 
     obj = {
         title: t,

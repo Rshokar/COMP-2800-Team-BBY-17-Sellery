@@ -168,12 +168,10 @@ class Post {
       dataType: "JSON",
       data: this.getJSON(),
       success: (data) => {
-        console.log(data);
         execute(data)
         return data
       },
       error: (err) => {
-        console.log(err);
         let obj = {
           status: "error",
           message: "Error posting data",
@@ -184,6 +182,62 @@ class Post {
     })
   }
 
+  /**
+   * This function will remove the posting from the HTML
+   * @date May 13 2021
+   */
+  removeFromHTML() {
+    let htmlID = this.HLID
+    $("#" + htmlID).remove();
+  }
+
+  /**
+   * This function will append the posting to the HTML
+   * @date May 13 2021
+   */
+  appendHTML() {
+    $("#card-listing").append(this.buildHTML())
+    editPostEventListner(this.HLID, this)
+  }
+
+  /**
+   * THis will generate the appropriate HTML for the posting. 
+   * @date May 13 2021
+   */
+  buildHTML(data) {
+    let html =
+      `
+    <div class="center-user listing" id=${this.HLID}>
+      <div class="property-card">
+        <div class=".property-card-image">
+          <img id="img-goes-here">
+        </div>
+      <div class="property-card-description">
+        <div id="name">
+          <h3 class='title'>${this.t}</h3>
+          <h5 calss='name'>${this.un}</h5>
+        </div>
+      <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
+        <span class='price'>${this.pri}</span>
+        <span class='quantity'>${this.q} quantity</span>
+        <p class='date-posted'>${this.posted}</p>
+        <i class="edit fas fa-edit"></i>
+      </div>
+      `
+    return html;
+  }
+
+  /**
+   * This function will update the listing in the HTML
+   * @date May 13 2021 
+   */
+  updateHTML() {
+    $("#" + this.HLID + " .title").text(this.t)
+    $("#" + this.HLID + " .description").text(this.d)
+    $("#" + this.HLID + " .price").text(this.pri)
+    $("#" + this.HLID + " .quantity").text(this.q)
+    $("#" + this.HLID + " .date-posted").text(this.t)
+  }
 
 
   /**
@@ -191,9 +245,9 @@ class Post {
    * @returns JSON obj
    */
   getJSON() {
-    if (this.uID === undefined) {
-      throw "Post does not have an ID. Must have ID before update"
-    }
+    //if (this.uID === undefined) {
+    //  throw "Post does not have an ID. Must have ID before update"
+    //}
     let obj = {
       title: this.t,
       quantity: this.q,
@@ -232,7 +286,6 @@ function buildPostList(posts) {
 
   for (post in posts) {
     let newPost = posts[post];
-    console.log(newPost);
     lst[post] = new Post(
       newPost.title,
       newPost.quantity,

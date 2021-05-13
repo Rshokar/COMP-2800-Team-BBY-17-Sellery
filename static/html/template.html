@@ -53,27 +53,34 @@
         <p class="error"></p>
       </form>
 
-      <div class="center-user listing" id="new-card-post">
-        <div class="property-card">
-          <div class=".property-card-image">
-            <img id="img-goes-here">
-          </div>
-          <div class="property-card-description">
-            <div id="name">
-              <h3>{{ new_post.title }}</h3>
-              <h5 id="name-goes-here">${data.userName}</h5>
+      <div id="new-card-post">
+        <div class="center-user">
+          <h3>Preview Post</h3>
+          <div class="property-card">
+            <div class=".property-card-image">
+              <img id="img-goes-here">
             </div>
-            <div id="bio"><span id="bio-goes-here">
-                <p>{{ new_post.description }}</p>
-              </span></div>
-            <span>${{ new_post.price }}</span>
-            <span>{{ new_post.quantity }} quantity</span>
-            <p>{{ new_post.time }}</p>
+            <div class="property-card-description">
+              <div id="name">
+                <h3 class="title">{{ new_post.title }}</h3>
+                <h5 class="name">${data.userName}</h5>
+              </div>
+              <div><span class="bio-preview">
+                  <p class="desc">{{ new_post.description }}</p>
+                </span></div>
+              <span class="price">{{ new_post.price }}</span>
+              <span class="quantity">{{ new_post.quantity }}</span>
+              <p class="time">{{ new_post.time }}</p>
+            </div>
           </div>
+          <button type="button" class="submit">Submit</button>
         </div>
       </div>
     </div>
   </div>
+
+
+
 
 
   <!-- New Post Ends -->

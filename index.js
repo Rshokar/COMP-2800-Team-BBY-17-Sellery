@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { readFile } = require('fs');
 const { MongoClient } = require('mongodb');
 const { read } = require('fs/promises');
-const { ObjectID } = require("bson");
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
@@ -217,11 +217,11 @@ app.get("/storefront-data", (req, res) => {
 
   if (formatOfResponse == 'getJSONBio') {
     res.setHeader('Content-Type', 'application/json');
-    console.log("hello you made it here");
+    console.log("hello you made it to the storefront.");
     client
       .db("sellery")
       .collection("sample_data")
-      .find({ "_id": ObjectID("60956e66db7bf207dbc33255") })
+      .find({ "_id": ObjectId("60956e66db7bf207dbc33255") })
       .toArray(function (err, result) {
         if (err) throw err;
         console.log(result);
@@ -239,29 +239,48 @@ app.get("/storefront-data", (req, res) => {
  * @date May 06 2021
  */
 app.post("/update_post", async (req, res) => {
-  post = req.body;
+  let post = req.body;
 
   console.log(post)
 
-  let filter = { title: "Corn" }
+  const query = { "_id": ObjectId(post.ID) }
 
-  let updateDoc = {
+  const updateDoc = {
     $set: {
       title: post.title,
-      //description: post.description,
-      //units: post.uinits,
-      //price: post.price,
-      //quantity: post.quantity,
+      description: post.description,
+      units: post.uinits,
+      price: post.price,
+      quantity: post.quantity,
     }
   }
 
   const options = { upsert: true };
 
-  result = await client.db("sellary").collection("post").updateOne(filter, updateDoc, options);
+  result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
 
-  console.log(
-    `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-  );
+
+
+  if (result.modifiedCount === 1) {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    myObj = {
+      message: "Success Deleting Post",
+      status: "sucess",
+    };
+    res.send(myObj);
+  } else {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error Deleting Post",
+      status: "error"
+    }
+    res.send(myObj)
+  }
 
 
 });
@@ -273,21 +292,16 @@ app.post("/update_post", async (req, res) => {
  * @version 1.0
  * @date May 11 2021
  */
-app.post("/delete_post", async (req, res) => {
+app.post("/delete_post", (req, res) => {
   post = req.body;
 
-  const db = client.db("sellary");
+  const db = client.db("sellery");
   const posts = db.collection("post");
 
-  const query = { _id: post }
+  const query = { "_id": ObjectId(post.ID) }
   let myObj;
 
-  console.log("My Post", post);
-  console.log("Post ID", post.ID);
-  console.log("Query", query);
-
-
-  const result = await posts.deleteOne(query);
+  const result = posts.deleteOne(query);
 
   if (result.deletedCount === 1) {
     console.dir("Successfully deleted one document.");
@@ -296,8 +310,9 @@ app.post("/delete_post", async (req, res) => {
       status: "sucess",
     };
     res.send(myObj);
-
   } else {
+    console.log(result.deletedCount);
+    console.log('Result', result);
     console.log("No documents matched the query. Deleted 0 documents.");
     myObj = {
       message: "Error Deleting Post",
@@ -315,7 +330,7 @@ app.post("/delete_post", async (req, res) => {
 */
 app.get("/generate_produce", (req, res) => {
 
-  console.log("Sellery is the best!");
+  console.log("Hello you made it generate produce.");
   client
     .db("sellery")
     .collection("post")
@@ -324,7 +339,6 @@ app.get("/generate_produce", (req, res) => {
     })
     .toArray(function (err, result) {
       if (err) throw err;
-      console.log(result);
       res.send(result);
     });
   // console.log(data);
