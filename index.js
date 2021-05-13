@@ -217,7 +217,8 @@ app.post("/post_post", (req, res) => {
  */
 app.get("/storefront-data", (req, res) => {
   let formatOfResponse = req.query['format'];
-  let data = null;
+
+  user_id = '60956e66db7bf207dbc33255';
 
   if (formatOfResponse == 'getJSONBio') {
     res.setHeader('Content-Type', 'application/json');
@@ -225,7 +226,7 @@ app.get("/storefront-data", (req, res) => {
     client
       .db("sellery")
       .collection("sample_data")
-      .find({ "_id": ObjectId("60956e66db7bf207dbc33255") })
+      .find({ "_id": ObjectID(user_id) })
       .toArray(function (err, result) {
         if (err) throw err;
         console.log(result);
@@ -414,5 +415,57 @@ app.post('/login', async (req, res) => {
     res.send('wrong email');
   }
 });
+
+/**
+ * This route gets a user's posts from the DB 
+ * @author Mike Lim
+ * @date May 10 2021  
+*/
+app.get("/generate_user_produce", (req, res) => {
+
+  // get user id from somewhere else
+  user_id = '60956e66db7bf207dbc33255';
+
+  console.log("Route");
+
+  client
+    .db("sellery")
+    .collection("post")
+    .find({ "user_id": ObjectID(user_id) })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+
+})
+
+/**
+ * This route gets all reviews from the DB 
+ * @author Mike Lim
+ * @date May 13 2021  
+*/
+app.get("/generate_reviews", (req, res) => {
+
+  user_id = '60956e66db7bf207dbc33255';
+
+  console.log("Generate reviews server");
+  client
+    .db("sellery")
+    .collection("reviews")
+    .find({
+      "user_id": ObjectID(user_id)
+    })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+  // console.log(data);
+  // res.send(data);
+
+})
+
+
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));

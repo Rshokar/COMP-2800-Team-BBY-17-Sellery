@@ -24,6 +24,8 @@
     deleting a produce listing. -->
   <link href="css/post.css" rel="stylesheet">
 
+  <!-- Custom CSS for review modal popup  -->
+  <link href="css/reviews.css" rel="stylesheet">
 </head>
 
 <body>
@@ -53,10 +55,31 @@
             <h5 id="name-goes-here"></h5>
           </div>
           <div id="bio"><span id="bio-goes-here"></span></div>
+          <div id="reviews"><a id="check_reviews" href="#">Reviews</a></div>
         </div>
       </div>
     </div>
-    <div id="Listings"></div>
+    <!-- <div id="Listings"></div> -->
+
+  <div class="modal">
+    <button class="close">&times;</button>
+    <!-- <div class="review_card_container"> -->
+      <div id="review-listing">
+        <div class="center-reviews">
+          <div class="property-card-reviews">
+            <div id="review-holder">
+              <div id="reviews" v-for="review in reviews" :key="review.data">
+                <h3>{{review.rating}}/5</h3>
+                <h5>{{review.reviewComment}}</h5>
+                <p>{{review.date}}</p>
+              </div>
+            </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+  </div>
 
     <h5>
       <div id="post-title">Here are your posts!</div>
@@ -67,6 +90,8 @@
 
 
     </div>
+    
+    
 
     <!-- Edit Post -->
     <div id="edit-posting">
@@ -77,6 +102,8 @@
   <!-- Content Ends -->
   <!-- Content Ends -->
   <!-- Content Ends -->
+
+  
 
   <!--footer-->
   <div id="new_post_container">
@@ -116,11 +143,6 @@
 
   <script src="../js/storefront.js"></script>
 
-  <script>
-    $(document).ready(function () {
-      genListing();
-    })
-  </script>
 
 </body>
 
