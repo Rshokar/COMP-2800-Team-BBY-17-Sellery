@@ -294,22 +294,6 @@ app.get("/generate_user_produce", (req, res) => {
 
   console.log("Route");
 
-  // let result = client
-  // .db("sellery")
-  // .collection("post")
-  // .find({ "user_id": ObjectID(user_id) })
-  // .toArray();
-
-  // let name = client
-  // .db("sellery")
-  // .collection("sample_data")
-  // .find({ "user_id": ObjectID(user_id)})
-
-  // result.push()
-
-  // console.log(result);
-  // res.send(result);
-
   client
     .db("sellery")
     .collection("post")
@@ -319,6 +303,32 @@ app.get("/generate_user_produce", (req, res) => {
       console.log(result);
       res.send(result);
     });
+
+})
+
+/**
+ * This route gets all reviews from the DB 
+ * @author Mike Lim
+ * @date May 13 2021  
+*/
+app.get("/generate_reviews", (req, res) => {
+
+  user_id = '60956e66db7bf207dbc33255';
+
+  console.log("Generate reviews server");
+  client
+    .db("sellery")
+    .collection("reviews")
+    .find({
+      "user_id": ObjectID(user_id)
+    })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+  // console.log(data);
+  // res.send(data);
 
 })
 

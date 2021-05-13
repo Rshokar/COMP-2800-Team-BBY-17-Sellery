@@ -18,6 +18,8 @@
   <link href="css/storefront.css" rel="stylesheet">
 
   <link href="css/card.css" rel="stylesheet">
+
+  <link href="css/reviews.css" rel="stylesheet">
 </head>
 
 <body>
@@ -55,12 +57,23 @@
     <!-- <div id="Listings"></div> -->
 
   <div class="modal">
-    <div class="review_card_container">
-      <div id="review_cards">
-        <button class="close">&times;</button>
-        <h1>Here are where the reviews will be</h1>
+    <button class="close">&times;</button>
+    <!-- <div class="review_card_container"> -->
+      <div id="review-listing">
+        <div class="center-reviews">
+          <div class="property-card-reviews">
+            <div id="review-holder">
+              <div id="reviews" v-for="review in reviews" :key="review.data">
+                <h3>{{review.rating}}/5</h3>
+                <h5>{{review.reviewComment}}</h5>
+                <p>{{review.date}}</p>
+              </div>
+            </div>
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    <!-- </div> -->
   </div>
 
     <h5>

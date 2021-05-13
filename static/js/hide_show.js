@@ -11,3 +11,5 @@ close.addEventListener("click", function() {
     post_card.style.display = "none";
 });
 
+
+
