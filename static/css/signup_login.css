@@ -1,4 +1,4 @@
-.login_signup_container {
+.auth_container {
     width: 360px;
     margin: 0 auto;
     padding: 30px;
@@ -29,4 +29,10 @@ button {
 
 hr {
     margin-top: 30px;
+}
+
+.error {
+    margin-top: 15px;
+    font-size: 0.5em;
+    color: red;
 }

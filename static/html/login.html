@@ -8,16 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="login_signup_container">
-        <form method="POST", action="/login">
-            <h2>Log in</h2>
+    <div class="auth_container">
+        <form action="/login">
+            <h2>Login</h2>
             <label for="email">Email</label>
             <input type="email" name="email" required>
-            <div class="email error"></div>
             <label for="password">Password</label>
             <input type="password" name="password" required>
-            <div class="password error"></div>
-            <button>Log in</button>
+            <button>login</button>
+            <p class="error"></p>
         </form>
         <hr>
         <div>

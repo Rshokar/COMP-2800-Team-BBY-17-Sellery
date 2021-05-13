@@ -5,21 +5,33 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/signup_login.css">
+    <link rel="stylesheet" href="css/pop_up.css">
     <title>Document</title>
 </head>
 <body>
-    <div class="login_signup_container">
-        <form action="/signup", method="POST">
-            <h2>Sign up</h2>
+    <div id="pop-up-background">
+
+    </div>
+    <div id="pop-up-menu">
+        <h1>Congrats!</h1>
+        <p>Your Information is successfully changed</p>
+        <button id="confirm">Confirm</button>
+    </div>
+    <div class="auth_container">
+        <form action="/signup">
+            <h2>Signup</h2>
+            <label for="name">Name</label>
+            <input type="text" name="name" required>
+            <label for="address">Address:</label>
+            <input name="address" id="autocomplete" type="text">
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
             <label for="email">Email</label>
             <input type="email" name="email" required>
-            <div class="email error"></div>
             <label for="password">Password</label>
             <input type="password" name="password" required>
-            <label for="address">Address</label>
-            <input type="text" name="address" required>
-            <div class="password error"></div>
-            <button id="submit">Sign up</button>
+            <button>Sign up</button>
+            <p class="error"></p>
         </form>
         <hr>
         <div>
@@ -31,5 +43,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
     <script src="js/signup_post.js"></script>
+
+    <!-- autocomplete using google maps api
+        @author Jimun Jang
+        @date May-13, 2021
+    -->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrfs5cFhP7_7f_I2BTdcwp4JnXY5tHeU"></script>
+    <script>
+        $(document).ready(function () {
+            var autocomplete;
+            autocomplete = new google.maps.places.Autocomplete((document.getElementById('autocomplete')), {
+                types: ['address'],
+                componentRestrictions: {
+                    country: "ca"
+                }
+            });
+            
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                var userAddress = autocomplete.getPlace();
+                document.getElementById('latitude').value = userAddress.geometry.location.lat();
+                document.getElementById('longitude').value = userAddress.geometry.location.lng();
+            });
+        });
+    </script>
 </body>
 </html>
