@@ -3,6 +3,8 @@
     z-index: 1;
     height: 8vh;
 }
+
+
 #new_post_container {
     height: 50px;
     width: 50px;
@@ -47,4 +49,5 @@
 #content_section {
     margin: auto;
     width: 90%;
+    margin-bottom: 12vh;
 }
