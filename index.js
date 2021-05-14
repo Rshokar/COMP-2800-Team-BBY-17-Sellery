@@ -2,23 +2,26 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 const { readFile } = require('fs');
 const { MongoClient } = require('mongodb');
 const { read } = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
-
-const mongoose = require('mongoose');
-const User = require('./models/user');
-
 
 const app = express();
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
+// for about page pics and favicon
+app.use("/pics", express.static("static/pics"));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 /**
@@ -57,13 +60,35 @@ main().catch(console.error);
 //   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 // };
 
+/**
+ * This is a middleware function that checks whether the user
+ * has token. This token is used for verifying user.
+ * @author Jimun Jang
+ * @date May-13-2021
+ */
+ requireLogin = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (token) {
+    jwt.verify(token, 'gimp', (err, decodedToken) => {
+      if (err) {
+        res.redirect('/login');
+      } else {
+        next();
+      }
+    })
+  } else {
+    res.redirect('/login');
+  }
+}
+
 
 /**
  * This route returns index page to the client 
  * @atuhor Ravinder Shokar 
  * @date April-29-2021
  */
-app.get("/", (req, res) => {
+app.get("/", requireLogin, (req, res) => {
   readFile("static/html/index.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("sorry, out of order");
@@ -79,64 +104,8 @@ app.get("/", (req, res) => {
  * @author Ravinder Shokar 
  * @date April-30-2021
  */
-app.get("/template", (req, res) => {
+app.get("/template", requireLogin, (req, res) => {
   readFile("static/html/template.html", "utf-8", (err, html) => {
-    if (err) {
-      res.status(500).send("Sorry, out of order.");
-    }
-    res.send(html);
-  })
-})
-
-/**
- * This route will return the HTML for the post summary.
- * @author Ravinder Shokar 
- * @date April-30-2021
- */
-app.get("/post_summary", (req, res) => {
-  readFile("static/html/post_summary.html", "utf-8", (err, html) => {
-    if (err) {
-      res.status(500).send("Sorry, out of order.");
-    }
-    res.send(html);
-  })
-})
-
-/**
- * This route will return the HTML for the post page.
- * @author Jimun Jang
- * @date April-30-2021
- */
-app.get("/post", (req, res) => {
-  readFile("static/html/post.html", "utf-8", (err, html) => {
-    if (err) {
-      res.status(500).send("Sorry, out of order.");
-    }
-    res.send(html);
-  })
-})
-
-/**
- * This route will return the HTML for the post summary.
- * @author Ravinder Shokar 
- * @date April-30-2021
- */
-app.get("/post_summary", (req, res) => {
-  readFile("static/html/post_summary.html", "utf-8", (err, html) => {
-    if (err) {
-      res.status(500).send("Sorry, out of order.");
-    }
-    res.send(html);
-  })
-})
-
-/**
- * This route will return the HTML for the post page.
- * @author Jimun Jang
- * @date April-30-2021
- */
-app.get("/post", (req, res) => {
-  readFile("static/html/post.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
     }
@@ -149,7 +118,7 @@ app.get("/post", (req, res) => {
  * @author Gurshawn Sekhon
  * @date April-30-2021
  */
-app.get("/feed", (req, res) => {
+app.get("/feed", requireLogin, (req, res) => {
   readFile("static/html/feed.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
@@ -164,7 +133,7 @@ app.get("/feed", (req, res) => {
  * @author Mike Lim 
  * @date April-30-2021
  */
-app.get("/storefront", (req, res) => {
+app.get("/storefront", requireLogin, (req, res) => {
   readFile("static/html/storefront.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
@@ -180,33 +149,38 @@ app.get("/storefront", (req, res) => {
  * @author Ravinder Shokar 
  * @date May-05-2021
  */
-app.post("/post_post", (req, res) => {
-
-  let post = req.body;
-
-  console.log(post);
-
-  // Only for this route. 
+app.post("/post_post", requireLogin, (req, res) => {
   const db = client.db("sellery");
-
-  db.collection("post").insertOne(post)
-    .then((result) => {
-      let obj = {
-        status: "success",
-        message: "message",
-      }
-      console.log(obj);
-      res.send(obj);
+  let post = req.body;
+  const token = req.cookies.jwt;
+  console.log(post);
+  
+  /** added this component to get user's location using token, then saving a post to
+   *  our database
+   * @author Jimun Jang
+   * @date May-13, 2021
+   */
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    console.log(decodedToken);
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+    .then((data) => {
+      console.log(data);
+      const user = data;
+      db.collection("post").insertOne({
+        description: post.description,
+        price: post.price,
+        quantity: post.quantity,
+        time: post.time,
+        title: post.title,
+        units: post.units,
+        location: user.location,
+        poster_name: user.name
+      }).then(() => {
+        let message = "success";
+        res.send({ message });
+      })
     })
-    .catch((err) => {
-      let obj = {
-        result: {},
-        status: "error",
-        message: "",
-      }
-      console.log(obj);
-      res.send(obj);
-    })
+  })
 })
 
 /**
@@ -215,9 +189,10 @@ app.post("/post_post", (req, res) => {
  * @version 1.0
  * @date May 06 2021
  */
-app.get("/storefront-data", (req, res) => {
+app.get("/storefront-data", requireLogin, (req, res) => {
   let formatOfResponse = req.query['format'];
-  let data = null;
+
+  user_id = '60956e66db7bf207dbc33255';
 
   if (formatOfResponse == 'getJSONBio') {
     res.setHeader('Content-Type', 'application/json');
@@ -225,7 +200,7 @@ app.get("/storefront-data", (req, res) => {
     client
       .db("sellery")
       .collection("sample_data")
-      .find({ "_id": ObjectId("60956e66db7bf207dbc33255") })
+      .find({ "_id": ObjectId(user_id) })
       .toArray(function (err, result) {
         if (err) throw err;
         console.log(result);
@@ -242,7 +217,7 @@ app.get("/storefront-data", (req, res) => {
  * @version 1.0
  * @date May 06 2021
  */
-app.post("/update_post", async (req, res) => {
+app.post("/update_post", requireLogin, async (req, res) => {
   let post = req.body;
 
   console.log(post)
@@ -296,7 +271,7 @@ app.post("/update_post", async (req, res) => {
  * @version 1.0
  * @date May 11 2021
  */
-app.post("/delete_post", (req, res) => {
+app.post("/delete_post", requireLogin, (req, res) => {
   post = req.body;
 
   const db = client.db("sellery");
@@ -332,7 +307,7 @@ app.post("/delete_post", (req, res) => {
  * @author Gurshawn Sehkon
  * @date May 07 2021  
 */
-app.get("/generate_produce", (req, res) => {
+app.get("/generate_produce", requireLogin, (req, res) => {
 
   console.log("Hello you made it generate produce.");
   client
@@ -350,7 +325,12 @@ app.get("/generate_produce", (req, res) => {
 
 })
 
-app.get('/login', (req, res) => {
+/**
+ * This routes to a login page
+ * @author Jimun Jang
+ * @date May-11-2021
+ */
+ app.get('/login', (req, res) => {
   readFile("static/html/login.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
@@ -359,35 +339,11 @@ app.get('/login', (req, res) => {
   });
 });
 
-app.post('/signup', async (req, res) => {
-  const { email, password, address } = req.body;
-
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  // Only for this route. 
-  const db = client.db("sellery");
-
-  db.collection("users").insertOne({email, password: hashedPassword, address})
-    .then((result) => {
-      let obj = {
-        status: "success",
-        message: "message",
-      }
-      console.log(obj);
-      res.send(obj);
-    })
-    .catch((err) => {
-      let obj = {
-        result: {},
-        status: "error",
-        message: "",
-      }
-      console.log(obj);
-      res.send(obj);
-    });
- });
-
+/**
+ * This routes to a signup page
+ * @author Jimun Jang
+ * @date May-11-2021
+ */
 app.get('/signup', (req, res) => {
   readFile("static/html/signup.html", "utf-8", (err, html) => {
     if (err) {
@@ -397,6 +353,59 @@ app.get('/signup', (req, res) => {
   });
 });
 
+/**
+ * Stores user info into our mongoDB database when user signs up.
+ * User info contains location, name, email, password.
+ * 
+ * Creates a cookie as a form of token that stores encoded user id.
+ * @author Jimun Jang
+ * @date May-12-2021
+ */
+app.post('/signup', async (req, res) => {
+  const { name, latitude, longitude, email, password } = req.body;
+
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  const db = client.db("sellery");
+
+  if (latitude != '' && longitude != '') {
+    db.collection("users").insertOne({
+      name,
+      location: {
+        type: "Point",
+        coordinates: [longitude, latitude]
+      },
+      email, // validate it
+      password: hashedPassword,
+    }).then((data) => {
+        const user = data;
+        const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
+        expiresIn: 24 * 60 * 60
+      });
+      console.log(user.ops[0]._id);
+      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+      res.status(200).json({ user: user._id });
+    }).catch((err) => {
+      let error = "password must be longer than 7 characters long";
+      if (err.code === 11000) {
+        error = "email is already registered";
+      }
+      res.status(400).json({ error });
+    });
+  } else {
+    let error = "Invalid Address: try to choose an address from the drop down menu";
+    res.status(400).json({ error });
+  }
+});
+
+/**
+ * This function lets user log in and
+ * creates a cookie as a form of token that stores encoded user id.
+ * 
+ * @author Jimun Jang
+ * @date May-12-2021
+ */
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -406,13 +415,151 @@ app.post('/login', async (req, res) => {
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
+      const token = jwt.sign({ id: user._id }, 'gimp', {
+        expiresIn: 24 * 60 * 60
+      })
+      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 24 * 60 * 1000 });
       res.status(200).json({ user: user._id });
     } else {
-      res.send('wrong password');
+      let error = "wrong password";
+      res.status(400).json({ error });
     }
   } else {
-    res.send('wrong email');
+    let error = "wrong email";
+    res.status(400).json({ error });
   }
+});
+
+/** when user clicks log out button, it deletes cookie.
+ * 
+ * @author Jimun Jang
+ * @date May-10, 2021
+ */
+ app.get('/logout', (req, res) => {
+  res.cookie('jwt', '', { maxAge: 1 });
+  res.redirect('/login');
+})
+
+
+/**
+ * This route gets a user's posts from the DB 
+ * @author Mike Lim
+ * @date May 10 2021  
+*/
+app.get("/generate_user_produce", (req, res) => {
+
+  // get user id from somewhere else
+  user_id = '60956e66db7bf207dbc33255';
+
+  console.log("Route");
+
+  client
+    .db("sellery")
+    .collection("post")
+    .find({ "user_id": ObjectId(user_id) })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+
+})
+
+/**
+ * This route gets all reviews from the DB 
+ * @author Mike Lim
+ * @date May 13 2021  
+*/
+app.get("/generate_reviews", (req, res) => {
+
+  user_id = '60956e66db7bf207dbc33255';
+
+  console.log("Generate reviews server");
+  client
+    .db("sellery")
+    .collection("reviews")
+    .find({
+      "user_id": ObjectId(user_id)
+    })
+    .toArray(function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    });
+})
+
+
+/**
+ * This route will return the about page for Sellary. This page is meant 
+ * for development purposes only 
+ * @author Gurshawn Sekhon
+ * @date May-05-10
+ */
+app.get("/about", (req, res) => {
+  readFile("static/html/about.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+
+/**
+ * This route will return the form for reviews/ratings.. This page is meant 
+ * for development purposes only 
+ * @author Gurshawn Sekhon
+ * @date May-05-11
+ */
+app.get("/review_form", (req, res) => {
+  readFile("static/html/review_form.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  })
+})
+
+
+
+
+/**
+ * This route will write reviews to the database.
+ * @author Gurshawn Sekhon
+ * @date May-10-2021
+ */
+app.post("/createReviews", (req, res) => {
+
+  const {
+    rating,
+    reviewComment
+  } = req.body;
+
+  const db = client.db("sellery");
+
+  const date = new Date().toDateString();
+
+  db.collection("reviews").insertOne({
+      rating,
+      reviewComment,
+      date
+    }).then(() => {
+      let obj = {
+        status: "success",
+        message: "created reviews successfully",
+      }
+      console.log(obj);
+      res.send(obj);
+    })
+    .catch((err) => {
+      let obj = {
+        result: {},
+        status: "error",
+        message: ""
+      }
+      console.log(obj);
+      res.send(obj);
+    })
 });
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));

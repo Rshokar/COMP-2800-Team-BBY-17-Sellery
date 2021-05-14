@@ -1,4 +1,4 @@
-.post_card_container, .edit_card_container, #confirmation {
+.new_card_container, .edit_card_container, #confirmation {
     width: 100%;
     display: none;
     position: fixed;

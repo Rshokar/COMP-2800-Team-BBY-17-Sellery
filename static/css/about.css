@@ -1,0 +1,41 @@
+
+
+/**
+   * Card template for about page.. 
+   * I found this code on w3schools.com
+   *
+   * @author w3schools
+   * @see https://www.w3schools.com/howto/howto_css_about_page.asp
+   */
+
+
+body {
+
+    margin: 0;
+}
+
+.column {
+
+
+    padding: 0 8px;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin: 8px;
+}
+
+#header {
+    padding: 40px;
+    text-align: center;
+    background-color: #474e5d;
+    color: white;
+}
+
+.container {
+    padding: 0 16px;
+}
+
+.title {
+    color: grey;
+}

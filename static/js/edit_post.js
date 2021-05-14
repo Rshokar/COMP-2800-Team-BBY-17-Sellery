@@ -112,7 +112,7 @@ function hideConfirm() {
  */
 function resetEditModal() {
   $("#edit-posting .edit_card_container").remove();
-  $("#edit-posting").append(modal)
+  $("#edit-posting").append(editModal)
 }
 
 /**
@@ -181,7 +181,7 @@ function nextPageEventListner(post) {
     $(element + " #edit-card-post").css({
       "display": "block"
     })
-    submitEventListner(post, obj);
+    submitEditEventListner(post, obj);
 
   })
 }
@@ -195,9 +195,10 @@ function nextPageEventListner(post) {
  * @date May 12 2021 
  * @param {Post} post is the post we are updating 
  */
-function submitEventListner(post, values) {
+function submitEditEventListner(post, values) {
   const element = "#edit-posting .edit_card_container"
   let query = element + " .submit";
+  console.log("Ready to submit")
 
   //console.log(query);
 
@@ -211,7 +212,7 @@ function submitEventListner(post, values) {
 
 
 
-const modal =
+const editModal =
   `
   <div class="edit_card_container">
   <div class="create-post">
@@ -265,17 +266,16 @@ const modal =
   `
 
 //Append for to HTML 
-$("#edit-posting").append(modal);
+$("#edit-posting").append(editModal);
 
-const post_card = document.querySelector(".edit_card_container");
-const close = document.querySelector("#edit-posting .close");
+const edit_post_card = document.querySelector(".edit_card_container");
+const edit_post_close = document.querySelector("#edit-posting .close");
 const delete_post = document.querySelector("#edit-posting .delete");
 
-close.addEventListener("click", function () {
+edit_post_close.addEventListener("click", function () {
   console.log("Closed");
-  post_card.style.display = "none";
+  edit_post_card.style.display = "none";
   hideConfirm();
   hidePreview();
   showForm();
-  resetEditModal();
 });
