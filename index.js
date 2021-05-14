@@ -383,7 +383,6 @@ app.post('/signup', async (req, res) => {
         const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
-      console.log(user.ops[0]._id);
       res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
       res.status(200).json({ user: user._id });
     }).catch((err) => {
