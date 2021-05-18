@@ -1,10 +1,18 @@
 
 $(document).ready(function () {
+  const url = new URL(window.location.href);
 
-  genStoreFrontListing();
-  genReviews();
+  //Get user ID from URL
+  const userID = url.searchParams.get('user');
 
-  console.log("Made it to document.ready");
+  //Check if User Id exist.
+  if (userID) {
+    genStoreFrontListing(userID);
+  } else {
+    console.log("Inside")
+    genMyStoreFrontListing();
+    genReviews();
+  }
 
   /**
    * AJAX call to request the user info from the server
@@ -41,7 +49,7 @@ $(document).ready(function () {
     review_card.style.display = "block";
   });
 
-  close.addEventListener("click", function() {
+  close.addEventListener("click", function () {
     console.log("x working");
     review_card.style.display = "none";
   });
@@ -59,13 +67,13 @@ $(document).ready(function () {
    * @author Mike Lim
    * @date May 13 2021
    */
-   console.log("made it to reviewlisting component");
-   const reviewApp = new Vue({
-       el: '#review-listing',
-       data: {
-           reviews: {}
-       }
-   })
+  console.log("made it to reviewlisting component");
+  const reviewApp = new Vue({
+    el: '#review-listing',
+    data: {
+      reviews: {}
+    }
+  })
 
   /**
    * This function will request reviews from the server.

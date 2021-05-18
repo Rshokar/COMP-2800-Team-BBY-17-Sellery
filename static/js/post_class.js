@@ -16,7 +16,7 @@ class Post {
    * @param {*} units of meassurement
    * @param {*} description of the produce being sold
    */
-  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID) {
+  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID, currentUser) {
     this.t = title;
     this.q = quantity;
     this.u = units;
@@ -27,6 +27,7 @@ class Post {
     this.posted = datePosted;
     this.HLID = htmlID;
     this.uID = userID;
+    this.currentUserID = currentUser;
   }
 
   /**
@@ -196,7 +197,7 @@ class Post {
    * @date May 13 2021
    */
   appendHTML() {
-    $("#card-listing").append(this.buildHTML())
+    $("#card-listing").prepend(this.buildHTML())
     editPostEventListner(this.HLID, this)
   }
 
@@ -213,17 +214,19 @@ class Post {
           <img id="img-goes-here">
         </div>
       <div class="property-card-description">
-        <div id="name">
+        <div class="name">
           <h3 class='title'>${this.t}</h3>
-          <h5 calss='name'>${this.un}</h5>
+          <a href="/storefront?user=${this.uID}"><h5 calss='name'>${this.un}</h5></a>
         </div>
       <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
-        <span class='price'>${this.pri}</span>
-        <span class='quantity'>${this.q}</span>
+        <span class='price'>Price: $${this.pri}</span>
+        <span class='quantity'>Quantity: ${this.q}</span>
         <p class='date-posted'>${this.posted}</p>
-        <i class="edit fas fa-edit"></i>
-      </div>
       `
+    if (this.uID == this.currentUserID) {
+      html += '<i class="edit fas fa-edit"></i></div>'
+    }
+
     return html;
   }
 
@@ -279,7 +282,7 @@ class Post {
  * @version 1.0 
  * @date Ma 11 2021
  */
-function buildPostList(posts) {
+function buildPostList(posts, currentUserId) {
   let lst = []
   let post;
 
@@ -292,11 +295,12 @@ function buildPostList(posts) {
       newPost.units,
       newPost.description,
       newPost._id,
-      newPost.user_name,
+      newPost.poster_name,
       newPost.price,
       newPost.time,
       post,
-      newPost.user_id
+      newPost.user_id,
+      currentUserId
     )
   }
   console.log(lst);

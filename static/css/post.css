@@ -99,3 +99,26 @@
     display: block;
     margin-top: 10px;
 }
+
+.price, .quantity {
+    margin-right: .5em;
+    margin-left: .5em;
+    font-weight: bold;
+}
+
+.name a {
+    color: black;
+    cursor: pointer;
+}
+
+.next {
+    margin-bottom: 20px;
+    border: none;
+    outline: none;
+    color: white;
+    background-color: #38A700;
+    font-weight: 600;
+    width: 100px;
+    border-radius: 10px;
+    padding: 5px;
+}
