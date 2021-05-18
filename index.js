@@ -5,12 +5,20 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-const { readFile } = require('fs');
-const { MongoClient } = require('mongodb');
-const { read } = require('fs/promises');
+const {
+  readFile
+} = require('fs');
+const {
+  MongoClient
+} = require('mongodb');
+const {
+  read
+} = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
+
+const initRoutes = require("./static/routes/web");
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
@@ -20,7 +28,10 @@ app.use("/pics", express.static("static/pics"));
 
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+  extended: true
+}));
+initRoutes(app);
 app.use(cookieParser());
 
 
@@ -66,7 +77,7 @@ main().catch(console.error);
  * @author Jimun Jang
  * @date May-13-2021
  */
- requireLogin = (req, res, next) => {
+requireLogin = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (token) {
@@ -154,7 +165,7 @@ app.post("/post_post", requireLogin, (req, res) => {
   let post = req.body;
   const token = req.cookies.jwt;
   console.log(post);
-  
+
   /** added this component to get user's location using token, then saving a post to
    *  our database
    * @author Jimun Jang
@@ -162,24 +173,28 @@ app.post("/post_post", requireLogin, (req, res) => {
    */
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     console.log(decodedToken);
-    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
-    .then((data) => {
-      console.log(data);
-      const user = data;
-      db.collection("post").insertOne({
-        description: post.description,
-        price: post.price,
-        quantity: post.quantity,
-        time: post.time,
-        title: post.title,
-        units: post.units,
-        location: user.location,
-        poster_name: user.name
-      }).then(() => {
-        let message = "success";
-        res.send({ message });
+    db.collection("users").findOne({
+        "_id": ObjectId(decodedToken.id)
       })
-    })
+      .then((data) => {
+        console.log(data);
+        const user = data;
+        db.collection("post").insertOne({
+          description: post.description,
+          price: post.price,
+          quantity: post.quantity,
+          time: post.time,
+          title: post.title,
+          units: post.units,
+          location: user.location,
+          poster_name: user.name
+        }).then(() => {
+          let message = "success";
+          res.send({
+            message
+          });
+        })
+      })
   })
 })
 
@@ -200,7 +215,9 @@ app.get("/storefront-data", requireLogin, (req, res) => {
     client
       .db("sellery")
       .collection("sample_data")
-      .find({ "_id": ObjectId(user_id) })
+      .find({
+        "_id": ObjectId(user_id)
+      })
       .toArray(function (err, result) {
         if (err) throw err;
         console.log(result);
@@ -222,7 +239,9 @@ app.post("/update_post", requireLogin, async (req, res) => {
 
   console.log(post)
 
-  const query = { "_id": ObjectId(post.ID) }
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
 
   const updateDoc = {
     $set: {
@@ -234,7 +253,9 @@ app.post("/update_post", requireLogin, async (req, res) => {
     }
   }
 
-  const options = { upsert: true };
+  const options = {
+    upsert: true
+  };
 
   result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
 
@@ -277,7 +298,9 @@ app.post("/delete_post", requireLogin, (req, res) => {
   const db = client.db("sellery");
   const posts = db.collection("post");
 
-  const query = { "_id": ObjectId(post.ID) }
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
   let myObj;
 
   const result = posts.deleteOne(query);
@@ -306,7 +329,7 @@ app.post("/delete_post", requireLogin, (req, res) => {
  * This route gets all post from the DB 
  * @author Gurshawn Sehkon
  * @date May 07 2021  
-*/
+ */
 app.get("/generate_produce", requireLogin, (req, res) => {
 
   console.log("Hello you made it generate produce.");
@@ -330,7 +353,7 @@ app.get("/generate_produce", requireLogin, (req, res) => {
  * @author Jimun Jang
  * @date May-11-2021
  */
- app.get('/login', (req, res) => {
+app.get('/login', (req, res) => {
   readFile("static/html/login.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
@@ -362,7 +385,13 @@ app.get('/signup', (req, res) => {
  * @date May-12-2021
  */
 app.post('/signup', async (req, res) => {
-  const { name, latitude, longitude, email, password } = req.body;
+  const {
+    name,
+    latitude,
+    longitude,
+    email,
+    password
+  } = req.body;
 
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -379,23 +408,34 @@ app.post('/signup', async (req, res) => {
       email, // validate it
       password: hashedPassword,
     }).then((data) => {
-        const user = data;
-        const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
+      const user = data;
+      const token = jwt.sign({
+        id: user.ops[0]._id
+      }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
       console.log(user.ops[0]._id);
-      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-      res.status(200).json({ user: user._id });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+      });
+      res.status(200).json({
+        user: user._id
+      });
     }).catch((err) => {
       let error = "password must be longer than 7 characters long";
       if (err.code === 11000) {
         error = "email is already registered";
       }
-      res.status(400).json({ error });
+      res.status(400).json({
+        error
+      });
     });
   } else {
     let error = "Invalid Address: try to choose an address from the drop down menu";
-    res.status(400).json({ error });
+    res.status(400).json({
+      error
+    });
   }
 });
 
@@ -407,26 +447,42 @@ app.post('/signup', async (req, res) => {
  * @date May-12-2021
  */
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const {
+    email,
+    password
+  } = req.body;
 
   const db = client.db("sellery");
 
-  const user = await db.collection("users").findOne({ email });
+  const user = await db.collection("users").findOne({
+    email
+  });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
-      const token = jwt.sign({ id: user._id }, 'gimp', {
+      const token = jwt.sign({
+        id: user._id
+      }, 'gimp', {
         expiresIn: 24 * 60 * 60
       })
-      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 24 * 60 * 1000 });
-      res.status(200).json({ user: user._id });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 24 * 24 * 60 * 1000
+      });
+      res.status(200).json({
+        user: user._id
+      });
     } else {
       let error = "wrong password";
-      res.status(400).json({ error });
+      res.status(400).json({
+        error
+      });
     }
   } else {
     let error = "wrong email";
-    res.status(400).json({ error });
+    res.status(400).json({
+      error
+    });
   }
 });
 
@@ -435,8 +491,10 @@ app.post('/login', async (req, res) => {
  * @author Jimun Jang
  * @date May-10, 2021
  */
- app.get('/logout', (req, res) => {
-  res.cookie('jwt', '', { maxAge: 1 });
+app.get('/logout', (req, res) => {
+  res.cookie('jwt', '', {
+    maxAge: 1
+  });
   res.redirect('/login');
 })
 
@@ -445,7 +503,7 @@ app.post('/login', async (req, res) => {
  * This route gets a user's posts from the DB 
  * @author Mike Lim
  * @date May 10 2021  
-*/
+ */
 app.get("/generate_user_produce", (req, res) => {
 
   // get user id from somewhere else
@@ -456,7 +514,9 @@ app.get("/generate_user_produce", (req, res) => {
   client
     .db("sellery")
     .collection("post")
-    .find({ "user_id": ObjectId(user_id) })
+    .find({
+      "user_id": ObjectId(user_id)
+    })
     .toArray(function (err, result) {
       if (err) throw err;
       console.log(result);
@@ -469,7 +529,7 @@ app.get("/generate_user_produce", (req, res) => {
  * This route gets all reviews from the DB 
  * @author Mike Lim
  * @date May 13 2021  
-*/
+ */
 app.get("/generate_reviews", (req, res) => {
 
   user_id = '60956e66db7bf207dbc33255';
@@ -561,5 +621,9 @@ app.post("/createReviews", (req, res) => {
       res.send(obj);
     })
 });
+
+
+
+
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));
