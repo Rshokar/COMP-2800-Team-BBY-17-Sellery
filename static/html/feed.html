@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Feed Template</title>
+  <title>Produce Feed</title>
   <!-- favicon -->
   <link rel="shorcut icon" type="image/png" href="pics/about.jpg">
 
@@ -23,6 +23,9 @@
     deleting a produce listing. -->
   <link href="css/post.css" rel="stylesheet">
 
+  <!-- Custom CSS for pop-up -->
+  <link href="css/pop_up.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -31,8 +34,20 @@
     <input type="test" placeholder="Search" id="feed_search">
   </header>
 
+  <!-- Pop up -->
+  <div id="pop-up-background">
+
+  </div>
+  <div id="pop-up-menu">
+      <h1>Congrats!</h1>
+      <p>Your posting is successfully posted</p>
+      <button id="confirm">Confirm</button>
+  </div>
+
   <!-- This is where content starts -->
   <div id="content_section">
+
+    <div id="title">Welcome To The Produce Feed!</div>
 
     <!-- This is where post start -->
     <div id="card-listing">

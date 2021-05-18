@@ -197,8 +197,8 @@ class Post {
    * @date May 13 2021
    */
   appendHTML() {
-    $("#card-listing").append(this.buildHTML())
-    editPostEventListner(this.HLID, this);
+    $("#card-listing").prepend(this.buildHTML())
+    editPostEventListner(this.HLID, this)
   }
 
   /**
