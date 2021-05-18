@@ -22,8 +22,8 @@ const newPostModal =
    <input type="number" id="price" min="1" max="100" step="0.01" required>
    <label for="description">Description:</label>
    <textarea id="description" name="description" required></textarea>
-   <button type="button" class="next">Next</button>
    <p class="error"></p>
+   <button type="button" class="next">Next</button>
  </form>
 
  <div class="center-user preview" id="new-card-post">
@@ -98,10 +98,9 @@ next_button.addEventListener('click', function () {
 
     submitNewEventListner(obj);
   } else {
-    const error = document.querySelector('.error');
-    error.innerHTML = "Please fill all the requirements";
+    const error = document.querySelector('#new-post .error');
+    error.textContent = "You must fill the requirements above";
   }
-
 })
 
 /**
@@ -129,7 +128,7 @@ function submitNewEventListner(post) {
   * @date May 07 2021
   * @version 1.0 
   */
-  $("#new-post .submit").click((e) => {
+  $("#confirm").click((e) => {
     console.log("I have been clicked");
     e.preventDefault;
     data = getPostData();
@@ -138,8 +137,16 @@ function submitNewEventListner(post) {
     // Result will contain an OBJ with value error or success. Later 
     // Implement if check to see if post was sent succesfully. 
     result = postOnePost(data);
+
+    window.location.href = '/feed';
   })
 };
+
+$('#new-post .submit').click(() => {
+  $('#pop-up-background').css("visibility", "visible");
+  $('#pop-up-menu').css("visibility", "visible");
+})
+
 
 
 
