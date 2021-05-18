@@ -1,0 +1,24 @@
+#chat_window {
+    margin-top: 1em;
+    height: 80vh;
+    background-color: rgb(82,215,19);
+    display: grid;
+    align-content: center;
+}   
+
+#messages {
+    height: 72vh;
+    background-color: white;
+    width: 95%;
+    margin: auto;
+}
+
+#input {
+    margin: auto;
+    margin-top: 1em;
+    width: 95%;
+}
+
+#input_field {
+    width: 77%;
+}
