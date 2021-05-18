@@ -365,6 +365,21 @@ app.get('/signup', (req, res) => {
   });
 });
 
+
+/**
+ * This route responsbile for returning the chat HTML file.
+ * @author Ravinder Shokar 
+ * @date May-18-2021
+ */
+app.get('/chats', (req, res) => {
+  readFile("static/html/chats.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  });
+});
+
 /**
  * Stores user info into our mongoDB database when user signs up.
  * User info contains location, name, email, password.
