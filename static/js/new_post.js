@@ -7,7 +7,6 @@ console.log("new_post.js")
 
 const newPostModal =
   `
-
 <div class="new_card_container">
 <div class="create-post">
  <button class="close"><i class="fas fa-times"></i></button>
@@ -20,6 +19,17 @@ const newPostModal =
    <input type="number" id="quantity" min="1" max="100" required>
    <label for="price">Price:</label>
    <input type="number" id="price" min="1" max="100" step="0.01" required>
+   <div class="radio-container">
+    <label for="bundle">Bundle</label>
+    <input id="bundle" type="radio" name="unit" value="bundle" checked="checked">
+    <label for="weight">Weight</label>
+    <input id="weight" type="radio" name="unit" value="weight">
+   </div>
+   <label for="weightOptions">Choose Weight Option:</label>
+   <select name="weightOptions" id="weightOptions">
+    <option value="gram">gram</option>
+    <option value="kilogram">kilogram</option>
+   </select>
    <label for="description">Description:</label>
    <textarea id="description" name="description" required></textarea>
    <p class="error"></p>
@@ -42,6 +52,7 @@ const newPostModal =
          </span></div>
        <span class="price-preview"></span>
        <span class="quantity-preview"></span>
+       <span class="units-preview"></span>
        <p class="time-preview"></p>
      </div>
    </div>
@@ -79,23 +90,33 @@ next_button.addEventListener('click', function () {
   const quantity = document.querySelector("#new-post #quantity").value;
   const price = document.querySelector("#new-post #price").value;
   const desc = document.querySelector("#new-post #description").value;
-  const units = 0
+
+  // boolean value
+  const bundle = document.querySelector('#new-post #bundle').checked;
+
   const time = new Date().toDateString();
+  var unit;
 
   if (title != '' && desc != '' && quantity != '' && price != '') {
 
     form.style.display = "none";
     preview.style.display = "block";
 
+    if (bundle) {
+      unit = "bundle(s)";
+    } else {
+      let weightOption = document.querySelector("#new-post #weightOptions").value;
+      unit = weightOption;
+    }
+
     obj = {
       title: title,
       quantity: quantity,
       price: price,
       description: desc,
-      units: units,
+      units: unit,
       time: time
     }
-
     submitNewEventListner(obj);
   } else {
     const error = document.querySelector('#new-post .error');
@@ -119,6 +140,7 @@ function submitNewEventListner(post) {
   $("#new-post .price-preview").text(post.price)
   $("#new-post .quantity-preview").text(post.quantity)
   $("#new-post .time-preview").text(post.time)
+  $("#new-post .units-preview").text(post.units);
 
   /**
   * This function gathers listing data from HTML and sends it to PostOnePost
@@ -216,6 +238,18 @@ function resetInputForm() {
   document.querySelector("#quantity").value = "";
   document.querySelector("#price").value = "";
   document.querySelector("#description").value = "";
-
 }
 
+const radiobuttons = document.querySelectorAll('#new-post div input[name="unit"]');
+const labelForDropdown = document.querySelector('#new-post label[for="weightOptions"]');
+const dropdown = document.querySelector('#new-post select[name="weightOptions"]');
+
+radiobuttons[0].addEventListener('click', () => {
+  labelForDropdown.style.display = "none";
+  dropdown.style.display = "none";
+});
+
+radiobuttons[1].addEventListener('click', () => {
+  labelForDropdown.style.display = "block";
+  dropdown.style.display = "block";
+});

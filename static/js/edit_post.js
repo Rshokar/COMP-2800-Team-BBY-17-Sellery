@@ -23,7 +23,7 @@ function editPostEventListner(id, posting) {
 function editPosting(post) {
   const element = "#edit-posting .edit_card_container"
 
-  //console.log(post);
+  console.log(post);
 
   $(element).css({
     "display": "block"
@@ -156,13 +156,24 @@ function showForm() {
 function nextPageEventListner(post) {
   const now = new Date().toDateString();
   const element = "#edit-posting .edit_card_container"
+
   $("#edit-posting .next").on("click", (e) => {
+    
+    const bundle = $('#edit-posting #bundle')[0].checked; //false if unchecked, true if checked
+    var unit;
+    if (bundle) {
+      unit = "bundle(s)";
+    } else {
+      let weightOption = document.querySelector("#edit-posting #weightOptions").value;
+      unit = weightOption;
+    }
+
     let obj = {
       title: $(element + " #title").val(),
       quantity: $(element + " #quantity").val(),
       price: $(element + " #price").val(),
       description: $(element + " #description").val(),
-      units: post.un,
+      units: unit,
       date_posted: now,
     }
 
@@ -176,6 +187,7 @@ function nextPageEventListner(post) {
     $(element + " .bio-preview").html(obj.description)
     $(element + " .price-preview").html(obj.price)
     $(element + " .quantity-preview").html(obj.quantity)
+    $(element + " .units-preview").html(obj.units)
     $(element + " .time-preview").html(now)
 
     $(element + " #edit-card-post").css({
@@ -227,6 +239,17 @@ const editModal =
       <input type="number" id="quantity" min="1" max="100" required>
       <label for="price">Price:</label>
       <input type="number" id="price" min="1" max="100" step="0.01" required>
+      <div class="radio-container">
+        <label for="bundle">Bundle</label>
+        <input id="bundle" type="radio" name="unit" value="bundle" checked="checked">
+        <label for="weight">Weight</label>
+        <input id="weight" type="radio" name="unit" value="weight">
+      </div>
+      <label for="weightOptions">Choose Weight Option:</label>
+      <select name="weightOptions" id="weightOptions">
+        <option value="gram">gram</option>
+        <option value="kilogram">kilogram</option>
+      </select>
       <label for="description">Description:</label>
       <textarea id="description" name="description" required></textarea>
       <button type="button" class="next">Next</button>
@@ -249,6 +272,7 @@ const editModal =
             </span></div>
           <span class="price-preview"></span>
           <span class="quantity-preview"></span>
+          <span class="units-preview"></span>
           <p class="time-preview"></p>
         </div>
       </div>
@@ -278,4 +302,18 @@ edit_post_close.addEventListener("click", function () {
   hideConfirm();
   hidePreview();
   showForm();
+});
+
+const radioButtons = document.querySelectorAll('#edit-posting div input[name="unit"]');
+const labelforDropdown = document.querySelector('#edit-posting label[for="weightOptions"]');
+const dropDown = document.querySelector('#edit-posting select[name="weightOptions"]');
+
+radioButtons[0].addEventListener('click', () => {
+  labelforDropdown.style.display = "none";
+  dropDown.style.display = "none";
+});
+
+radioButtons[1].addEventListener('click', () => {
+  labelforDropdown.style.display = "block";
+  dropDown.style.display = "block";
 });
