@@ -99,3 +99,14 @@
     display: block;
     margin-top: 10px;
 }
+
+.price, .quantity {
+    margin-right: .5em;
+    margin-left: .5em;
+    font-weight: bold;
+}
+
+.name a {
+    color: black;
+    cursor: pointer;
+}

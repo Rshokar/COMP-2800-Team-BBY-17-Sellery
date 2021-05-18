@@ -173,9 +173,7 @@ app.post("/post_post", requireLogin, (req, res) => {
    */
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     console.log(decodedToken);
-    db.collection("users").findOne({
-        "_id": ObjectId(decodedToken.id)
-      })
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
       .then((data) => {
         console.log(data);
         const user = data;
@@ -187,12 +185,11 @@ app.post("/post_post", requireLogin, (req, res) => {
           title: post.title,
           units: post.units,
           location: user.location,
-          poster_name: user.name
+          poster_name: user.name,
+          user_id: decodedToken.id
         }).then(() => {
           let message = "success";
-          res.send({
-            message
-          });
+          res.send({ message });
         })
       })
   })
@@ -331,18 +328,29 @@ app.post("/delete_post", requireLogin, (req, res) => {
  * @date May 07 2021  
  */
 app.get("/generate_produce", requireLogin, (req, res) => {
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    console.log(decodedToken);
+    client
+      .db("sellery")
+      .collection("post")
+      .find({
+
+      })
+      .toArray(function (err, result) {
+        obj = {
+          user_id: decodedToken.id,
+          results: result,
+        }
+        console.log(obj);
+        if (err) throw err;
+        res.send(obj);
+      });
+  })
 
   console.log("Hello you made it generate produce.");
-  client
-    .db("sellery")
-    .collection("post")
-    .find({
 
-    })
-    .toArray(function (err, result) {
-      if (err) throw err;
-      res.send(result);
-    });
   // console.log(data);
   // res.send(data);
 
@@ -409,9 +417,7 @@ app.post('/signup', async (req, res) => {
       password: hashedPassword,
     }).then((data) => {
       const user = data;
-      const token = jwt.sign({
-        id: user.ops[0]._id
-      }, 'gimp', {
+      const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
       console.log(user.ops[0]._id);
@@ -492,35 +498,62 @@ app.post('/login', async (req, res) => {
  * @date May-10, 2021
  */
 app.get('/logout', (req, res) => {
-  res.cookie('jwt', '', {
-    maxAge: 1
-  });
+  res.cookie('jwt', '', { maxAge: 1 });
   res.redirect('/login');
 })
 
 
 /**
- * This route gets a user's posts from the DB 
+ * This route gets the currently logged in users posts
  * @author Mike Lim
  * @date May 10 2021  
- */
-app.get("/generate_user_produce", (req, res) => {
+*/
+app.get("/generate_my_produce", (req, res) => {
 
-  // get user id from somewhere else
-  user_id = '60956e66db7bf207dbc33255';
+  const token = req.cookies.jwt;
 
-  console.log("Route");
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    userId = decodedToken.id;
+    console.log("Route");
+
+    client
+      .db("sellery")
+      .collection("post")
+      .find({ "user_id": ObjectId(userId) })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        let obj = {
+          userId: userId,
+          results: result
+        }
+        console.log("generate_my_produce", obj);
+        res.send(obj);
+      });
+
+  })
+})
+
+/**
+ * This route gets a users posts dependent on there userId
+ * @author Ravinder Shokar
+ * @date May 17 2021  
+*/
+app.post("/generate_user_produce", (req, res) => {
+
+  userId = req.body.id
 
   client
     .db("sellery")
     .collection("post")
-    .find({
-      "user_id": ObjectId(user_id)
-    })
+    .find({ "user_id": ObjectId(userId) })
     .toArray(function (err, result) {
       if (err) throw err;
-      console.log(result);
-      res.send(result);
+      let obj = {
+        userId: userId,
+        results: result
+      }
+      console.log("generate_user_produce", obj);
+      res.send(obj);
     });
 
 })
@@ -600,17 +633,17 @@ app.post("/createReviews", (req, res) => {
   const date = new Date().toDateString();
 
   db.collection("reviews").insertOne({
-      rating,
-      reviewComment,
-      date
-    }).then(() => {
-      let obj = {
-        status: "success",
-        message: "created reviews successfully",
-      }
-      console.log(obj);
-      res.send(obj);
-    })
+    rating,
+    reviewComment,
+    date
+  }).then(() => {
+    let obj = {
+      status: "success",
+      message: "created reviews successfully",
+    }
+    console.log(obj);
+    res.send(obj);
+  })
     .catch((err) => {
       let obj = {
         result: {},
