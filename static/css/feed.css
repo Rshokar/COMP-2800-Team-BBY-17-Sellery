@@ -1,0 +1,33 @@
+#search-bar {
+  height: 30vh;
+  padding-top: 20%;
+  padding-bottom: 20%;
+}
+
+
+
+
+#input { 
+  font-family: 'FontAwesome';
+  position: relative;
+}
+
+#wrapper:before {
+  font-family: 'FontAwesome';
+  color:black;
+  position: relative;
+  content: "\f002";
+}
+
+#title {
+  /* margin-top: 10%; */
+  font-size: 18pt;
+}
+
+#feed_search {
+  margin-top: 5%;
+  width: 90%;
+  border-radius:10px;
+  border-width: 0.3em;
+  border-color:#ccc;
+}

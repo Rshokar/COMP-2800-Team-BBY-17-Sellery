@@ -26,13 +26,16 @@
   <!-- Custom CSS for pop-up -->
   <link href="css/pop_up.css" rel="stylesheet">
 
+  <!-- Custom CSS for feed -->
+  <link href="css/feed.css" rel="stylesheet">
+
 </head>
 
 <body>
-  <header id="mobile_head">
+  <!-- <header id="mobile_head">
     <h1>Sellery</h1>
     <input type="test" placeholder="Search" id="feed_search">
-  </header>
+  </header> -->
 
   <!-- Pop up -->
   <div id="pop-up-background">
@@ -44,10 +47,22 @@
       <button id="confirm">Confirm</button>
   </div>
 
+
   <!-- This is where content starts -->
   <div id="content_section">
 
-    <div id="title">Welcome To The Produce Feed!</div>
+    <!-- This is the search bar section -->
+    <div id="search-bar">
+      <div id="title">Search The Produce Feed!</div>
+      <img id="kiwi" src="../pics/kiwi-background.jpg"/>
+      
+      <div id="wrapper">
+        <input type="test" placeholder="Search Away!" id="feed_search">
+      </div>
+      
+    </div>
+
+    
 
     <!-- This is where post start -->
     <div id="card-listing">
@@ -73,7 +88,7 @@
     <div class="container py-1">
       <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
 
-      <a id="feed" class="btn fas fa-list fa-2x px-auto" href="/feed"></a>
+      <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
     </div>
   </footer>
 
