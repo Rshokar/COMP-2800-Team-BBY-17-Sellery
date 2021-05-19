@@ -26,13 +26,21 @@
   <!-- Custom CSS for pop-up -->
   <link href="css/pop_up.css" rel="stylesheet">
 
+  <!-- Custom CSS for search bars in feed page -->
+  <link href="css/feed_search.css" rel="stylesheet">
+
 </head>
 
 <body>
   <header id="mobile_head">
     <h1>Sellery</h1>
-    <input type="test" placeholder="Search" id="feed_search">
+    <input type="test" placeholder="filter by title" class="feed_search">
   </header>
+  <button id="custom-dropdown">filter by proximity</button>
+  <form id="search">
+    <i class="fas fa-search"></i>
+    <input type="text" name="search" placeholder="filter by proximity" class="feed_search">
+  </form>
 
   <!-- Pop up -->
   <div id="pop-up-background">
