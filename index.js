@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
   const chatBot = {
     name: "Chat Bot",
   }
-  user
+
 
   socket.on('joinRoom', (room) => {
 

@@ -12,9 +12,6 @@ const roomID = url.searchParams.get('chat');
 loadChat(roomID);
 
 
-// Join chatroom
-socket.emit("joinRoom", roomID);
-
 //Message from server
 socket.on('message', (msg) => {
   console.log(msg)
@@ -24,8 +21,12 @@ socket.on('message', (msg) => {
 
 submit.addEventListener('click', (e) => {
   e.preventDefault();
+
+
+
   if (input.value) {
-    socket.emit('chat message', input.value, roomID);
+    let msg = buildMsgObj();
+    socket.emit('chat message', msg, roomID);
     input.value = '';
     input.focus()
     messages.scrollTop = messages.scrollHeight;
@@ -95,6 +96,8 @@ function loadChat(room) {
       for (let msg in data.messages) {
         outputMessage(msg);
       }
+      // Join chatroom
+      socket.emit("joinRoom", roomID);
     },
     error: (err) => {
       console.log(err);
@@ -113,4 +116,35 @@ function loadChat(room) {
  */
 function isMine(id) {
   return $("#input span").attr("id") == id;
+}
+
+
+/**
+ * This function will gather all data needed for a message in the DOM
+ * and return an OBJ
+ * @author Ravinder Shokar
+ * @version 1.0
+ * @date May 20 2021
+ * @returns an msg obj with the format of 
+ * {
+ *  owner: { ID }
+ *  message: "String"
+ *  timeStamp: 
+ * }
+ */
+function buildMsgObj() {
+  var d = new Date();
+
+  var datetime = d.getDate() + "-"
+    + (d.getMonth() + 1) + "-"
+    + d.getFullYear() + "  "
+    + d.getHours() + ":"
+    + d.getMinutes() + ":"
+    + d.getSeconds();
+
+  return {
+    owner: $("#input span").attr("id"),
+    message: input.value,
+    timeStamp: d
+  }
 }
