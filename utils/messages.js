@@ -1,3 +1,4 @@
+const { ObjectID } = require('bson');
 const moment = require('moment');
 
 
@@ -16,6 +17,21 @@ function formatMessage(user, msg) {
     msg,
     time: moment().format("h:mm a")
   }
+}
+
+/**
+ * This function will push a message to the chatroom in mongoDB to save all messages
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ * @param {} message message object holding the single message
+ */
+function addMessage(message) {
+  const db = client
+  .db("sellery")
+  .collection("chat");
+
+  db.update({ "_id": ObjectID(message.id) }, { $push: { "messages": message }});
 }
 
 
