@@ -188,6 +188,7 @@ app.post("/post_post", requireLogin, (req, res) => {
           poster_name: user.name,
           user_id: decodedToken.id
         }).then(() => {
+          db.collection("post").createIndex( { location : "2dsphere" });
           let message = "success";
           res.send({ message });
         })
@@ -406,12 +407,15 @@ app.post('/signup', async (req, res) => {
 
   const db = client.db("sellery");
 
+  const longInNum = Number(longitude);
+  const latInNum = Number(latitude);
+
   if (latitude != '' && longitude != '') {
     db.collection("users").insertOne({
       name,
       location: {
         type: "Point",
-        coordinates: [longitude, latitude]
+        coordinates: [longInNum, latInNum]
       },
       email, // validate it
       password: hashedPassword,
@@ -648,6 +652,42 @@ app.post("/createReviews", (req, res) => {
       res.send(obj);
     })
 });
+
+app.get('/proximity_search', (req, res) => {
+  const distance = Number(req.query.distance);
+  const db = client.db('sellery');
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+    .then((data) => {
+      const longitude = Number(data.location.coordinates[0]);
+      const latitude = Number(data.location.coordinates[1]);
+      console.log(longitude, latitude, distance);
+      db.collection("post").find(
+        {
+          location: 
+          {
+            $near: 
+            {
+              $geometry: { type: "Point", coordinates: [longitude, latitude]},
+              $maxDistance: distance
+            }
+          }
+        }
+      ).toArray((err, result) => {
+        if (err) {
+          let obj = { err };
+          res.send(err);
+        } else {
+          
+          let obj = { user_id: decodedToken.id, result };
+          res.send(obj);
+        }
+      })
+    });
+  })
+})
 
 
 
