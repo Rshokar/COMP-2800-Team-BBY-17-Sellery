@@ -649,7 +649,125 @@ app.post("/createReviews", (req, res) => {
     })
 });
 
+/**
+ * This route is responsible for updating profile bio in with profile bio data. 
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ */
+ app.post("/update_bio", requireLogin, (req, res) => {
+  let post = req.body;
 
+  console.log("server: " , req);
+
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
+
+  const updateBioDoc = {
+    $set: {
+      name: post.name,
+      bio: post.bio,
+      location: {
+        type: "Point",
+        coordinates: [post.longitude, post.latitude]
+      }
+      // image here
+    }
+  }
+
+  const options = {
+    upsert: true
+  };
+
+  // WILL NEED TO CHANGE COLLECTION
+  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
+
+
+
+  if (result.modifiedCount === 1) {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    myObj = {
+      message: "Success updating bio",
+      status: "sucess",
+    };
+    res.send(myObj);
+  } else {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error updating bio",
+      status: "error"
+    }
+    res.send(myObj)
+  }
+
+
+});
+
+/**
+ * This route is responsible for updating profile bio in with profile bio data. 
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ */
+ app.get("/xxx", requireLogin, (req, res) => {
+  let post = req.body;
+
+  console.log("server: " , req);
+
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
+
+  const updateBioDoc = {
+    $set: {
+      name: post.name,
+      bio: post.bio,
+      location: {
+        type: "Point",
+        coordinates: [post.longitude, post.latitude]
+      }
+      // image here
+    }
+  }
+
+  const options = {
+    upsert: true
+  };
+
+  // WILL NEED TO CHANGE COLLECTION
+  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
+
+
+
+  if (result.modifiedCount === 1) {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    myObj = {
+      message: "Success updating bio",
+      status: "sucess",
+    };
+    res.send(myObj);
+  } else {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error updating bio",
+      status: "error"
+    }
+    res.send(myObj)
+  }
+
+
+});
 
 
 
