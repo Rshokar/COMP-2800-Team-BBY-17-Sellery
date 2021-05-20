@@ -38,12 +38,13 @@
 
   <div id="content_section">
     <div id="chat_window">
+      <h3 id="you">User Name</h3>
       <div id="messages">
-        asd
       </div>
       <div id="input">
         <input id="input_field" type="test" placeholder="message">
         <button id="submit">Submit</button>
+        <span id=""></span>
       </div>
     </div>
   </div>
@@ -96,6 +97,11 @@ function postOnePost() -->
 <!-- Store the data from Listing form into cosnt which can be used 
 to in different files. -->
 <script src="js/new_post.js"></script>
+
+<!-- Imports for socket.io -->
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="js/chat.js"></script>
 
 
 </html>

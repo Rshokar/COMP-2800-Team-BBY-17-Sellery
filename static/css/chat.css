@@ -7,10 +7,11 @@
 }   
 
 #messages {
-    height: 72vh;
+    height: 68vh;
     background-color: white;
     width: 95%;
     margin: auto;
+    overflow: scroll;
 }
 
 #input {
@@ -21,4 +22,23 @@
 
 #input_field {
     width: 77%;
+}
+.message {
+    margin-left: 1em;
+}
+
+.text {
+    font-size: 18pt;
+    margin-bottom: 0;
+}
+
+.meta {
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: .5em;
+    margin-left: .5em;
+    margin-bottom: 0;
+    font-size: 20pt;
 }

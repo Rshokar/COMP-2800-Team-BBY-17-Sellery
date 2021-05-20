@@ -5,20 +5,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-const {
-  readFile
-} = require('fs');
-const {
-  MongoClient
-} = require('mongodb');
-const {
-  read
-} = require('fs/promises');
+
+const { readFile } = require('fs');
+const { MongoClient } = require('mongodb');
+const { read } = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
 const initRoutes = require("./static/routes/web");
+const { formatMessage } = require("./utils/messages");
+const { format } = require('util');
+
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
@@ -28,9 +31,7 @@ app.use("/pics", express.static("static/pics"));
 
 
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
 initRoutes(app);
 app.use(cookieParser());
 
@@ -62,6 +63,41 @@ async function main() {
 }
 
 main().catch(console.error);
+
+
+io.on('connection', (socket) => {
+
+  const chatBot = {
+    name: "Chat Bot",
+  }
+  user
+
+  socket.on('joinRoom', (room) => {
+
+    socket.join(room)
+
+    // Welcome to current user. 
+    socket.emit('message', formatMessage(chatBot, 'Welcome to Sellary'));
+
+    //Broadcast when a user connects
+    socket.broadcast.to(room).emit("message", formatMessage(chatBot, "A user has joined the chat"));
+
+
+    //User disconects
+    socket.on('disconnect', () => {
+      io.to(room).emit("message", formatMessage(chatBot, "A user has left the chat"));
+    });
+
+  })
+
+  //User sends message 
+  socket.on("chat message", (msg, roomID) => {
+    console.log(msg, roomID)
+    addMessageToDB(msg, roomID);
+    io.to(roomID).emit('message', formatMessage(chatBot, msg));
+  });
+
+})
 
 
 // async function listDatabases(client) {
@@ -202,18 +238,16 @@ app.post("/post_post", requireLogin, (req, res) => {
  * @date May 06 2021
  */
 app.get("/storefront-data", requireLogin, (req, res) => {
-  let formatOfResponse = req.query['format'];
+  const token = req.cookies.jwt;
+  console.log("hello you made it to the storefront.");
 
-  user_id = '60956e66db7bf207dbc33255';
-
-  if (formatOfResponse == 'getJSONBio') {
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello you made it to the storefront.");
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    console.log(decodedToken);
     client
       .db("sellery")
-      .collection("sample_data")
+      .collection("users")
       .find({
-        "_id": ObjectId(user_id)
+        "_id": ObjectId(decodedToken.id)
       })
       .toArray(function (err, result) {
         if (err) throw err;
@@ -222,8 +256,8 @@ app.get("/storefront-data", requireLogin, (req, res) => {
       });
     // console.log(data);
     // res.send(data);
-  }
-})
+  })
+});
 
 /**
  * This route is responsible for updating post in with post data. 
@@ -256,14 +290,12 @@ app.post("/update_post", requireLogin, async (req, res) => {
 
   result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
 
-
-
   if (result.modifiedCount === 1) {
     console.log(
       `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
     );
     myObj = {
-      message: "Success Deleting Post",
+      message: "Success Updating Post",
       status: "sucess",
     };
     res.send(myObj);
@@ -273,7 +305,7 @@ app.post("/update_post", requireLogin, async (req, res) => {
     );
     console.log("No documents matched the query. Deleted 0 documents.");
     myObj = {
-      message: "Error Deleting Post",
+      message: "Error Updating Post",
       status: "error"
     }
     res.send(myObj)
@@ -402,15 +434,131 @@ app.get('/chats', (req, res) => {
 /**
  * This route responsbile for returning the chat HTML file.
  * @author Ravinder Shokar 
- * @date May-18-2021
+ * @date May 18 2021
  */
-app.get('/chat', (req, res) => {
+app.get('/chat', requireLogin, (req, res) => {
   readFile("static/html/chat.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
     }
     res.send(html);
   });
+});
+
+/**
+ * This route is reesponsible for checking if a chatroom exist. If it does 
+ * then it will redirect to the correct room. If does not it will create 
+ * a new room, then redirect the user to the chat room.
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 19 2021
+ */
+app.post("/create_chat_room", requireLogin, async (req, res) => {
+  let post = req.body;
+
+  console.log(post);
+
+  let userOne = post.currentUserID;
+  let userTwo = post.uID
+  let obj;
+
+  const db = client.db("sellery").collection('chat');
+
+  //Check if a chat room exist. 
+  const chatRoom = await db.findOne({
+    ID: { "$in": [userOne && userTwo] }
+  });
+
+  if (chatRoom) {
+    console.log("Chat room exist");
+
+    //Redirect to chatroom
+    console.log(chatRoom);
+    res.send({
+      status: "success",
+      message: "Chat room found",
+      id: chatRoom._id
+    })
+  } else {
+    console.log("Chat room does not exist");
+
+    // Create Chat room
+    db.insertOne({
+      names: ["Ravinder", post.un],
+      ID: [userOne, userTwo],
+      messages: []
+    },
+      (err, doc) => {
+        if (err) {
+          res.send({
+            status: "error",
+            message: "Erro finding chatroom",
+          })
+        } else {
+          console.log(doc);
+          res.send({
+            status: "success",
+            message: "chat room found",
+            id: doc.insertedId
+          })
+        }
+      })
+  }
+})
+
+
+/**
+ * This route is responsible for getting a chat log from the DB and returning it 
+ * to the clien 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 20 2021
+ */
+app.get("/get_chat", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    let obj;
+    let me;
+    let you;
+    let userID = decodedToken.id;
+    let roomID = req.query.room;
+
+
+    const database = client.db("sellery");
+    const chats = database.collection("chat")
+
+    const query = { "_id": ObjectId(roomID) }
+
+    const chat = await chats.findOne(query);
+
+    console.log(chat);
+
+    if (chat) {
+
+      if (chat.ID[0] == userID) {
+        me = { ID: chat.ID[0], name: chat.names[0] }
+        you = { ID: chat.ID[1], name: chat.names[1] }
+      } else {
+        me = { ID: chat.ID[1], name: chat.names[1] }
+        you = { ID: chat.ID[0], name: chat.names[0] }
+      }
+
+      obj = {
+        messages: chat.messages,
+        me: me,
+        you: you,
+        status: "Success",
+      }
+    } else {
+      obj = {
+        result: null,
+        status: "Error",
+        message: "Error Querying for Chat",
+      }
+    }
+    res.send(obj);
+  })
 });
 
 /**
@@ -473,7 +621,7 @@ app.post('/signup', async (req, res) => {
  * creates a cookie as a form of token that stores encoded user id.
  * 
  * @author Jimun Jang
- * @date May-12-2021
+ * @date May 12 2021
  */
 app.post('/login', async (req, res) => {
   const {
@@ -518,7 +666,7 @@ app.post('/login', async (req, res) => {
 /** when user clicks log out button, it deletes cookie.
  * 
  * @author Jimun Jang
- * @date May-10, 2021
+ * @date May 10, 2021
  */
 app.get('/logout', (req, res) => {
   res.cookie('jwt', '', { maxAge: 1 });
@@ -678,8 +826,4 @@ app.post("/createReviews", (req, res) => {
     })
 });
 
-
-
-
-
-app.listen(8000, () => console.log("App available on http://localhost:8000"));
+server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });
