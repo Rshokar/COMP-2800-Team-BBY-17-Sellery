@@ -199,6 +199,7 @@ class Post {
   appendHTML() {
     $("#card-listing").prepend(this.buildHTML())
     editPostEventListner(this.HLID, this)
+    createChatRoomEventListner(this)
   }
 
   /**
@@ -234,6 +235,8 @@ class Post {
       `
     if (this.uID == this.currentUserID) {
       html += '<i class="edit fas fa-edit"></i></div>'
+    } else {
+      html += '<i class="chat fas fa-comment"></i></div>'
     }
 
     return html;
@@ -320,4 +323,49 @@ function buildPostList(posts, currentUserId) {
 }
 
 
+/**
+ * This event listner will post, the post user ID to server and check to see if a
+ * chat already exist. If it does the user will be redirected to that chat. If
+ * the chat does not exit it will make a new one and redirect the user to the 
+ * chat.
+ * @author Ravinder Shokar
+ * @version 1.0 
+ * @date May 19 2021 
+ * @param {Post} post user clicked on. 
+ */
+function createChatRoomEventListner(post) {
+  let query = "#" + post.htmlID + " .chat";
+  $(query).on("click", (e) => {
+    createChatRoom(post);
+  })
+}
 
+/**
+ * This function will send the post to the server in the purpose to redirect to the 
+ * correct chat or make an new chat and then redirect to the new chat.
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 19 2021
+ * @param {*} post 
+ */
+function createChatRoom(post) {
+  $.ajax({
+    url: "create_chat_room",
+    type: "POST",
+    dataType: "JSON",
+    data: post,
+    success: (data) => {
+      console.log(data);
+      if (data.status == "error") {
+        console.log("error")
+        console.log(data);
+      } else {
+        const url = new URL(window.location.href);
+        window.location.href = "/chat?chat=" + data.id;
+      }
+    },
+    error: (err) => {
+      console.log(err);
+    }
+  })
+}

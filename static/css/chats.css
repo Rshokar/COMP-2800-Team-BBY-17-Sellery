@@ -1,0 +1,31 @@
+.chat {
+    background-color: rgb(82,215,19);
+    height: 10vh;
+    border: 1px solid black;
+    margin: .5em .5em .5em .5em;
+    border-radius: 2%;
+    display: grid;
+    grid-template-columns: 25% 75%;
+}
+
+.chat span {
+    grid-column: 2 / span 1;
+    line-height: 10vh;
+    font-size: 20pt;
+}
+
+#chats .chat:nth-child(2n) {
+    background-color: #fffdfd;
+}
+
+.chat img {
+    grid-column: 1 / span 1;
+    border-radius: 50%;
+    height: 7vh;
+    margin-left: 1em;
+    margin-top: 1.5vh;
+}
+
+.chat :hover{
+    background-color: grey;
+}
