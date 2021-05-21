@@ -1070,4 +1070,4 @@ app.get('/proximity_search', (req, res) => {
 })
 
 
-app.listen(8000, () => console.log("App available on http://localhost:8000"));
+server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });
