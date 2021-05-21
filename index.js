@@ -777,19 +777,19 @@ app.get("/generate_my_produce", (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    userId = decodedToken.id;
-    console.log("Route");
+    let userId = decodedToken.id;
 
     client
       .db("sellery")
       .collection("post")
-      .find({ "user_id": ObjectId(userId) })
+      .find({ "user_id": userId })
       .toArray(function (err, result) {
         if (err) throw err;
         let obj = {
           userId: userId,
           results: result
         }
+        console.log(result)
         res.send(obj);
       });
 
@@ -808,7 +808,7 @@ app.post("/generate_user_produce", (req, res) => {
   client
     .db("sellery")
     .collection("post")
-    .find({ "user_id": ObjectId(userId) })
+    .find({ "user_id": userId })
     .toArray(function (err, result) {
       if (err) throw err;
       let obj = {
@@ -830,7 +830,7 @@ app.get("/generate_reviews", (req, res) => {
 
   user_id = '60956e66db7bf207dbc33255';
 
-  console.log("Generate reviews server");
+  //console.log("Generate reviews server");
   client
     .db("sellery")
     .collection("reviews")
@@ -839,7 +839,7 @@ app.get("/generate_reviews", (req, res) => {
     })
     .toArray(function (err, result) {
       if (err) throw err;
-      console.log(result);
+      //console.log(result);
       res.send(result);
     });
 })
