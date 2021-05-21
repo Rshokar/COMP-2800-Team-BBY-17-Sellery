@@ -202,6 +202,15 @@ class Post {
   }
 
   /**
+     * This function will append the posting to the HTML
+     * @date May 13 2021
+     */
+  displayInProximityContainer() {
+    $("#proximity-card-listing").prepend(this.buildHTML())
+    editPostEventListner(this.HLID, this)
+  }
+
+  /**
    * THis will generate the appropriate HTML for the posting. 
    * @date May 13 2021
    */

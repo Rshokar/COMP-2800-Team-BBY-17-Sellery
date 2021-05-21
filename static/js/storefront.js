@@ -50,25 +50,50 @@ $(document).ready(function () {
    * Event listeners for the review modal.
    */
   const reviews_button = document.querySelector("#reviews");
-  const review_card = document.querySelector(".modal");
-  const close = document.querySelector(".close");
-  // const next_button = document.querySelector(".submit");
+  const review_card = document.querySelector("#review-modal");
+  const review_close = document.querySelector("#review-close");
 
   reviews_button.addEventListener("click", function () {
+    console.log("Clicked reviews");
     review_card.style.display = "block";
   });
 
-  close.addEventListener("click", function () {
-    console.log("x working");
+  review_close.addEventListener("click", function () {
+    console.log("review x working");
     review_card.style.display = "none";
   });
 
-  window.onclick = function (event) {
-    if (event.target == review_card) {
-      console.log("window close");
-      review_card.style.display = "none";
-    }
-  };
+
+  /**
+   * Event listeners for the edit modal.
+   */
+   const edit_button = document.querySelector("#edit");
+   const edit_card = document.querySelector("#edit-modal");
+   const edit_close = document.querySelector("#edit-close");
+ 
+   edit_button.addEventListener("click", function () {
+     console.log("Clicked reviews");
+     edit_card.style.display = "block";
+   });
+ 
+   edit_close.addEventListener("click", function () {
+     console.log("edit x working");
+     edit_card.style.display = "none";
+   });
+ 
+
+   /**
+    * Window listens for click outside of modals to close.
+    */
+   window.onclick = function (event) {
+     if (event.target == edit_card) {
+       console.log("window close");
+       edit_card.style.display = "none";
+     }
+     if (event.target == review_card) {
+       review_card.style.display = "none";
+     }
+   };
 
   /**
    * This Vue app is used to add and remove data from HTML 
@@ -105,5 +130,79 @@ $(document).ready(function () {
       }
     })
   }
+
+  /**
+   * Autocomplete using Google Maps API
+   * @author Mike Lim
+   * @date May-20-2021
+   */
+  var autocomplete;
+  autocomplete = new google.maps.places.Autocomplete((document.getElementById('autocomplete')), {
+      types: ['address'],
+      componentRestrictions: {
+          country: "ca"
+      }
+  });
+  
+  google.maps.event.addListener(autocomplete, 'place_changed', function () {
+      var userAddress = autocomplete.getPlace();
+      document.getElementById('latitude').value = userAddress.geometry.location.lat();
+      document.getElementById('longitude').value = userAddress.geometry.location.lng();
+  });
+
+
+  /**
+   * Listens to the edit bio submit button and runs update() with the data.
+   */
+  $("#submit").on("click" , function(event) {
+    event.preventDefault();
+    var newName = document.getElementById("newName").value;
+    var newBio = document.getElementById("newBio").value;
+    var newLat = document.getElementById("latitude").value;
+    var newLong = document.getElementById("longitude").value;
+
+    //hard coded id for now.
+    var myObj = {ID: "60956e66db7bf207dbc33255", name: newName, bio: newBio, longitude: newLong, latitude: newLat};
+    
+    console.log("clicked and saved: " + newName + newBio + newLat + newLong);
+    
+
+    update(myObj);
+
+
+  })
+
+  /**
+   * This function will update the bio with its new values. 
+   * @return obj with either success or error. 
+   */
+   function update(bioData) {
+     console.log("client bio data:" , bioData);
+     
+    $.ajax({
+      url: "/update_bio",
+      type: "POST",
+      dataType: "JSON",
+      data: bioData,
+      success: (data) => {
+        console.log("success in update in client");
+        
+        return data
+      },
+      error: (err) => {
+        let obj = {
+          status: "error",
+          message: "Error posting data",
+          error: err,
+        }
+        
+        return obj;
+      }
+    })
+    
+  }
+
 })
+
+
 

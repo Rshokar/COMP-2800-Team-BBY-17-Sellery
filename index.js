@@ -201,6 +201,7 @@ app.post("/post_post", requireLogin, (req, res) => {
           poster_name: user.name,
           user_id: decodedToken.id
         }).then(() => {
+          db.collection("post").createIndex( { location : "2dsphere" });
           let message = "success";
           res.send({ message });
         })
@@ -409,12 +410,15 @@ app.post('/signup', async (req, res) => {
 
   const db = client.db("sellery");
 
+  const longInNum = Number(longitude);
+  const latInNum = Number(latitude);
+
   if (latitude != '' && longitude != '') {
     db.collection("users").insertOne({
       name,
       location: {
         type: "Point",
-        coordinates: [longitude, latitude]
+        coordinates: [longInNum, latInNum]
       },
       email, // validate it
       password: hashedPassword,
@@ -667,7 +671,7 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
     error.httpStatusCode = 400;
     return next(error);
   } 
-
+ 
   // convert images into base64 encoding
   let images = files.map((file) => {
     let image = fs.readFileSync(file.path);
@@ -695,6 +699,108 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
     })
   })
 
+})
+
+/**
+ * This route is responsible for updating profile bio in with profile bio data. 
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ */
+ app.post("/update_bio", requireLogin, async (req, res) => {
+  let post = req.body;
+
+  console.log("server: " , req);
+
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
+
+  const updateBioDoc = {
+    $set: {
+      name: post.name,
+      bio: post.bio,
+      location: {
+        type: "Point",
+        coordinates: [post.longitude, post.latitude]
+      }
+      // image here
+    }
+  }
+
+  const options = {
+    upsert: true
+  };
+
+  // WILL NEED TO CHANGE COLLECTION
+  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
+
+
+
+  if (result.modifiedCount === 1) {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    myObj = {
+      message: "Success updating bio",
+      status: "sucess",
+    };
+    res.send(myObj);
+  } else {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error updating bio",
+      status: "error"
+    }
+    res.send(myObj)
+  }
+
+
+});
+
+/**
+ * Proximity search
+ * @author Jimun Jang
+ * @version 1.0
+ * @date May 20 2021
+ */
+app.get('/proximity_search', (req, res) => {
+  const distance = Number(req.query.distance);
+  const db = client.db('sellery');
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+    .then((data) => {
+      const longitude = Number(data.location.coordinates[0]);
+      const latitude = Number(data.location.coordinates[1]);
+      console.log(longitude, latitude, distance);
+      db.collection("post").find(
+        {
+          location: 
+          {
+            $near: 
+            {
+              $geometry: { type: "Point", coordinates: [longitude, latitude]},
+              $maxDistance: distance
+            }
+          }
+        }
+      ).toArray((err, result) => {
+        if (err) {
+          let obj = { err };
+          res.send(err);
+        } else {
+          
+          let obj = { user_id: decodedToken.id, result };
+          res.send(obj);
+        }
+      })
+    });
+  })
 })
 
 
