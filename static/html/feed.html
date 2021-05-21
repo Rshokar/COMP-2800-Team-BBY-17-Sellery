@@ -59,14 +59,26 @@
       <div id="wrapper">
         <input type="test" placeholder="Search Away!" id="feed_search">
       </div>
-      
+    </div>
+    <div id="dropdown">Search By Proximity<i class="fas fa-caret-down"></i></div>
+    <div>
+      <div id="proximity-search-bar">
+        <i class="fas fa-search-location"></i>
+        <form>
+          <input type="text" placeholder="Search distance in meters" id="proximity-search">
+          <button id="proximity-button">search</button>
+        </form>
+      </div>
+      <p class="error-handle"></p>
     </div>
 
-    
+    <button id="drop">View All</button>
+
+    <!-- this is where post filtered by proximity goes -->
+    <div id="proximity-card-listing"></div>
 
     <!-- This is where post start -->
-    <div id="card-listing">
-    </div>
+    <div id="card-listing"></div>
 
     <!-- Edit Post -->
     <div id="edit-posting">
@@ -121,9 +133,12 @@ function postOnePost() -->
   to in different files. -->
   <script src="js/new_post.js"></script>
 
+  <!-- dropdown menu for proximity search bar -->
+  <script src="js/search_bar_hide_show.js"></script>
+
   <script>
-    $(document).ready(function () {
-      let listing = genListing();
+    $(document).ready(async function () {
+      let listing = await genListing();
     })
   </script>
 
