@@ -19,6 +19,23 @@ function genListing() {
         console.log(post)
         newData[post].appendHTML();
       }
+
+      // search bar to filter cards by title or post owner's name
+      const title_list = document.querySelectorAll('#card-listing .listing h3');
+      const search_by_title = document.querySelector('#feed_search');
+
+      search_by_title.addEventListener('keyup', function (e) {
+        const term = e.target.value.toLowerCase();
+        title_list.forEach(function (card) {
+          const title_name = card.parentElement.querySelector('h3').textContent;
+          const post_owner_name = card.parentElement.querySelector('h5').textContent;
+          if (title_name.toLowerCase().indexOf(term) != -1 || post_owner_name.toLowerCase().indexOf(term) != -1) {
+            card.parentElement.parentElement.parentElement.parentElement.style.display = 'block';
+          } else {
+            card.parentElement.parentElement.parentElement.parentElement.style.display = 'none';
+          }
+        })
+      })
       return data
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -40,10 +57,8 @@ function genListing() {
 function genMyStoreFrontListing() {
   $.ajax({
     url: "/generate_my_produce",
-    dataType: "json",
+    dataType: "JSON",
     type: "GET",
-    // use the user id
-    // data: "userid",
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
@@ -69,7 +84,7 @@ function genMyStoreFrontListing() {
 function genStoreFrontListing(userId) {
   $.ajax({
     url: "/generate_user_produce",
-    dataType: "json",
+    dataType: "JSON",
     type: "POST",
     data: {
       id: userId

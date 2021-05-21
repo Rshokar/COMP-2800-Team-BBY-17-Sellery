@@ -52,8 +52,8 @@ p {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
-    box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
+    -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
+    box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
 }
 
 /* ^-- The margin bottom is necessary for the drop shadow otherwise it gets clipped in certain cases. */

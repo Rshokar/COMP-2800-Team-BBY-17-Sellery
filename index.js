@@ -1,24 +1,44 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-const {
-  readFile
-} = require('fs');
-const {
-  MongoClient
-} = require('mongodb');
-const {
-  read
-} = require('fs/promises');
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
+const path = require('path');
+
+
+const methodOverride = require('method-override');
+
+const { readFile } = require('fs');
+const { MongoClient } = require('mongodb');
+const { read } = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
-const initRoutes = require("./static/routes/web");
+// set storage
+var storage = multer.diskStorage({
+  // destination: function (req, res, cb) {
+  //   cb(null, 'uploads');
+  // },
+  filename: function (req, file, cb) {
+    var ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
+    cb(null, file.fieldname + '-' + Date.now() + ext);
+  }
+})
+
+store = multer({ storage: storage })
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+const { formatMessage } = require("./utils/messages");
+const { format } = require('util');
+
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
@@ -26,13 +46,29 @@ app.use("/html", express.static("static/html"));
 // for about page pics and favicon
 app.use("/pics", express.static("static/pics"));
 
+app.use("/views", express.static("static/views"));
+
+
 
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
-initRoutes(app);
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+
+/**
+ * Used for logging. Logging is set to rotate daily
+ * @author Arron Ferguson, Gurshawn Sehkon
+ * @date May-18-2021
+ */
+const accessLogStream = rfs.createStream('access.log', {
+  interval: '1d',
+  path: path.join(__dirname, 'static/log')
+});
+app.use(morgan(':referrer :url :user-agent', {
+  stream: accessLogStream
+}));
+
+
 
 
 /**
@@ -40,6 +76,10 @@ app.use(cookieParser());
  * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
  */
 const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
+
+
+
+
 
 // Mongo DB Client.
 const client = new MongoClient(uri, {
@@ -63,6 +103,56 @@ async function main() {
 
 main().catch(console.error);
 
+
+io.on('connection', (socket) => {
+
+  const chatBot = {
+    ID: -1,
+    name: "Chat Bot"
+  }
+
+
+  socket.on('joinRoom', (room) => {
+
+    socket.join(room)
+
+    // Welcome to current user.
+    socket.emit('message', formatMessage(chatBot, 'Welcome to the Chat'));
+
+    //Broadcast when a user connects
+    socket.broadcast.to(room).emit("message", formatMessage(chatBot, "A user has joined the chat"));
+
+
+    //User disconects
+    socket.on('disconnect', () => {
+      io.to(room).emit("message", formatMessage(chatBot, "A user has left the chat"));
+    });
+
+  })
+
+  //User sends message
+  socket.on("chat message", (msg, roomID) => {
+    addMessage(msg, roomID);
+    io.emit('message', msg);
+  });
+
+})
+
+/**
+ * This function will push a message to the chatroom in mongoDB to save all messages
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ * @param {} message message object holding the single message
+ */
+function addMessage(message, room) {
+  const db = client
+    .db("sellery")
+    .collection("chat");
+
+  db.update({ "_id": ObjectId(room) }, { $push: { "messages": message } });
+
+}
 
 // async function listDatabases(client) {
 //   databasesList = await client.db().admin().listDatabases();
@@ -175,7 +265,6 @@ app.post("/post_post", requireLogin, (req, res) => {
     console.log(decodedToken);
     db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
       .then((data) => {
-        console.log(data);
         const user = data;
         db.collection("post").insertOne({
           description: post.description,
@@ -188,6 +277,7 @@ app.post("/post_post", requireLogin, (req, res) => {
           poster_name: user.name,
           user_id: decodedToken.id
         }).then(() => {
+          db.collection("post").createIndex({ location: "2dsphere" });
           let message = "success";
           res.send({ message });
         })
@@ -196,33 +286,23 @@ app.post("/post_post", requireLogin, (req, res) => {
 })
 
 /**
- * This route sends user info to bio section of storefront
+ * This route sends a single users info to the bio section of storefront
  * @author Mike Lim
  * @version 1.0
  * @date May 06 2021
  */
 app.get("/storefront-data", requireLogin, (req, res) => {
-  let formatOfResponse = req.query['format'];
+  const token = req.cookies.jwt;
 
-  user_id = '60956e66db7bf207dbc33255';
+  jwt.verify(token, 'gimp', (err, decodedToken) => {
+    console.log(decodedToken);
 
-  if (formatOfResponse == 'getJSONBio') {
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello you made it to the storefront.");
-    client
-      .db("sellery")
-      .collection("sample_data")
-      .find({
-        "_id": ObjectId(user_id)
+    client.db("sellery").collection("users")
+      .findOne({ "_id": ObjectId(decodedToken.id) })
+      .then((data) => {
+        res.send({ result: data });
       })
-      .toArray(function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        res.send(result);
-      });
-    // console.log(data);
-    // res.send(data);
-  }
+  })
 })
 
 /**
@@ -244,7 +324,7 @@ app.post("/update_post", requireLogin, async (req, res) => {
     $set: {
       title: post.title,
       description: post.description,
-      units: post.uinits,
+      units: post.units,
       price: post.price,
       quantity: post.quantity,
     }
@@ -256,14 +336,12 @@ app.post("/update_post", requireLogin, async (req, res) => {
 
   result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
 
-
-
   if (result.modifiedCount === 1) {
     console.log(
       `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
     );
     myObj = {
-      message: "Success Deleting Post",
+      message: "Success Updating Post",
       status: "sucess",
     };
     res.send(myObj);
@@ -273,7 +351,7 @@ app.post("/update_post", requireLogin, async (req, res) => {
     );
     console.log("No documents matched the query. Deleted 0 documents.");
     myObj = {
-      message: "Error Deleting Post",
+      message: "Error Updating Post",
       status: "error"
     }
     res.send(myObj)
@@ -343,13 +421,11 @@ app.get("/generate_produce", requireLogin, (req, res) => {
           user_id: decodedToken.id,
           results: result,
         }
-        console.log(obj);
         if (err) throw err;
         res.send(obj);
       });
   })
 
-  console.log("Hello you made it generate produce.");
 
   // console.log(data);
   // res.send(data);
@@ -384,6 +460,188 @@ app.get('/signup', (req, res) => {
   });
 });
 
+
+/**
+ * This route responsbile for returning the chats HTML file.
+ * @author Ravinder Shokar 
+ * @date May-18-2021
+ */
+app.get('/chats', requireLogin, (req, res) => {
+  readFile("static/html/chats.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  });
+});
+
+/**
+ * This route responsbile for returning the chat HTML file.
+ * @author Ravinder Shokar 
+ * @date May 18 2021
+ */
+app.get('/chat', requireLogin, (req, res) => {
+  readFile("static/html/chat.html", "utf-8", (err, html) => {
+    if (err) {
+      res.status(500).send("Sorry, out of order.");
+    }
+    res.send(html);
+  });
+});
+
+/**
+ * This route is reesponsible for checking if a chatroom exist. If it does 
+ * then it will redirect to the correct room. If does not it will create 
+ * a new room, then redirect the user to the chat room.
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 19 2021
+ */
+app.post("/create_chat_room", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
+  let post = req.body;
+
+  jwt.verify(token, "gimp", async (err, decodedToken) => {
+    console.log("Token", decodedToken);
+    let userOne = post.currentUserID;
+    let userTwo = post.uID
+    let obj;
+
+    const db = client.db("sellery").collection('chat');
+
+    //Check if a chat room exist. 
+    const chatRoom = await db.findOne({
+      ID: { "$all": [userOne, userTwo] }
+    });
+
+    if (chatRoom) {
+      console.log("Chat room exist");
+
+      //Redirect to chatroom
+      console.log(chatRoom);
+      res.send({
+        status: "success",
+        message: "Chat room found",
+        id: chatRoom._id
+      })
+    } else {
+      console.log("Chat room does not exist");
+
+      // Create Chat room
+      db.insertOne({
+        names: [decodedToken.userName, post.un],
+        ID: [userOne, userTwo],
+        messages: []
+      },
+        (err, doc) => {
+          if (err) {
+            res.send({
+              status: "error",
+              message: "Erro finding chatroom",
+            })
+          } else {
+            res.send({
+              status: "success",
+              message: "chat room found",
+              id: doc.insertedId
+            })
+          }
+        })
+    }
+
+
+  })
+
+
+})
+
+
+/**
+ * This route is responsible for getting a chat log from the DB and returning it 
+ * to the clien 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 20 2021
+ */
+app.get("/get_chat", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    let obj;
+    let me;
+    let you;
+    let userID = decodedToken.id;
+    let roomID = req.query.room;
+    console.log(roomID);
+
+
+    const database = client.db("sellery");
+    const chats = database.collection("chat")
+
+    const query = { "_id": ObjectId(roomID) }
+
+    const chat = await chats.findOne(query);
+
+    console.log(chat);
+
+    if (chat) {
+
+      if (chat.ID[0] == userID) {
+        me = { ID: chat.ID[0], name: chat.names[0] }
+        you = { ID: chat.ID[1], name: chat.names[1] }
+      } else {
+        me = { ID: chat.ID[1], name: chat.names[1] }
+        you = { ID: chat.ID[0], name: chat.names[0] }
+      }
+
+      obj = {
+        messages: chat.messages,
+        me: me,
+        you: you,
+        status: "Success",
+      }
+    } else {
+      obj = {
+        result: null,
+        status: "Error",
+        message: "Error Querying for Chat",
+      }
+    }
+    res.send(obj);
+  })
+});
+
+/**
+ * This route is responsible for getting chats assoiciated with the currently 
+ * logged in user
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @data May 20 2021
+ */
+app.get("/get_my_chats", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    console.log(decodedToken);
+    let userID = decodedToken.id;
+
+    const database = client.db("sellery");
+    const chats = database.collection('chat');
+
+    const query = { ID: userID };
+
+    await chats.find(query).toArray((err, result) => {
+      if (err) throw err;
+      res.send({
+        status: "success",
+        message: "Successfuly got users chats",
+        results: result,
+        userID: userID
+      })
+    })
+  })
+})
+
 /**
  * Stores user info into our mongoDB database when user signs up.
  * User info contains location, name, email, password.
@@ -406,22 +664,32 @@ app.post('/signup', async (req, res) => {
 
   const db = client.db("sellery");
 
+  const longInNum = Number(longitude);
+  const latInNum = Number(latitude);
+
   if (latitude != '' && longitude != '') {
     db.collection("users").insertOne({
       name,
       location: {
         type: "Point",
-        coordinates: [longitude, latitude]
+        coordinates: [longInNum, latInNum]
       },
       email, // validate it
       password: hashedPassword,
     }).then((data) => {
+      console.log(data);
       const user = data;
-      const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
+      const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
-      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-      res.status(200).json({ user: user._id });
+      console.log(user.ops[0]._id);
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+      });
+      res.status(200).json({
+        user: user._id
+      });
     }).catch((err) => {
       let error = "password must be longer than 7 characters long";
       if (err.code === 11000) {
@@ -444,7 +712,7 @@ app.post('/signup', async (req, res) => {
  * creates a cookie as a form of token that stores encoded user id.
  * 
  * @author Jimun Jang
- * @date May-12-2021
+ * @date May 12 2021
  */
 app.post('/login', async (req, res) => {
   const {
@@ -459,8 +727,10 @@ app.post('/login', async (req, res) => {
   });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
+    console.log("login User", user);
     if (auth) {
       const token = jwt.sign({
+        userName: user.name,
         id: user._id
       }, 'gimp', {
         expiresIn: 24 * 60 * 60
@@ -489,7 +759,7 @@ app.post('/login', async (req, res) => {
 /** when user clicks log out button, it deletes cookie.
  * 
  * @author Jimun Jang
- * @date May-10, 2021
+ * @date May 10, 2021
  */
 app.get('/logout', (req, res) => {
   res.cookie('jwt', '', { maxAge: 1 });
@@ -501,26 +771,25 @@ app.get('/logout', (req, res) => {
  * This route gets the currently logged in users posts
  * @author Mike Lim
  * @date May 10 2021  
-*/
+ */
 app.get("/generate_my_produce", (req, res) => {
 
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    userId = decodedToken.id;
-    console.log("Route");
+    let userId = decodedToken.id;
 
     client
       .db("sellery")
       .collection("post")
-      .find({ "user_id": ObjectId(userId) })
+      .find({ "user_id": userId })
       .toArray(function (err, result) {
         if (err) throw err;
         let obj = {
           userId: userId,
           results: result
         }
-        console.log("generate_my_produce", obj);
+        console.log(result)
         res.send(obj);
       });
 
@@ -539,7 +808,7 @@ app.post("/generate_user_produce", (req, res) => {
   client
     .db("sellery")
     .collection("post")
-    .find({ "user_id": ObjectId(userId) })
+    .find({ "user_id": userId })
     .toArray(function (err, result) {
       if (err) throw err;
       let obj = {
@@ -561,7 +830,7 @@ app.get("/generate_reviews", (req, res) => {
 
   user_id = '60956e66db7bf207dbc33255';
 
-  console.log("Generate reviews server");
+  //console.log("Generate reviews server");
   client
     .db("sellery")
     .collection("reviews")
@@ -570,7 +839,7 @@ app.get("/generate_reviews", (req, res) => {
     })
     .toArray(function (err, result) {
       if (err) throw err;
-      console.log(result);
+      //console.log(result);
       res.send(result);
     });
 })
@@ -649,8 +918,156 @@ app.post("/createReviews", (req, res) => {
     })
 });
 
+/**
+ * This route will upload profile picture
+ * @author Gurshawn Sekhon, Jimun Jang
+ * @date May-10-2021
+ */
+
+app.post('/uploadImage', store.array('images'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+
+  if (!files) {
+    const error = new Error('Please choose files');
+    error.httpStatusCode = 400;
+    return next(error);
+  }
+
+  // convert images into base64 encoding
+  let images = files.map((file) => {
+    let image = fs.readFileSync(file.path);
+
+    return encode_image = image.toString('base64');
+  })
+
+  let result = images.map((src, index) => {
+    const filename = files[index].originalname;
+    const contentType = files[index].mimetype;
+    const imageBase64 = src;
+    jwt.verify(token, 'gimp', (err, decodedToken) => {
+      client.db("sellery").collection("users").findOneAndUpdate(
+        { "_id": ObjectId(decodedToken.id) },
+        {
+          $set: {
+            "profile_pic": {
+              filename,
+              contentType,
+              imageBase64
+            }
+          }
+        }
+      ).then((data) => {
+        res.redirect('/storefront')
+      }).catch((err) => {
+        res.send(err);
+      })
+    })
+  })
+
+})
+
+/**
+ * This route is responsible for updating profile bio in with profile bio data. 
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ */
+app.post("/update_bio", requireLogin, async (req, res) => {
+  let post = req.body;
+
+  console.log("server: ", req);
+
+  const query = {
+    "_id": ObjectId(post.ID)
+  }
+
+  const updateBioDoc = {
+    $set: {
+      name: post.name,
+      bio: post.bio,
+      location: {
+        type: "Point",
+        coordinates: [post.longitude, post.latitude]
+      }
+      // image here
+    }
+  }
+
+  const options = {
+    upsert: true
+  };
+
+  // WILL NEED TO CHANGE COLLECTION
+  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
 
 
 
+  if (result.modifiedCount === 1) {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    myObj = {
+      message: "Success updating bio",
+      status: "sucess",
+    };
+    res.send(myObj);
+  } else {
+    console.log(
+      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+    );
+    console.log("No documents matched the query. Deleted 0 documents.");
+    myObj = {
+      message: "Error updating bio",
+      status: "error"
+    }
+    res.send(myObj)
+  }
 
-app.listen(8000, () => console.log("App available on http://localhost:8000"));
+
+});
+
+/**
+ * Proximity search
+ * @author Jimun Jang
+ * @version 1.0
+ * @date May 20 2021
+ */
+app.get('/proximity_search', (req, res) => {
+  const distance = Number(req.query.distance);
+  const db = client.db('sellery');
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+      .then((data) => {
+        const longitude = Number(data.location.coordinates[0]);
+        const latitude = Number(data.location.coordinates[1]);
+        console.log(longitude, latitude, distance);
+        db.collection("post").find(
+          {
+            location:
+            {
+              $near:
+              {
+                $geometry: { type: "Point", coordinates: [longitude, latitude] },
+                $maxDistance: distance
+              }
+            }
+          }
+        ).toArray((err, result) => {
+          if (err) {
+            let obj = { err };
+            res.send(err);
+          } else {
+
+            let obj = { user_id: decodedToken.id, result };
+            res.send(obj);
+          }
+        })
+      });
+  })
+})
+
+
+server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });

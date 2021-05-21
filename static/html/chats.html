@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sellary Template</title>
+  <title>Chats</title>
   <!-- favicon -->
   <link rel="shorcut icon" type="image/png" href="pics/about.jpg">
 
@@ -21,6 +21,9 @@
   <link href="css/post.css" rel="stylesheet">
 
   <link href="css/card.css" rel="stylesheet">
+
+  <!-- Custom CSS for chats.html -->
+  <link href="css/chats.css" rel="stylesheet">
 </head>
 
 <body>
@@ -32,10 +35,14 @@
   <!-- Content goes here -->
   <!-- Content goes here -->
   <!-- Content goes here -->
-  <div id="content_section">
-    <div id="new-post">
 
-    </div>
+  <div id="title">Chats</div>
+  <div id="chats">
+  </div>
+
+
+
+  <div id="new-post">
   </div>
   <!-- Content Ends -->
   <!-- Content Ends -->
@@ -54,7 +61,7 @@
     <div class="container py-1">
       <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
 
-      <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
+      <a id="feed" class="btn fas fa-list fa-2x px-auto" href="/feed"></a>
     </div>
   </footer>
 </body>
@@ -82,8 +89,8 @@ function postOnePost() -->
 to in different files. -->
 <script src="js/new_post.js"></script>
 
-
-
+<!-- This script loads in all chats and displays them to the DOM in the DIV Chats -->
+<script src="js/chats.js"></script>
 
 
 </html>

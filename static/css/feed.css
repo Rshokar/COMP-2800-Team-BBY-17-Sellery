@@ -1,0 +1,159 @@
+#search-bar {
+  height: 22.5vh;
+  padding-top: 20%;
+  padding-bottom: 10%;
+}
+
+#input { 
+  font-family: 'FontAwesome';
+  position: relative;
+}
+
+#wrapper:before {
+  font-family: 'FontAwesome';
+  color:black;
+  position: relative;
+  content: "\f002";
+}
+
+#title {
+  /* margin-top: 10%; */
+  font-size: 18pt;
+}
+
+#feed_search, #proximity-search {
+  margin-top: 5%;
+  width: 90%;
+  border-radius:10px;
+  border-width: 0.3em;
+  border-color:#ccc;
+}
+
+#proximity-search {
+  width: 220px;
+}
+
+#proximity-search::placeholder {
+  font-style: italic;
+}
+
+.fa-search-location {
+  font-size: 1.2em;
+  margin-right: 5px;
+  padding-top: 12px;
+}
+
+#dropdown {
+  font-size: 16pt;
+  text-align: center;
+  margin-top: 1em;
+  font-weight: bold;
+  text-shadow: 4px 4px #ccc;
+  cursor: pointer;
+}
+
+#drop {
+  display: block;
+  width: 150px;
+  margin: 30px auto;
+  border: none;
+  outline: none;
+  background-color: white;
+  padding: 8px;
+  color: rgb(82,215,19);
+  font-weight: 800;
+  border-radius: 15px;
+}
+
+#dropdown:active {
+  transform: scale(0.9);
+  transition: ease-in-out 0.4s;
+}
+
+.fa-caret-down, .fa-caret-up {
+  margin-left: 10px;
+}
+
+#proximity-search-bar {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#proximity-search-bar button {
+  display: inline-block;
+  border: none;
+  outline: none;
+  background-color: rgb(82,215,19);
+  border-radius: 5px;
+  color: white;
+  font-weight: 700;
+  padding: 2px 15px;
+}
+
+.error-handle {
+  color: red;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-weight: 800;
+}
+
+#search {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feed_search {
+  display: inline;
+  margin-left: 10px;
+  margin-top: 5px;
+  width: 80%;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid grey;
+}
+
+.feed_search:focus {
+  border-bottom: 2px solid #387A00;
+}
+
+.feed_search:active {
+transform: scale(0.90);
+}
+
+.feed_search::placeholder {
+  font-style: italic;
+}
+
+#custom-dropdown {
+  background-color: rgb(82,215,19);
+  width: 100%;
+  border: none;
+  outline: none;
+  color: white;
+  font-style: italic;
+  font-weight: 600;
+}
+
+#feed-title {
+  font-size: 16pt;
+  text-align: center;
+  margin-top: 1em;
+  font-weight: bold;
+  text-shadow: 4px 4px #ccc;
+}
+
+#easter-egg-image {
+  width: 100%;
+  height: 40vh;
+  background-position: center;
+  background-size: cover;
+  background-image: url(../pics/Bee.jpg);
+}
+
+#easter-egg-card {
+  display: none;
+}

@@ -1,0 +1,38 @@
+#search {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feed_search {
+    display: inline;
+    margin-left: 10px;
+    margin-top: 5px;
+    width: 80%;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid grey;
+}
+
+.feed_search:focus {
+    border-bottom: 2px solid #387A00;
+}
+
+.feed_search:active {
+	transform: scale(0.90);
+}
+
+.feed_search::placeholder {
+    font-style: italic;
+}
+
+#custom-dropdown {
+    background-color: rgb(82,215,19);
+    width: 100%;
+    border: none;
+    outline: none;
+    color: white;
+    font-style: italic;
+    font-weight: 600;
+}

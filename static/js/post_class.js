@@ -199,6 +199,16 @@ class Post {
   appendHTML() {
     $("#card-listing").prepend(this.buildHTML())
     editPostEventListner(this.HLID, this)
+    createChatRoomEventListner(this)
+  }
+
+  /**
+     * This function will append the posting to the HTML
+     * @date May 13 2021
+     */
+  displayInProximityContainer() {
+    $("#proximity-card-listing").prepend(this.buildHTML())
+    editPostEventListner(this.HLID, this)
   }
 
   /**
@@ -210,21 +220,23 @@ class Post {
       `
     <div class="center-user listing" id=${this.HLID}>
       <div class="property-card">
-        <div class=".property-card-image">
+        <div class="property-card-image">
           <img id="img-goes-here">
         </div>
       <div class="property-card-description">
         <div class="name">
           <h3 class='title'>${this.t}</h3>
-          <a href="/storefront?user=${this.uID}"><h5 calss='name'>${this.un}</h5></a>
+          <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
         </div>
       <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
         <span class='price'>Price: $${this.pri}</span>
-        <span class='quantity'>Quantity: ${this.q}</span>
+        <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
         <p class='date-posted'>${this.posted}</p>
       `
     if (this.uID == this.currentUserID) {
       html += '<i class="edit fas fa-edit"></i></div>'
+    } else {
+      html += '<i class="chat fas fa-comment"></i></div>'
     }
 
     return html;
@@ -237,8 +249,8 @@ class Post {
   updateHTML() {
     $("#" + this.HLID + " .title").text(this.t)
     $("#" + this.HLID + " .description").text(this.d)
-    $("#" + this.HLID + " .price").text(this.pri)
-    $("#" + this.HLID + " .quantity").text(this.q)
+    $("#" + this.HLID + " .price").text("Price: $" + this.pri)
+    $("#" + this.HLID + " .quantity").text("Quantity: " + this.q + " " + this.u)
     $("#" + this.HLID + " .date-posted").text(this.t)
   }
 
@@ -260,6 +272,7 @@ class Post {
       userID: this.uID,
       ID: this.ID
     }
+    console.log(obj);
     return obj
   }
 
@@ -310,4 +323,49 @@ function buildPostList(posts, currentUserId) {
 }
 
 
+/**
+ * This event listner will post, the post user ID to server and check to see if a
+ * chat already exist. If it does the user will be redirected to that chat. If
+ * the chat does not exit it will make a new one and redirect the user to the 
+ * chat.
+ * @author Ravinder Shokar
+ * @version 1.0 
+ * @date May 19 2021 
+ * @param {Post} post user clicked on. 
+ */
+function createChatRoomEventListner(post) {
+  let query = "#" + post.htmlID + " .chat";
+  $(query).on("click", (e) => {
+    createChatRoom(post);
+  })
+}
 
+/**
+ * This function will send the post to the server in the purpose to redirect to the 
+ * correct chat or make an new chat and then redirect to the new chat.
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 19 2021
+ * @param {*} post 
+ */
+function createChatRoom(post) {
+  $.ajax({
+    url: "create_chat_room",
+    type: "POST",
+    dataType: "JSON",
+    data: post,
+    success: (data) => {
+      console.log(data);
+      if (data.status == "error") {
+        console.log("error")
+        console.log(data);
+      } else {
+        const url = new URL(window.location.href);
+        window.location.href = "/chat?chat=" + data.id;
+      }
+    },
+    error: (err) => {
+      console.log(err);
+    }
+  })
+}

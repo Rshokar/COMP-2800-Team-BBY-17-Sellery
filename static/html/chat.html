@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sellary Template</title>
+  <title>Chat</title>
   <!-- favicon -->
   <link rel="shorcut icon" type="image/png" href="pics/about.jpg">
 
@@ -21,6 +21,9 @@
   <link href="css/post.css" rel="stylesheet">
 
   <link href="css/card.css" rel="stylesheet">
+
+  <!-- Custom CSS for chat page -->
+  <link href="css/chat.css" rel="stylesheet">
 </head>
 
 <body>
@@ -32,10 +35,33 @@
   <!-- Content goes here -->
   <!-- Content goes here -->
   <!-- Content goes here -->
-  <div id="content_section">
-    <div id="new-post">
 
+  <div id="head">
+    <div id="back">
+      <div id="button">
+        <i class="fas fa-arrow-left"></i>
+      </div>
     </div>
+    <div id="you_name">
+      <div id="name">
+        <h3 id="you"></h3>
+      </div>
+    </div>
+  </div>
+  <div id="chat_window">
+    <div id="messages">
+    </div>
+    <div id="input">
+      <input id="input_field" type="test" placeholder="message">
+      <button id="submit">Submit</button>
+      <span id=""></span>
+      <p id="my-name" style="visibility:hidden;"></p>
+    </div>
+  </div>
+
+
+
+  <div id="new-post">
   </div>
   <!-- Content Ends -->
   <!-- Content Ends -->
@@ -54,7 +80,7 @@
     <div class="container py-1">
       <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
 
-      <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
+      <a id="feed" class="btn fas fa-list fa-2x px-auto" href="/feed"></a>
     </div>
   </footer>
 </body>
@@ -82,8 +108,11 @@ function postOnePost() -->
 to in different files. -->
 <script src="js/new_post.js"></script>
 
+<!-- Imports for socket.io -->
+<script src="/socket.io/socket.io.js"></script>
 
 
+<script src="js/chat.js"></script>
 
 
 </html>
