@@ -132,9 +132,8 @@ io.on('connection', (socket) => {
 
   //User sends message
   socket.on("chat message", (msg, roomID) => {
-    console.log(msg, roomID)
     addMessage(msg, roomID);
-    io.to(roomID).emit('message', msg);
+    io.emit('message', msg);
   });
 
 })
@@ -512,7 +511,7 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
 
     //Check if a chat room exist. 
     const chatRoom = await db.findOne({
-      ID: { "$in": [userOne && userTwo] }
+      ID: { "$all": [userOne, userTwo] }
     });
 
     if (chatRoom) {
@@ -680,7 +679,7 @@ app.post('/signup', async (req, res) => {
     }).then((data) => {
       console.log(data);
       const user = data;
-      const token = jwt.sign({ id: user.ops[0]._id, eame: user.ops[0].name }, 'gimp', {
+      const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
       console.log(user.ops[0]._id);
