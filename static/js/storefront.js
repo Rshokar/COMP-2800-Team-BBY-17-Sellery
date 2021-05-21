@@ -172,8 +172,8 @@ $(document).ready(function () {
      console.log("client bio data:" , bioData);
      
     $.ajax({
-      url: "/xxx",
-      type: "GET",
+      url: "/update_bio",
+      type: "POST",
       dataType: "JSON",
       data: bioData,
       success: (data) => {

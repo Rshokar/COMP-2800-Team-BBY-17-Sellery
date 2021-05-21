@@ -655,7 +655,7 @@ app.post("/createReviews", (req, res) => {
  * @version 1.0
  * @date May 20 2021
  */
- app.post("/update_bio", requireLogin, (req, res) => {
+ app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
 
   console.log("server: " , req);
@@ -715,7 +715,7 @@ app.post("/createReviews", (req, res) => {
  * @version 1.0
  * @date May 20 2021
  */
- app.get("/xxx", requireLogin, (req, res) => {
+ app.post("/xxx", requireLogin, async (req, res) => {
   let post = req.body;
 
   console.log("server: " , req);
