@@ -189,7 +189,6 @@ app.post("/post_post", requireLogin, (req, res) => {
     console.log(decodedToken);
     db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
       .then((data) => {
-        console.log(data);
         const user = data;
         db.collection("post").insertOne({
           description: post.description,
