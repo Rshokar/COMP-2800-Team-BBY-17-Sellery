@@ -220,7 +220,7 @@ class Post {
         </div>
       <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
         <span class='price'>Price: $${this.pri}</span>
-        <span class='quantity'>Quantity: ${this.q}</span>
+        <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
         <p class='date-posted'>${this.posted}</p>
       `
     if (this.uID == this.currentUserID) {
@@ -237,8 +237,8 @@ class Post {
   updateHTML() {
     $("#" + this.HLID + " .title").text(this.t)
     $("#" + this.HLID + " .description").text(this.d)
-    $("#" + this.HLID + " .price").text(this.pri)
-    $("#" + this.HLID + " .quantity").text(this.q)
+    $("#" + this.HLID + " .price").text("Price: $" + this.pri)
+    $("#" + this.HLID + " .quantity").text("Quantity: " + this.q + " " + this.u)
     $("#" + this.HLID + " .date-posted").text(this.t)
   }
 
@@ -260,6 +260,7 @@ class Post {
       userID: this.uID,
       ID: this.ID
     }
+    console.log(obj);
     return obj
   }
 

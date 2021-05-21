@@ -248,7 +248,7 @@ app.post("/update_post", requireLogin, async (req, res) => {
     $set: {
       title: post.title,
       description: post.description,
-      units: post.uinits,
+      units: post.units,
       price: post.price,
       quantity: post.quantity,
     }

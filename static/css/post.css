@@ -122,3 +122,17 @@
     border-radius: 10px;
     padding: 5px;
 }
+
+.radio-container {
+    display: flex;
+    align-items: center;
+}
+
+input[type="radio"] {
+    margin: 10px;
+    transform: translateY(7px);
+}
+
+label[for="weightOptions"], select[name="weightOptions"] {
+    display: none;
+}
