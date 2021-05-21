@@ -5,6 +5,20 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
+const fs = require('fs');
+const path = require('path');
+
+
+const crypto = require('crypto');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
+
+
 const {
   readFile
 } = require('fs');
@@ -18,7 +32,6 @@ const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
-const initRoutes = require("./static/routes/web");
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
@@ -26,13 +39,37 @@ app.use("/html", express.static("static/html"));
 // for about page pics and favicon
 app.use("/pics", express.static("static/pics"));
 
+app.use("/views", express.static("static/views"));
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-initRoutes(app);
+
+app.use(methodOverride('_method'));
+app.set('views', path.join(__dirname, './static/views'))
+app.set('view engine', 'ejs');
+
+
 app.use(cookieParser());
+
+
+/**
+ * Used for logging. Logging is set to rotate daily
+ * @author Arron Ferguson, Gurshawn Sehkon
+ * @date May-18-2021
+ */
+const accessLogStream = rfs.createStream('access.log', {
+  interval: '1d',
+  path: path.join(__dirname, 'static/log')
+});
+app.use(morgan(':referrer :url :user-agent', {
+  stream: accessLogStream
+}));
+
+
 
 
 /**
@@ -40,6 +77,10 @@ app.use(cookieParser());
  * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
  */
 const uri = "mongodb+srv://testing:gcX9e2D4a4HXprR0@sellery.4rqio.mongodb.net/Sellery?retryWrites=true&w=majority"
+
+
+
+
 
 // Mongo DB Client.
 const client = new MongoClient(uri, {
@@ -62,7 +103,6 @@ async function main() {
 }
 
 main().catch(console.error);
-
 
 // async function listDatabases(client) {
 //   databasesList = await client.db().admin().listDatabases();
@@ -420,8 +460,14 @@ app.post('/signup', async (req, res) => {
       const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
-      res.cookie('jwt', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-      res.status(200).json({ user: user._id });
+      console.log(user.ops[0]._id);
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+      });
+      res.status(200).json({
+        user: user._id
+      });
     }).catch((err) => {
       let error = "password must be longer than 7 characters long";
       if (err.code === 11000) {
@@ -501,8 +547,8 @@ app.get('/logout', (req, res) => {
  * This route gets the currently logged in users posts
  * @author Mike Lim
  * @date May 10 2021  
-*/
-app.get("/generate_my_produce", (req, res) => {
+ */
+app.get("/generate_user_produce", (req, res) => {
 
   const token = req.cookies.jwt;
 
