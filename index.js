@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
