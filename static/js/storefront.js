@@ -21,15 +21,24 @@ $(document).ready(function () {
     url: "/storefront-data",
     dataType: "json",
     type: "GET",
-    data: { format: "getJSONBio" },
     success: function (data) {
-      console.log("Data Received: ", data);
-      let url = data[0].url;
-      let name = data[0].name;
-      let bio = data[0].bio;
-      $("#name-goes-here").html(name);
-      $("#bio-goes-here").html(bio);
-      $("#img-goes-here").attr("src", url);
+      console.log(data);
+      let name = data.result.name;
+      let bio = data.result.bio;
+      let profile_pic = data.result.profile_pic;
+      // url data:image/jpeg;charset=utf-8;base64,/9j/4QAWRXhpZgAATU0AKgAAAAgAAAAAAAD/4Q...
+      if (!profile_pic) {
+        let url = '/pics/about.png';
+        $("#name-goes-here").html(name);
+        $("#bio-goes-here").html(bio);
+        $("#img-goes-here").attr("src", url);
+      } else {
+        let url = `data:${profile_pic.contentType};charset=utf-8;base64,${profile_pic.imageBase64}`;
+        $("#name-goes-here").html(name);
+        $("#bio-goes-here").html(bio);
+        $("#img-goes-here").attr("src", url);
+      }
+      
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
@@ -93,7 +102,6 @@ $(document).ready(function () {
       error: function (jqXHR, textStatus, errorThrown) {
         $("#p1").text(jqXHR.statusText);
         console.log("ERROR:", jqXHR, textStatus, errorThrown);
-
       }
     })
   }

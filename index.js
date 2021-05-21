@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -18,7 +20,20 @@ const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
-const initRoutes = require("./static/routes/web");
+// set storage
+var storage = multer.diskStorage({
+  // destination: function (req, res, cb) {
+  //   cb(null, 'uploads');
+  // },
+  filename: function(req, file, cb) {
+    var ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
+    cb(null, file.fieldname + '-' + Date.now() + ext);
+  }
+})
+
+store = multer({
+  storage: storage
+})
 
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
@@ -31,7 +46,6 @@ app.use(express.json());
 app.use(express.urlencoded({
   extended: true
 }));
-initRoutes(app);
 app.use(cookieParser());
 
 
@@ -202,27 +216,17 @@ app.post("/post_post", requireLogin, (req, res) => {
  * @date May 06 2021
  */
 app.get("/storefront-data", requireLogin, (req, res) => {
-  let formatOfResponse = req.query['format'];
+  const token = req.cookies.jwt;
 
-  user_id = '60956e66db7bf207dbc33255';
+  jwt.verify(token, 'gimp', (err, decodedToken) => {
+    console.log(decodedToken);
 
-  if (formatOfResponse == 'getJSONBio') {
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello you made it to the storefront.");
-    client
-      .db("sellery")
-      .collection("sample_data")
-      .find({
-        "_id": ObjectId(user_id)
+    client.db("sellery").collection("users")
+      .findOne( {"_id": ObjectId(decodedToken.id)} )
+      .then((data) => {
+        res.send({ result: data });
       })
-      .toArray(function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        res.send(result);
-      });
-    // console.log(data);
-    // res.send(data);
-  }
+  })
 })
 
 /**
@@ -649,8 +653,50 @@ app.post("/createReviews", (req, res) => {
     })
 });
 
+/**
+ * This route will upload profile picture
+ * @author Gurshawn Sekhon, Jimun Jang
+ * @date May-10-2021
+ */
 
+app.post('/uploadImage', store.array('images'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
 
+  if (!files) {
+    const error = new Error('Please choose files');
+    error.httpStatusCode = 400;
+    return next(error);
+  } 
+
+  // convert images into base64 encoding
+  let images = files.map((file) => {
+    let image = fs.readFileSync(file.path);
+
+    return encode_image = image.toString('base64');
+  })
+
+  let result = images.map((src, index) => {
+    const filename = files[index].originalname;
+    const contentType = files[index].mimetype;
+    const imageBase64 = src;
+    jwt.verify(token, 'gimp', (err, decodedToken) => {
+      client.db("sellery").collection("users").findOneAndUpdate(
+        { "_id": ObjectId(decodedToken.id) },
+        { $set: { "profile_pic": {
+          filename,
+          contentType,
+          imageBase64
+        }} }
+      ).then((data) => {
+        res.redirect('/storefront')
+      }).catch((err) => {
+        res.send(err);
+      })
+    })
+  })
+
+})
 
 
 app.listen(8000, () => console.log("App available on http://localhost:8000"));

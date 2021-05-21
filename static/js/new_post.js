@@ -95,7 +95,6 @@ next_button.addEventListener('click', function () {
       units: units,
       time: time
     }
-
     submitNewEventListner(obj);
   } else {
     const error = document.querySelector('#new-post .error');
