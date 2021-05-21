@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-const fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -13,11 +12,6 @@ const fs = require('fs');
 const path = require('path');
 
 
-const crypto = require('crypto');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const GridFsStorage = require('multer-gridfs-storage');
-const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
 
 
@@ -39,7 +33,7 @@ var storage = multer.diskStorage({
   // destination: function (req, res, cb) {
   //   cb(null, 'uploads');
   // },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     var ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
     cb(null, file.fieldname + '-' + Date.now() + ext);
   }
@@ -237,7 +231,7 @@ app.post("/post_post", requireLogin, (req, res) => {
           poster_name: user.name,
           user_id: decodedToken.id
         }).then(() => {
-          db.collection("post").createIndex( { location : "2dsphere" });
+          db.collection("post").createIndex({ location: "2dsphere" });
           let message = "success";
           res.send({ message });
         })
@@ -258,7 +252,7 @@ app.get("/storefront-data", requireLogin, (req, res) => {
     console.log(decodedToken);
 
     client.db("sellery").collection("users")
-      .findOne( {"_id": ObjectId(decodedToken.id)} )
+      .findOne({ "_id": ObjectId(decodedToken.id) })
       .then((data) => {
         res.send({ result: data });
       })
@@ -551,7 +545,7 @@ app.get('/logout', (req, res) => {
  * @author Mike Lim
  * @date May 10 2021  
  */
-app.get("/generate_user_produce", (req, res) => {
+app.get("/generate_my_produce", (req, res) => {
 
   const token = req.cookies.jwt;
 
@@ -712,8 +706,8 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
     const error = new Error('Please choose files');
     error.httpStatusCode = 400;
     return next(error);
-  } 
- 
+  }
+
   // convert images into base64 encoding
   let images = files.map((file) => {
     let image = fs.readFileSync(file.path);
@@ -728,11 +722,15 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
     jwt.verify(token, 'gimp', (err, decodedToken) => {
       client.db("sellery").collection("users").findOneAndUpdate(
         { "_id": ObjectId(decodedToken.id) },
-        { $set: { "profile_pic": {
-          filename,
-          contentType,
-          imageBase64
-        }} }
+        {
+          $set: {
+            "profile_pic": {
+              filename,
+              contentType,
+              imageBase64
+            }
+          }
+        }
       ).then((data) => {
         res.redirect('/storefront')
       }).catch((err) => {
@@ -749,10 +747,10 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
  * @version 1.0
  * @date May 20 2021
  */
- app.post("/update_bio", requireLogin, async (req, res) => {
+app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
 
-  console.log("server: " , req);
+  console.log("server: ", req);
 
   const query = {
     "_id": ObjectId(post.ID)
@@ -816,32 +814,32 @@ app.get('/proximity_search', (req, res) => {
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
-    .then((data) => {
-      const longitude = Number(data.location.coordinates[0]);
-      const latitude = Number(data.location.coordinates[1]);
-      console.log(longitude, latitude, distance);
-      db.collection("post").find(
-        {
-          location: 
+      .then((data) => {
+        const longitude = Number(data.location.coordinates[0]);
+        const latitude = Number(data.location.coordinates[1]);
+        console.log(longitude, latitude, distance);
+        db.collection("post").find(
           {
-            $near: 
+            location:
             {
-              $geometry: { type: "Point", coordinates: [longitude, latitude]},
-              $maxDistance: distance
+              $near:
+              {
+                $geometry: { type: "Point", coordinates: [longitude, latitude] },
+                $maxDistance: distance
+              }
             }
           }
-        }
-      ).toArray((err, result) => {
-        if (err) {
-          let obj = { err };
-          res.send(err);
-        } else {
-          
-          let obj = { user_id: decodedToken.id, result };
-          res.send(obj);
-        }
-      })
-    });
+        ).toArray((err, result) => {
+          if (err) {
+            let obj = { err };
+            res.send(err);
+          } else {
+
+            let obj = { user_id: decodedToken.id, result };
+            res.send(obj);
+          }
+        })
+      });
   })
 })
 

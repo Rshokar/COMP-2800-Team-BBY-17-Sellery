@@ -57,10 +57,8 @@ function genListing() {
 function genMyStoreFrontListing() {
   $.ajax({
     url: "/generate_my_produce",
-    dataType: "json",
+    dataType: "JSON",
     type: "GET",
-    // use the user id
-    // data: "userid",
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
@@ -86,7 +84,7 @@ function genMyStoreFrontListing() {
 function genStoreFrontListing(userId) {
   $.ajax({
     url: "/generate_user_produce",
-    dataType: "json",
+    dataType: "JSON",
     type: "POST",
     data: {
       id: userId
