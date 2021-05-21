@@ -68,7 +68,8 @@ main().catch(console.error);
 io.on('connection', (socket) => {
 
   const chatBot = {
-    name: "Chat Bot",
+    ID: -1,
+    name: "Chat Bot"
   }
 
 
@@ -77,7 +78,7 @@ io.on('connection', (socket) => {
     socket.join(room)
 
     // Welcome to current user. 
-    socket.emit('message', formatMessage(chatBot, 'Welcome to Sellary'));
+    socket.emit('message', formatMessage(chatBot, 'Welcome to the Chat'));
 
     //Broadcast when a user connects
     socket.broadcast.to(room).emit("message", formatMessage(chatBot, "A user has joined the chat"));
@@ -93,12 +94,27 @@ io.on('connection', (socket) => {
   //User sends message 
   socket.on("chat message", (msg, roomID) => {
     console.log(msg, roomID)
-    addMessageToDB(msg, roomID);
-    io.to(roomID).emit('message', formatMessage(chatBot, msg));
+    addMessage(msg, roomID);
+    io.to(roomID).emit('message', msg);
   });
 
 })
 
+/**
+ * This function will push a message to the chatroom in mongoDB to save all messages
+ * @author Mike Lim
+ * @version 1.0
+ * @date May 20 2021
+ * @param {} message message object holding the single message
+ */
+function addMessage(message, room) {
+  const db = client
+    .db("sellery")
+    .collection("chat");
+
+  db.update({ "_id": ObjectId(room) }, { $push: { "messages": message } });
+
+}
 
 // async function listDatabases(client) {
 //   databasesList = await client.db().admin().listDatabases();
@@ -375,13 +391,11 @@ app.get("/generate_produce", requireLogin, (req, res) => {
           user_id: decodedToken.id,
           results: result,
         }
-        console.log(obj);
         if (err) throw err;
         res.send(obj);
       });
   })
 
-  console.log("Hello you made it generate produce.");
 
   // console.log(data);
   // res.send(data);
@@ -422,7 +436,7 @@ app.get('/signup', (req, res) => {
  * @author Ravinder Shokar 
  * @date May-18-2021
  */
-app.get('/chats', (req, res) => {
+app.get('/chats', requireLogin, (req, res) => {
   readFile("static/html/chats.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("Sorry, out of order.");
@@ -454,56 +468,61 @@ app.get('/chat', requireLogin, (req, res) => {
  * @date May 19 2021
  */
 app.post("/create_chat_room", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
   let post = req.body;
 
-  console.log(post);
+  jwt.verify(token, "gimp", async (err, decodedToken) => {
+    console.log("Token", decodedToken);
+    let userOne = post.currentUserID;
+    let userTwo = post.uID
+    let obj;
 
-  let userOne = post.currentUserID;
-  let userTwo = post.uID
-  let obj;
+    const db = client.db("sellery").collection('chat');
 
-  const db = client.db("sellery").collection('chat');
+    //Check if a chat room exist. 
+    const chatRoom = await db.findOne({
+      ID: { "$in": [userOne && userTwo] }
+    });
 
-  //Check if a chat room exist. 
-  const chatRoom = await db.findOne({
-    ID: { "$in": [userOne && userTwo] }
-  });
+    if (chatRoom) {
+      console.log("Chat room exist");
 
-  if (chatRoom) {
-    console.log("Chat room exist");
-
-    //Redirect to chatroom
-    console.log(chatRoom);
-    res.send({
-      status: "success",
-      message: "Chat room found",
-      id: chatRoom._id
-    })
-  } else {
-    console.log("Chat room does not exist");
-
-    // Create Chat room
-    db.insertOne({
-      names: ["Ravinder", post.un],
-      ID: [userOne, userTwo],
-      messages: []
-    },
-      (err, doc) => {
-        if (err) {
-          res.send({
-            status: "error",
-            message: "Erro finding chatroom",
-          })
-        } else {
-          console.log(doc);
-          res.send({
-            status: "success",
-            message: "chat room found",
-            id: doc.insertedId
-          })
-        }
+      //Redirect to chatroom
+      console.log(chatRoom);
+      res.send({
+        status: "success",
+        message: "Chat room found",
+        id: chatRoom._id
       })
-  }
+    } else {
+      console.log("Chat room does not exist");
+
+      // Create Chat room
+      db.insertOne({
+        names: [decodedToken.userName, post.un],
+        ID: [userOne, userTwo],
+        messages: []
+      },
+        (err, doc) => {
+          if (err) {
+            res.send({
+              status: "error",
+              message: "Erro finding chatroom",
+            })
+          } else {
+            res.send({
+              status: "success",
+              message: "chat room found",
+              id: doc.insertedId
+            })
+          }
+        })
+    }
+
+
+  })
+
+
 })
 
 
@@ -523,6 +542,7 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     let you;
     let userID = decodedToken.id;
     let roomID = req.query.room;
+    console.log(roomID);
 
 
     const database = client.db("sellery");
@@ -560,6 +580,37 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     res.send(obj);
   })
 });
+
+/**
+ * This route is responsible for getting chats assoiciated with the currently 
+ * logged in user
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @data May 20 2021
+ */
+app.get("/get_my_chats", requireLogin, async (req, res) => {
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    let userID = decodedToken.id;
+
+    const database = client.db("sellery");
+    const chats = database.collection('chat');
+
+    const query = { ID: userID };
+
+    await chats.find(query).toArray((err, result) => {
+      if (err) throw err;
+      console.log(result);
+      res.send({
+        status: "success",
+        message: "Successfuly got users chats",
+        results: result,
+        userID: userID
+      })
+    })
+  })
+})
 
 /**
  * Stores user info into our mongoDB database when user signs up.
@@ -636,8 +687,10 @@ app.post('/login', async (req, res) => {
   });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
+    console.log("login User", user);
     if (auth) {
       const token = jwt.sign({
+        userName: user.name,
         id: user._id
       }, 'gimp', {
         expiresIn: 24 * 60 * 60
@@ -697,7 +750,6 @@ app.get("/generate_my_produce", (req, res) => {
           userId: userId,
           results: result
         }
-        console.log("generate_my_produce", obj);
         res.send(obj);
       });
 

@@ -3,9 +3,15 @@ var socket = io();
 const submit = document.getElementById("submit");
 const input = document.getElementById("input_field");
 const messages = document.getElementById("messages");
+const back = document.getElementById("button");
 
 const url = new URL(window.location.href);
 const roomID = url.searchParams.get('chat');
+
+
+back.addEventListener("click", (e) => {
+  window.location.href = "/chats";
+})
 
 
 //Set up Dom
@@ -14,8 +20,7 @@ loadChat(roomID);
 
 //Message from server
 socket.on('message', (msg) => {
-  console.log(msg)
-  outputMessage(msg)
+  outputMessage(msg, { ID: 0 })
 })
 
 
@@ -26,6 +31,7 @@ submit.addEventListener('click', (e) => {
 
   if (input.value) {
     let msg = buildMsgObj();
+    console.log(msg);
     socket.emit('chat message', msg, roomID);
     input.value = '';
     input.focus()
@@ -41,7 +47,7 @@ submit.addEventListener('click', (e) => {
  * @date May 18 2021
  * @param {string} msg 
  */
-function outputMessage(msg) {
+function outputMessage(msg, me, you) {
   console.log(msg);
   var div = document.createElement("div");
   div.classList.add("message");
@@ -49,24 +55,32 @@ function outputMessage(msg) {
   //This will needed to be filled with either sender or reciever
   //div.classList.add(person)
   let html;
-  if (isMine(msg.user.ID)) {
+  if (msg.owner.ID === me.ID) {
+    div.classList.add("me");
     html =
       `
-      <p class="text me">
-        ${msg.msg}
+      <p class="text">
+        ${msg.message}
       </p>
-         <span class="meta">${msg.user.name} ${msg.time}</span>
+         <span class="meta">${msg.owner.name} ${msg.timeStamp}</span>
       `;
-  } else {
+  } else if (msg.owner.ID == -1) {
+    div.classList.add("chatbot");
     html = `
-        <p class="text you">
-        ${msg.msg}
+        <p class="text">
+        ${msg.message}
         </p>
-        <span class="meta">${msg.user.name} ${msg.time}</span>
+        <span class="meta">Chat Bot ${msg.timeStamp}</span>
+        `;
+  } else {
+    div.classList.add("you");
+    html = `
+        <p class="text">
+        ${msg.message}
+        </p>
+        <span class="meta">${msg.owner.name} ${msg.timeStamp}</span>
         `;
   }
-
-
   div.innerHTML = html
 
   messages.append(div);
@@ -91,10 +105,11 @@ function loadChat(room) {
     data: { room },
     success: (data) => {
       $("#input span").attr("id", data.me.ID);
-      console.log(data);
+      $("#input p").text(data.me.name);
       $("#you").text(data.you.name)
+      //console.log(data)
       for (let msg in data.messages) {
-        outputMessage(msg);
+        outputMessage(data.messages[msg], data.me, data.you);
       }
       // Join chatroom
       socket.emit("joinRoom", roomID);
@@ -135,16 +150,35 @@ function isMine(id) {
 function buildMsgObj() {
   var d = new Date();
 
-  var datetime = d.getDate() + "-"
-    + (d.getMonth() + 1) + "-"
-    + d.getFullYear() + "  "
-    + d.getHours() + ":"
-    + d.getMinutes() + ":"
-    + d.getSeconds();
-
   return {
-    owner: $("#input span").attr("id"),
+    owner: {
+      id: $("#input span").attr("id"),
+      name: $("#input p").text(),
+    },
     message: input.value,
-    timeStamp: d
+    timeStamp: formatAMPM(d),
   }
+}
+
+
+/**
+ * I could not be bothered to figure this out myself and i still need to do alot of things. 
+ * https://stackoverflow.com/questions/8888491/how-do-you-display-javascript-datetime-in-12-hour-am-pm-format
+ * Ravinder Shokar
+ * @author WasiF
+ * @date Sep 20 2020
+ * @param {*} date  object
+ * @returns string formated to AM PM
+ */
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+
+  console.log(strTime);
+  return strTime;
 }

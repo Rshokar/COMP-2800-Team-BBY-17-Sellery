@@ -11,27 +11,12 @@ const moment = require('moment');
  * @param {*} msg beging sent to room
  * @returns a obj containing msg, user, and timestamp. 
  */
-function formatMessage(user, msg) {
+function formatMessage(owner, message) {
   return {
-    user,
-    msg,
-    time: moment().format("h:mm a")
+    owner,
+    message,
+    timeStamp: moment().format("h:mm a")
   }
-}
-
-/**
- * This function will push a message to the chatroom in mongoDB to save all messages
- * @author Mike Lim
- * @version 1.0
- * @date May 20 2021
- * @param {} message message object holding the single message
- */
-function addMessage(message) {
-  const db = client
-  .db("sellery")
-  .collection("chat");
-
-  db.update({ "_id": ObjectID(message.id) }, { $push: { "messages": message }});
 }
 
 
