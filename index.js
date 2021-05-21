@@ -132,9 +132,8 @@ io.on('connection', (socket) => {
 
   //User sends message
   socket.on("chat message", (msg, roomID) => {
-    console.log(msg, roomID)
     addMessage(msg, roomID);
-    io.to(roomID).emit('message', msg);
+    io.emit('message', msg);
   });
 
 })
@@ -512,7 +511,7 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
 
     //Check if a chat room exist. 
     const chatRoom = await db.findOne({
-      ID: { "$in": [userOne && userTwo] }
+      ID: { "$all": [userOne, userTwo] }
     });
 
     if (chatRoom) {
@@ -623,6 +622,7 @@ app.get("/get_my_chats", requireLogin, async (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    console.log(decodedToken);
     let userID = decodedToken.id;
 
     const database = client.db("sellery");
@@ -632,7 +632,6 @@ app.get("/get_my_chats", requireLogin, async (req, res) => {
 
     await chats.find(query).toArray((err, result) => {
       if (err) throw err;
-      console.log(result);
       res.send({
         status: "success",
         message: "Successfuly got users chats",
@@ -678,8 +677,9 @@ app.post('/signup', async (req, res) => {
       email, // validate it
       password: hashedPassword,
     }).then((data) => {
+      console.log(data);
       const user = data;
-      const token = jwt.sign({ id: user.ops[0]._id }, 'gimp', {
+      const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
         expiresIn: 24 * 60 * 60
       });
       console.log(user.ops[0]._id);
