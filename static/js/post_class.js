@@ -220,13 +220,13 @@ class Post {
       `
     <div class="center-user listing" id=${this.HLID}>
       <div class="property-card">
-        <div class=".property-card-image">
+        <div class="property-card-image">
           <img id="img-goes-here">
         </div>
       <div class="property-card-description">
         <div class="name">
           <h3 class='title'>${this.t}</h3>
-          <a href="/storefront?user=${this.uID}"><h5 calss='name'>${this.un}</h5></a>
+          <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
         </div>
       <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
         <span class='price'>Price: $${this.pri}</span>

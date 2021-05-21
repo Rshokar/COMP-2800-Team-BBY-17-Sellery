@@ -5,6 +5,7 @@ const inputField = document.querySelector('#proximity-search');
 const proximityBtn = document.querySelector('#proximity-button');
 const p = document.querySelector('.error-handle');
 const viewAll = document.querySelector('#drop');
+const easterCard = document.querySelector('#easter-egg-card');
 
 viewAll.addEventListener('click', () => {
     window.location.href = "/feed";
@@ -13,6 +14,7 @@ viewAll.addEventListener('click', () => {
 inputField.addEventListener('click', () => {
     p.textContent = "";
     inputField.value = "";
+    easterCard.style.display = "none";
 })
 
 proxDropDown.addEventListener('click', () => {
@@ -21,17 +23,23 @@ proxDropDown.addEventListener('click', () => {
     if (currentStatus == 'fas fa-caret-down') {
         status.setAttribute('class', 'fas fa-caret-up');
         search_bar.style.display = "flex";
+        easterCard.style.display = "none";
         p.textContent = "";
     } else {
         status.setAttribute('class', 'fas fa-caret-down');
         search_bar.style.display = "none";
         p.textContent = "";
+        easterCard.style.display = "none";
     }
 });
 
 proximityBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const distance = document.querySelector('input[id="proximity-search"]').value;
+    if (distance.toLowerCase() == "superhuman beeing") {
+        console.log('typed successfully');
+        easterCard.style.display = "initial";
+    }
     const distanceInNum = Number(distance);
     const container = document.querySelector('#proximity-card-listing');
     const proximityCards = document.querySelectorAll('#proximity-card-listing div');
@@ -46,7 +54,7 @@ proximityBtn.addEventListener('click', (e) => {
                 distance: distanceInNum
             },
             success: function (data) {
-                console.log(data);
+                easterCard.style.display = "none";
                 const allData = document.querySelector('#card-listing');
                 proximityCards.forEach((card) => {
                     card.remove();
@@ -60,6 +68,7 @@ proximityBtn.addEventListener('click', (e) => {
                     }
                     container.style.display = "initial";
                 } else {
+                    easterCard.style.display = "none";
                     allData.style.display = "none";
                     container.style.display = "none";
                     p.textContent = "No Matching Results";
