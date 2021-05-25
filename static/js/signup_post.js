@@ -5,6 +5,8 @@
  * @date May 10, 2021
 */
 
+"use strict";
+
 const form = $('form')[0];
 const error = $('.error')[0];
 const confirm_button = $('#confirm');
@@ -43,5 +45,5 @@ form.addEventListener('submit', async (e) => {
 })
 
 confirm_button.click(() => {
-    window.location.href = '/template';
+    window.location.href = '/feed';
 })

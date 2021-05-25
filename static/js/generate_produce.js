@@ -4,10 +4,13 @@
  * @date May-07-2021
  */
 
+"use strict";
+
 
 // might need to take in more arguments for filtering
 // no input required, gets data from user and displays to user
 function genListing() {
+  let newData;
   $.ajax({
     url: "/generate_produce",
     dataType: "json",
@@ -15,7 +18,7 @@ function genListing() {
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.user_id);
-      for (post in newData) {
+      for (let post in newData) {
         console.log(post)
         newData[post].appendHTML();
       }
@@ -55,6 +58,7 @@ function genListing() {
 // might need to take in more arguments for filtering
 // no input required, gets data from user and displays to user
 function genMyStoreFrontListing() {
+  let newData;
   $.ajax({
     url: "/generate_my_produce",
     dataType: "JSON",
@@ -62,7 +66,7 @@ function genMyStoreFrontListing() {
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
-      for (post in newData) {
+      for (let post in newData) {
         newData[post].appendHTML();
       }
       // app.posts = data;
@@ -82,6 +86,7 @@ function genMyStoreFrontListing() {
  * @param {*} userId if the owner of the post. 
  */
 function genStoreFrontListing(userId) {
+  let newData;
   $.ajax({
     url: "/generate_user_produce",
     dataType: "JSON",
@@ -92,7 +97,7 @@ function genStoreFrontListing(userId) {
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
-      for (post in newData) {
+      for (let post in newData) {
         newData[post].appendHTML();
       }
       // app.posts = data;

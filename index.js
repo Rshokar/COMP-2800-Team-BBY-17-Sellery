@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const { fs } = require("fs");
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -19,6 +20,8 @@ const { read } = require('fs/promises');
 const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
+
+"use strict";
 
 // set storage
 var storage = multer.diskStorage({
@@ -107,7 +110,7 @@ main().catch(console.error);
 io.on('connection', (socket) => {
 
   const chatBot = {
-    ID: -1,
+    id: -1,
     name: "Chat Bot"
   }
 
@@ -727,7 +730,6 @@ app.post('/login', async (req, res) => {
   });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
-    console.log("login User", user);
     if (auth) {
       const token = jwt.sign({
         userName: user.name,
