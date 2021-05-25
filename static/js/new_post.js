@@ -3,6 +3,8 @@
  * @date May 06 2021
  */
 
+"use strict";
+
 console.log("new_post.js")
 
 const newPostModal =
@@ -86,6 +88,8 @@ close_new_post.addEventListener("click", function () {
 
 next_button.addEventListener('click', function () {
 
+  let obj;
+
   const title = document.querySelector("#new-post #title").value;
   const quantity = document.querySelector("#new-post #quantity").value;
   const price = document.querySelector("#new-post #price").value;
@@ -153,12 +157,12 @@ function submitNewEventListner(post) {
   $("#confirm").click((e) => {
     console.log("I have been clicked");
     e.preventDefault;
-    data = getPostData();
+    let data = getPostData();
     resetNewPostModal();
 
     // Result will contain an OBJ with value error or success. Later 
     // Implement if check to see if post was sent succesfully. 
-    result = postOnePost(data);
+    let result = postOnePost(data);
 
     window.location.href = '/feed';
   })
@@ -189,6 +193,8 @@ $('#new-post .submit').click(() => {
  * @date May 07 2021 
  */
 function getPostData() {
+  let obj;
+
   let t = $("#new-post .title-preview").text()
   let d = $("#new-post .description-preview").text()
   let q = $("#new-post .quantity-preview").text()

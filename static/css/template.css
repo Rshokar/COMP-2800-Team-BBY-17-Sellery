@@ -8,6 +8,10 @@
     box-shadow:         3px 3px 5px 6px #ccc; /*chrome*/
 }
 
+#mobile_nav span{
+    margin-bottom: -1.5em;
+}
+
 #feed, #storefront{
     color: rgb(82,215,19);
 }
@@ -29,7 +33,7 @@
     box-shadow:         3px 3px 5px 6px #ccc; /*chrome*/
 }
 
-#new_post_container :hover {
+#new_post_container :hover{
     height: 50px;
     width: 50px;
     background-color: #1b512d;
@@ -70,4 +74,17 @@
     height: 50%;
     width: 100vw;
     z-index: -1;
+}
+
+#chat_link {
+    margin: .5em .5em .5em .5em;
+    padding: .5em .5em .5em .5em;
+    float: right;
+    background-color: white;
+    border-radius: 50%;
+}
+
+#chat_link i{
+    color: rgb(82,215,19);
+    font-size: 20pt;
 }

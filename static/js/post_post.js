@@ -13,6 +13,9 @@
  * @version 1.0 
  * @date May 06 2021
  */
+
+"use strict";
+
 function postOnePost(post) {
   $.ajax({
     url: "/post_post",

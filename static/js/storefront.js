@@ -1,3 +1,5 @@
+"use strict";
+
 
 $(document).ready(function () {
   const url = new URL(window.location.href);
@@ -9,7 +11,6 @@ $(document).ready(function () {
   if (userID) {
     genStoreFrontListing(userID);
   } else {
-    console.log("Inside")
     genMyStoreFrontListing();
     genReviews();
   }
@@ -38,7 +39,7 @@ $(document).ready(function () {
         $("#bio-goes-here").html(bio);
         $("#img-goes-here").attr("src", url);
       }
-      
+
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
@@ -67,33 +68,33 @@ $(document).ready(function () {
   /**
    * Event listeners for the edit modal.
    */
-   const edit_button = document.querySelector("#edit");
-   const edit_card = document.querySelector("#edit-modal");
-   const edit_close = document.querySelector("#edit-close");
- 
-   edit_button.addEventListener("click", function () {
-     console.log("Clicked reviews");
-     edit_card.style.display = "block";
-   });
- 
-   edit_close.addEventListener("click", function () {
-     console.log("edit x working");
-     edit_card.style.display = "none";
-   });
- 
+  const edit_button = document.querySelector("#edit");
+  const edit_card = document.querySelector("#edit-modal");
+  const edit_close = document.querySelector("#edit-close");
 
-   /**
-    * Window listens for click outside of modals to close.
-    */
-   window.onclick = function (event) {
-     if (event.target == edit_card) {
-       console.log("window close");
-       edit_card.style.display = "none";
-     }
-     if (event.target == review_card) {
-       review_card.style.display = "none";
-     }
-   };
+  edit_button.addEventListener("click", function () {
+    console.log("Clicked reviews");
+    edit_card.style.display = "block";
+  });
+
+  edit_close.addEventListener("click", function () {
+    console.log("edit x working");
+    edit_card.style.display = "none";
+  });
+
+
+  /**
+   * Window listens for click outside of modals to close.
+   */
+  window.onclick = function (event) {
+    if (event.target == edit_card) {
+      console.log("window close");
+      edit_card.style.display = "none";
+    }
+    if (event.target == review_card) {
+      review_card.style.display = "none";
+    }
+  };
 
   /**
    * This Vue app is used to add and remove data from HTML 
@@ -138,23 +139,23 @@ $(document).ready(function () {
    */
   var autocomplete;
   autocomplete = new google.maps.places.Autocomplete((document.getElementById('autocomplete')), {
-      types: ['address'],
-      componentRestrictions: {
-          country: "ca"
-      }
+    types: ['address'],
+    componentRestrictions: {
+      country: "ca"
+    }
   });
-  
+
   google.maps.event.addListener(autocomplete, 'place_changed', function () {
-      var userAddress = autocomplete.getPlace();
-      document.getElementById('latitude').value = userAddress.geometry.location.lat();
-      document.getElementById('longitude').value = userAddress.geometry.location.lng();
+    var userAddress = autocomplete.getPlace();
+    document.getElementById('latitude').value = userAddress.geometry.location.lat();
+    document.getElementById('longitude').value = userAddress.geometry.location.lng();
   });
 
 
   /**
    * Listens to the edit bio submit button and runs update() with the data.
    */
-  $("#submit").on("click" , function(event) {
+  $("#submit").on("click", function (event) {
     event.preventDefault();
     var newName = document.getElementById("newName").value;
     var newBio = document.getElementById("newBio").value;
@@ -162,10 +163,10 @@ $(document).ready(function () {
     var newLong = document.getElementById("longitude").value;
 
     //hard coded id for now.
-    var myObj = {ID: "60956e66db7bf207dbc33255", name: newName, bio: newBio, longitude: newLong, latitude: newLat};
-    
+    var myObj = { ID: "60956e66db7bf207dbc33255", name: newName, bio: newBio, longitude: newLong, latitude: newLat };
+
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
-    
+
 
     update(myObj);
 
@@ -176,9 +177,9 @@ $(document).ready(function () {
    * This function will update the bio with its new values. 
    * @return obj with either success or error. 
    */
-   function update(bioData) {
-     console.log("client bio data:" , bioData);
-     
+  function update(bioData) {
+    console.log("client bio data:", bioData);
+
     $.ajax({
       url: "/update_bio",
       type: "POST",
@@ -186,7 +187,7 @@ $(document).ready(function () {
       data: bioData,
       success: (data) => {
         console.log("success in update in client");
-        
+
         return data
       },
       error: (err) => {
@@ -195,11 +196,11 @@ $(document).ready(function () {
           message: "Error posting data",
           error: err,
         }
-        
+
         return obj;
       }
     })
-    
+
   }
 
 })

@@ -5,6 +5,9 @@
  * @date Mat 11 2021
  * @param index is the index where it located in the post list.
  */
+
+"use strict";
+
 function editPostEventListner(id, posting) {
   let query = "#" + id + " .edit"
   $(query).on("click", (e) => {
@@ -158,7 +161,7 @@ function nextPageEventListner(post) {
   const element = "#edit-posting .edit_card_container"
 
   $("#edit-posting .next").on("click", (e) => {
-    
+
     const bundle = $('#edit-posting #bundle')[0].checked; //false if unchecked, true if checked
     var unit;
     if (bundle) {

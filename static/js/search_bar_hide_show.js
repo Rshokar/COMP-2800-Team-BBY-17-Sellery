@@ -1,3 +1,5 @@
+"use strict";
+
 const proxDropDown = document.querySelector('#dropdown');
 const status = document.querySelector('#dropdown i');
 const search_bar = document.querySelector('#proximity-search-bar');
@@ -54,6 +56,7 @@ proximityBtn.addEventListener('click', (e) => {
                 distance: distanceInNum
             },
             success: function (data) {
+                let newData;
                 easterCard.style.display = "none";
                 const allData = document.querySelector('#card-listing');
                 proximityCards.forEach((card) => {
@@ -62,7 +65,7 @@ proximityBtn.addEventListener('click', (e) => {
                 if (data.result.length > 0) {
                     allData.style.display = "none";
                     newData = buildPostList(data.result, data.user_id);
-                    for (post in newData) {
+                    for (let post in newData) {
                         console.log(post)
                         newData[post].displayInProximityContainer();
                     }

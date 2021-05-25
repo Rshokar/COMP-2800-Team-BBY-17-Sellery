@@ -51,7 +51,7 @@
       <div id="bio"><span id="bio-goes-here"></span></div>
     </div> -->
 
-    <div id="image-div"><img id="kiwi" src="../pics/brocoli-background.jpg"/></div> 
+    <div id="image-div"><img id="kiwi" src="../pics/brocoli-background.jpg" /></div>
 
     <div class="center-user">
       <div class="property-card-user">
@@ -63,10 +63,10 @@
             <h5><span id="name-goes-here"></span><span>'s Storefront</span></h5>
           </div>
           <div id="bio"><span id="bio-goes-here"></span></div>
-            <form action="/uploadImage" enctype="multipart/form-data" id="upload_image" method="POST">
-              <input type="file" name="images">
-              <button>Upload Image</button>
-            </form>
+          <form action="/uploadImage" enctype="multipart/form-data" id="upload_image" method="POST">
+            <input type="file" name="images">
+            <button>Upload Image</button>
+          </form>
           <div id="reviews"><a id="check_reviews" href="#">Reviews</a></div>
           <div id="edit"><a id="edit" class="btn fas fa-edit fa-2x px-auto"></a></div>
         </div>
@@ -105,24 +105,24 @@
         <div class="edit-reviews">
           <div class="property-card-edit">
             <!-- <form id="bio-form"> -->
-              <legend>Edit Profile</legend>
-              <label id="name-label" for="name">Name:</label>
-              <input type="text" id="newName" name="name" placeholder="Enter your name">
+            <legend>Edit Profile</legend>
+            <label id="name-label" for="name">Name:</label>
+            <input type="text" id="newName" name="name" placeholder="Enter your name">
 
-              <label id="bio-label" for="bio">Bio:</label>
-              <textarea id="newBio" name="bio" placeholder="Enter your bio"></textarea>
+            <label id="bio-label" for="bio">Bio:</label>
+            <textarea id="newBio" name="bio" placeholder="Enter your bio"></textarea>
 
-              <label id="address-label" for="address">Address:</label>
-              <input name="address" id="autocomplete" type="text">
-              <input type="hidden" id="latitude" name="latitude">
-              <input type="hidden" id="longitude" name="longitude">
+            <label id="address-label" for="address">Address:</label>
+            <input name="address" id="autocomplete" type="text">
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
 
-              <label id="picture-label" for="picture">Profile Picture:</label>
-              <input type="file" onchange="showPic(this);" name="picture" >
-              <img id="preview" src="#" alt="">
+            <label id="picture-label" for="picture">Profile Picture:</label>
+            <input type="file" onchange="showPic(this);" name="picture">
+            <img id="preview" src="#" alt="">
 
-              <button id="submit">submit</button>
-              
+            <button id="submit">submit</button>
+
             <!-- </form> -->
           </div>
         </div>
@@ -130,8 +130,8 @@
     </div>
 
 
-      <!-- </div> -->
-    
+    <!-- </div> -->
+
     <button id="add_image">Add image</button>
     <div id="Listings"></div>
 
@@ -174,7 +174,7 @@
   <footer id="mobile_nav" class="navbar justify-content-evenly fixed-bottom">
     <div class="container py-1">
       <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
-
+      <span>Create Post</span>
       <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
     </div>
   </footer>
@@ -187,7 +187,8 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
   <!-- Google Maps -->
-  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrfs5cFhP7_7f_I2BTdcwp4JnXY5tHeU"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrfs5cFhP7_7f_I2BTdcwp4JnXY5tHeU"></script>
 
 
   <!-- Jquery -->

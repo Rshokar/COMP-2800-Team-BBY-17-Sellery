@@ -1,3 +1,5 @@
+"use strict";
+
 const namelist = document.querySelectorAll('.property-description h5');
 const searchBar = document.forms['search'].querySelector('input');
 

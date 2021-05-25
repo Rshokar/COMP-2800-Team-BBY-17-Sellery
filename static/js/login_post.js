@@ -5,6 +5,10 @@
  * @author Jimun Jang
  * @date May 10, 2021
 */
+
+"use strict";
+
+
 const form = $('form')[0];
 const error = $('.error')[0];
 
