@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -240,48 +241,6 @@ app.get("/storefront", requireLogin, (req, res) => {
       res.status(500).send("Sorry, out of order.");
     }
     res.send(html);
-  })
-})
-
-
-
-/**
- * This route will post data to Mongo DB. 
- * @author Ravinder Shokar 
- * @date May-05-2021
- */
-app.post("/post_post", requireLogin, (req, res) => {
-  const db = client.db("sellery");
-  let post = req.body;
-  const token = req.cookies.jwt;
-  console.log(post);
-
-  /** added this component to get user's location using token, then saving a post to
-   *  our database
-   * @author Jimun Jang
-   * @date May-13, 2021
-   */
-  jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
-    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
-      .then((data) => {
-        const user = data;
-        db.collection("post").insertOne({
-          description: post.description,
-          price: post.price,
-          quantity: post.quantity,
-          time: post.time,
-          title: post.title,
-          units: post.units,
-          location: user.location,
-          poster_name: user.name,
-          user_id: decodedToken.id
-        }).then(() => {
-          db.collection("post").createIndex({ location: "2dsphere" });
-          let message = "success";
-          res.send({ message });
-        })
-      })
   })
 })
 
@@ -727,7 +686,6 @@ app.post('/login', async (req, res) => {
   });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
-    console.log("login User", user);
     if (auth) {
       const token = jwt.sign({
         userName: user.name,
@@ -1069,5 +1027,73 @@ app.get('/proximity_search', (req, res) => {
   })
 })
 
+
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var time = new Date().toDateString;
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
+
+  
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+      .then((data) => {
+        const user = data;
+        db.collection("post").insertOne({
+          description: req.body.description,
+          price: req.body.price,
+          quantity: req.body.quantity,
+          time: date,
+          title: req.body.title,
+          units: post_unit,
+          location: user.location,
+          poster_name: user.name,
+          user_id: decodedToken.id,
+          post_pic: {
+            filename,
+            contentType,
+            imageBase64
+          }
+      }).then(() => {
+          db.collection("post").createIndex({ location: "2dsphere" });
+          res.redirect('/feed');
+        })
+    })
+  })
+})
 
 server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });

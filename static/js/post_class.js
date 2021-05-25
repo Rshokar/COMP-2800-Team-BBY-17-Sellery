@@ -16,7 +16,7 @@ class Post {
    * @param {*} units of meassurement
    * @param {*} description of the produce being sold
    */
-  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID, currentUser) {
+  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID, currentUser, contentType, base64) {
     this.t = title;
     this.q = quantity;
     this.u = units;
@@ -28,6 +28,8 @@ class Post {
     this.HLID = htmlID;
     this.uID = userID;
     this.currentUserID = currentUser;
+    this.contentType = contentType;
+    this.base64 = base64;
   }
 
   /**
@@ -221,18 +223,30 @@ class Post {
     <div class="center-user listing" id=${this.HLID}>
       <div class="property-card">
         <div class="property-card-image">
-          <img id="img-goes-here">
-        </div>
-      <div class="property-card-description">
-        <div class="name">
-          <h3 class='title'>${this.t}</h3>
-          <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
-        </div>
-      <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
-        <span class='price'>Price: $${this.pri}</span>
-        <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
-        <p class='date-posted'>${this.posted}</p>
       `
+
+    let html2 = 
+    `
+    </div>
+    <div class="property-card-description">
+      <div class="name">
+        <h3 class='title'>${this.t}</h3>
+        <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
+      </div>
+    <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
+      <span class='price'>Price: $${this.pri}</span>
+      <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
+      <p class='date-posted'>${this.posted}</p>
+    `
+    if (this.contentType == null && this.base64 == null) {
+      html += `<img id="img-goes-here" src="/pics/the_sellery.jpg">`;
+      html += html2;
+    } else {
+      html += `<img id="img-goes-here" src="data:${this.contentType};charset=utf-8;base64,${this.base64}">`;
+      html += html2;
+      
+    }
+         
     if (this.uID == this.currentUserID) {
       html += '<i class="edit fas fa-edit"></i></div>'
     } else {
@@ -298,7 +312,8 @@ class Post {
 function buildPostList(posts, currentUserId) {
   let lst = []
   let post;
-
+  let contentType;
+  let base64;
 
   for (post in posts) {
     let newPost = posts[post];
@@ -313,7 +328,9 @@ function buildPostList(posts, currentUserId) {
       newPost.time,
       post,
       newPost.user_id,
-      currentUserId
+      currentUserId,
+      newPost.post_pic.contentType,
+      newPost.post_pic.imageBase64
     )
   }
   console.log(lst);
