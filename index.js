@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
@@ -975,54 +976,102 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
  */
 app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
+  let result;
 
   console.log("server: ", req);
 
-  const query = {
-    "_id": ObjectId(post.ID)
-  }
+  const token = req.cookies.jwt;
 
-  const updateBioDoc = {
-    $set: {
-      name: post.name,
-      bio: post.bio,
-      location: {
-        type: "Point",
-        coordinates: [post.longitude, post.latitude]
-      }
-      // image here
-    }
-  }
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    let userId = decodedToken.id;
+    
 
-  const options = {
-    upsert: true
-  };
-
-  // WILL NEED TO CHANGE COLLECTION
-  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
-
-
-
-  if (result.modifiedCount === 1) {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    myObj = {
-      message: "Success updating bio",
-      status: "sucess",
+    const query = {
+      "_id": ObjectId(userId)
     };
-    res.send(myObj);
-  } else {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    console.log("No documents matched the query. Deleted 0 documents.");
-    myObj = {
-      message: "Error updating bio",
-      status: "error"
+
+    const options = {
+      upsert: true
+    };
+  
+    if (post.name) {
+      const updateName = {
+        $set: {
+          name: post.name
+        }
+      }
+
+      await client
+      .db("sellery")
+      .collection("users")
+      .updateOne(query, updateName, options);
+
+      const postQuery = {
+        "user_id": userId
+      }
+  
+      const updatePostDoc = {
+        $set: {
+          poster_name: post.name
+        }
+      }
+  
+      client.db("sellery").collection("post").updateMany(postQuery, updatePostDoc);
     }
-    res.send(myObj)
-  }
+
+    if (post.bio) {
+      const updateBio = {
+        $set: {
+          bio: post.bio
+        }
+      }
+
+      await client
+      .db("sellery")
+      .collection("users")
+      .updateOne(query, updateBio, options);
+    }
+
+    if (post.latitude) {
+      const updateLoc = {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [post.longitude, post.latitude]
+          }
+        }
+      }
+
+      await client
+      .db("sellery")
+      .collection("users")
+      .updateOne(query, updateLoc, options);
+    }
+    
+    
+
+  })
+
+  // if (result.modifiedCount === 1) {
+  //   console.log(
+  //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+  //   );
+  //   myObj = {
+  //     message: "Success updating bio",
+  //     status: "sucess",
+  //   };
+  //   res.send(myObj);
+  // } else {
+  //   console.log(
+  //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
+  //   );
+  //   console.log("No documents matched the query. Deleted 0 documents.");
+  //   myObj = {
+  //     message: "Error updating bio",
+  //     status: "error"
+  //   }
+  //   res.send(myObj)
+  // }
 
 
 });
