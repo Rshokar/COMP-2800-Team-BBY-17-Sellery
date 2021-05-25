@@ -17,6 +17,8 @@ back.addEventListener("click", (e) => {
 //Set up Dom
 loadChat(roomID);
 
+socket.emit("joinRoom", roomID);
+
 
 //Message from server
 socket.on('message', (msg) => {
@@ -111,8 +113,6 @@ function loadChat(room) {
       for (let msg in data.messages) {
         outputMessage(data.messages[msg], data.me, data.you);
       }
-      // Join chatroom
-      socket.emit("joinRoom", roomID);
     },
     error: (err) => {
       console.log(err);
