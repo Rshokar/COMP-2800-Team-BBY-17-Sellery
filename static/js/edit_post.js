@@ -57,7 +57,7 @@ function deletePostEventListner(post) {
     var yes = document.querySelector("#confirmation .yes");
     var no = document.querySelector("#confirmation .no");
 
-    yesEvent = () => {
+    let yesEvent = () => {
       console.log("I Have Been Shot Dead", post);
       post.delete((results) => {
         post.removeFromHTML();
@@ -66,7 +66,7 @@ function deletePostEventListner(post) {
       })
     }
 
-    noEvent = () => {
+    let noEvent = () => {
       console.log("I Have Been Saved", post);
       hideConfirm();
     }
@@ -107,16 +107,8 @@ function hideConfirm() {
   })
 };
 
-/**
- * This function will reset the modal to its original state
- * @author Ravinder Shokar 
- * @version 1.0 
- * @date May 13 2021
- */
-function resetEditModal() {
-  $("#edit-posting .edit_card_container").remove();
-  $("#edit-posting").append(editModal)
-}
+
+
 
 /**
  * This function will close the confirmation page
@@ -286,8 +278,6 @@ const editModal =
       <p>Are you sure you want to delete this post?</p>
       <button class="yes">Yes</button><button class="no">No</button>
     </div>
-  
-  
   </div>
   </div>
   `
@@ -297,14 +287,14 @@ $("#edit-posting").append(editModal);
 
 const edit_post_card = document.querySelector(".edit_card_container");
 const edit_post_close = document.querySelector("#edit-posting .close");
-const delete_post = document.querySelector("#edit-posting .delete");
+const edit_post_form = document.querySelector("#edit-posting .post_form");
+const edit_post_preview = document.getElementById("edit-card-post");
+const edit_detele_confirmation = document.querySelector("#edit-posting #confirmation")
 
 edit_post_close.addEventListener("click", function () {
-  console.log("Closed");
+  edit_post_form.style.display = "block";
+  edit_post_preview.style.display = "none";
   edit_post_card.style.display = "none";
-  hideConfirm();
-  hidePreview();
-  showForm();
 });
 
 const radioButtons = document.querySelectorAll('#edit-posting div input[name="unit"]');
@@ -320,3 +310,16 @@ radioButtons[1].addEventListener('click', () => {
   labelforDropdown.style.display = "block";
   dropDown.style.display = "block";
 });
+
+/**
+ * This function will reset the modal to its original state
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 13 2021
+ */
+function resetEditModal() {
+  edit_post_form.style.display = "block";
+  edit_post_preview.style.display = "none";
+  edit_post_card.style.display = "none";
+  edit_detele_confirmation.style.display = "none";
+}
