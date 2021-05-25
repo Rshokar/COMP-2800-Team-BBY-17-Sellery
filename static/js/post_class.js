@@ -121,45 +121,6 @@ class Post {
   }
 
   /**
-   * This function will allow the post to be updated 
-   * with an obj.
-   * @param {JSON} obj 
-   */
-  updateWithJSON(obj) {
-    this.posted = obj.date_posted;
-    this.pri = obj.price;
-    this.d = obj.description;
-    this.u = obj.units;
-    this.q = obj.quantity;
-    this.t = obj.title;
-  }
-
-
-  /**
-   * This function will update the current object with its current values. 
-   * @return obj with either success or error. 
-   */
-  update() {
-    $.ajax({
-      url: "/update_post",
-      type: "POST",
-      dataType: "JSON",
-      data: this.getJSON(),
-      success: (data) => {
-        return data
-      },
-      error: (err) => {
-        let obj = {
-          status: "error",
-          message: "Error posting data",
-          error: err,
-        }
-        return obj;
-      }
-    })
-  }
-
-  /**
    * This meathod will delete the current object from the DB.
    * @returns obj with either success or error
    */
@@ -244,7 +205,6 @@ class Post {
     } else {
       html += `<img id="img-goes-here" src="data:${this.contentType};charset=utf-8;base64,${this.base64}">`;
       html += html2;
-      
     }
          
     if (this.uID == this.currentUserID) {

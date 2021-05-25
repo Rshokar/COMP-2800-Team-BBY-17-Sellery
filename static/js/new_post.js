@@ -41,7 +41,7 @@ const newPostModal =
    <h3>Preview Post</h3>
    <div class="property-card">
      <div class=".property-card-image">
-       <img id="img-goes-here" src="/pics/about.png">
+       <img id="img-goes-here" src="/pics/the_sellery.jpg">
      </div>
      <div class="property-card-description">
        <div id="name">
@@ -77,6 +77,12 @@ const close_new_post = document.querySelector("#new-post .close");
 const image = document.querySelector("#new-post #image"); 
 const img_container = document.querySelector("#new-card-post #img-goes-here");
 
+image.addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    img_container.src = URL.createObjectURL(file);
+  }
+})
 
 plus_button.addEventListener("click", function () {
   new_post_card.style.display = "initial";
@@ -85,13 +91,6 @@ plus_button.addEventListener("click", function () {
 close_new_post.addEventListener("click", function () {
   new_post_card.style.display = "none";
 });
-
-image.addEventListener('change', function() {
-  const file = this.files[0];
-  if (file) {
-    img_container.src = URL.createObjectURL(file);
-  }
-})
 
 next_button.addEventListener('click', function () {
 

@@ -265,62 +265,6 @@ app.get("/storefront-data", requireLogin, (req, res) => {
 })
 
 /**
- * This route is responsible for updating post in with post data. 
- * @author Ravinder Shokar
- * @version 1.0
- * @date May 06 2021
- */
-app.post("/update_post", requireLogin, async (req, res) => {
-  let post = req.body;
-
-  console.log(post)
-
-  const query = {
-    "_id": ObjectId(post.ID)
-  }
-
-  const updateDoc = {
-    $set: {
-      title: post.title,
-      description: post.description,
-      units: post.units,
-      price: post.price,
-      quantity: post.quantity,
-    }
-  }
-
-  const options = {
-    upsert: true
-  };
-
-  result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
-
-  if (result.modifiedCount === 1) {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    myObj = {
-      message: "Success Updating Post",
-      status: "sucess",
-    };
-    res.send(myObj);
-  } else {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    console.log("No documents matched the query. Deleted 0 documents.");
-    myObj = {
-      message: "Error Updating Post",
-      status: "error"
-    }
-    res.send(myObj)
-  }
-
-
-});
-
-
-/**
  * This route is responsible for deleting post. 
  * @author Ravinder Shokar
  * @version 1.0
@@ -747,7 +691,6 @@ app.get("/generate_my_produce", (req, res) => {
           userId: userId,
           results: result
         }
-        console.log(result)
         res.send(obj);
       });
 
@@ -773,7 +716,6 @@ app.post("/generate_user_produce", (req, res) => {
         userId: userId,
         results: result
       }
-      console.log("generate_user_produce", obj);
       res.send(obj);
     });
 
@@ -1027,17 +969,18 @@ app.get('/proximity_search', (req, res) => {
   })
 })
 
-
 /**
  * Post with an image
  * @author Jimun Jang
  * @date May 25 2021
  */
-app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
+ app.post('/update_post', store.array('editedImage'), (req, res, next) => {
   const token = req.cookies.jwt;
   const files = req.files;
   const db = client.db('sellery');
-  var time = new Date().toDateString;
+  var date = new Date();
+  var time = date.toDateString();
+  console.log(time);
   var post_unit;
   var filename;
   var contentType;
@@ -1067,7 +1010,71 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
     })
   }
 
-  
+  console.log (req.body);
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    client.db("sellery").collection("post").findOneAndUpdate(
+      { "_id": ObjectId(req.body.postId) },
+      {
+        $set: {
+          title: req.body.title,
+          quantity: req.body.quantity,
+          price: req.body.price,
+          description: req.body.description,
+          time: time,
+          units: post_unit,
+          "post_pic": {
+            filename,
+            contentType,
+            imageBase64
+          }
+        }
+      }
+    ).then((data) => {
+      res.redirect('back');
+    })
+  })
+})
+
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var date = new Date();
+  var time = date.toDateString();
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
@@ -1077,7 +1084,7 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
           description: req.body.description,
           price: req.body.price,
           quantity: req.body.quantity,
-          time: date,
+          time: time,
           title: req.body.title,
           units: post_unit,
           location: user.location,
