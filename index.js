@@ -246,48 +246,6 @@ app.get("/storefront", requireLogin, (req, res) => {
   })
 })
 
-
-
-/**
- * This route will post data to Mongo DB. 
- * @author Ravinder Shokar 
- * @date May-05-2021
- */
-app.post("/post_post", requireLogin, (req, res) => {
-  const db = client.db("sellery");
-  let post = req.body;
-  const token = req.cookies.jwt;
-  console.log(post);
-
-  /** added this component to get user's location using token, then saving a post to
-   *  our database
-   * @author Jimun Jang
-   * @date May-13, 2021
-   */
-  jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
-    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
-      .then((data) => {
-        const user = data;
-        db.collection("post").insertOne({
-          description: post.description,
-          price: post.price,
-          quantity: post.quantity,
-          time: post.time,
-          title: post.title,
-          units: post.units,
-          location: user.location,
-          poster_name: user.name,
-          user_id: decodedToken.id
-        }).then(() => {
-          db.collection("post").createIndex({ location: "2dsphere" });
-          let message = "success";
-          res.send({ message });
-        })
-      })
-  })
-})
-
 /**
  * This route sends a single users info to the bio section of storefront
  * @author Mike Lim
@@ -307,62 +265,6 @@ app.get("/storefront-data", requireLogin, (req, res) => {
       })
   })
 })
-
-/**
- * This route is responsible for updating post in with post data. 
- * @author Ravinder Shokar
- * @version 1.0
- * @date May 06 2021
- */
-app.post("/update_post", requireLogin, async (req, res) => {
-  let post = req.body;
-
-  console.log(post)
-
-  const query = {
-    "_id": ObjectId(post.ID)
-  }
-
-  const updateDoc = {
-    $set: {
-      title: post.title,
-      description: post.description,
-      units: post.units,
-      price: post.price,
-      quantity: post.quantity,
-    }
-  }
-
-  const options = {
-    upsert: true
-  };
-
-  result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
-
-  if (result.modifiedCount === 1) {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    myObj = {
-      message: "Success Updating Post",
-      status: "sucess",
-    };
-    res.send(myObj);
-  } else {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    console.log("No documents matched the query. Deleted 0 documents.");
-    myObj = {
-      message: "Error Updating Post",
-      status: "error"
-    }
-    res.send(myObj)
-  }
-
-
-});
-
 
 /**
  * This route is responsible for deleting post. 
@@ -816,7 +718,6 @@ app.post("/generate_user_produce", (req, res) => {
         userId: userId,
         results: result
       }
-      console.log("generate_user_produce", obj);
       res.send(obj);
     });
 
@@ -1070,5 +971,138 @@ app.get('/proximity_search', (req, res) => {
   })
 })
 
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+ app.post('/update_post', store.array('editedImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var date = new Date();
+  var time = date.toDateString();
+  console.log(time);
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
+
+  console.log (req.body);
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    client.db("sellery").collection("post").findOneAndUpdate(
+      { "_id": ObjectId(req.body.postId) },
+      {
+        $set: {
+          title: req.body.title,
+          quantity: req.body.quantity,
+          price: req.body.price,
+          description: req.body.description,
+          time: time,
+          units: post_unit,
+          "post_pic": {
+            filename,
+            contentType,
+            imageBase64
+          }
+        }
+      }
+    ).then((data) => {
+      res.redirect('back');
+    })
+  })
+})
+
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var date = new Date();
+  var time = date.toDateString();
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+      .then((data) => {
+        const user = data;
+        db.collection("post").insertOne({
+          description: req.body.description,
+          price: req.body.price,
+          quantity: req.body.quantity,
+          time: time,
+          title: req.body.title,
+          units: post_unit,
+          location: user.location,
+          poster_name: user.name,
+          user_id: decodedToken.id,
+          post_pic: {
+            filename,
+            contentType,
+            imageBase64
+          }
+      }).then(() => {
+          db.collection("post").createIndex({ location: "2dsphere" });
+          res.redirect('/feed');
+        })
+    })
+  })
+})
 
 server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });
