@@ -1,3 +1,89 @@
+const editModal =
+  `
+  <div class="edit_card_container">
+  <div class="create-post">
+    <button class="close"><i class="fas fa-times"></i></button>
+    <button class="delete"><i class="fas fa-trash-alt"></i></button>
+    <button class="back"><i class="fas fa-arrow-left"></i></button>
+  
+    <form class="post_form" enctype="multipart/form-data" action="/update_post" method="POST">
+      <legend>Edit Post</legend>
+      <label class="title_label" for="title">Post title:</label>
+      <input type="text" id="title" name="title" required>
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" min="1" max="100" name="quantity" required>
+      <label for="price">Price:</label>
+      <input type="number" id="price" min="1" max="100" step="0.01" name="price" required>
+      <div class="radio-container">
+        <label for="bundle">Bundle</label>
+        <input id="bundle" type="radio" name="unit" value="bundle" checked="checked">
+        <label for="weight">Weight</label>
+        <input id="weight" type="radio" name="unit" value="weight">
+      </div>
+      <label for="weightOptions">Choose Weight Option:</label>
+      <select name="weightOptions" id="weightOptions">
+        <option value="gram">gram</option>
+        <option value="kilogram">kilogram</option>
+      </select>
+      <input accept="image/*" type="file" name="editedImage" id="editImage">
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" required></textarea>
+      <button type="button" class="next">Next</button>
+      <input type="hidden" name="postId" id="post_id_container">
+      <p class="error"></p>
+    </form>
+  
+    <div class="center-user" id="edit-card-post">
+      <h3>Preview Post</h3>
+      <div class="property-card">
+        <div class=".property-card-image">
+          <img id="img-goes-here">
+        </div>
+        <div class="property-card-description">
+          <div id="name">
+            <h3 class="title-preview"></h3>
+            <h5 class="name-preview"></h5>
+          </div>
+          <div id="bio"><span class="bio-preview">
+              <p>{{ new_post.description }}</p>
+            </span></div>
+          <span class="price-preview"></span>
+          <span class="quantity-preview"></span>
+          <span class="units-preview"></span>
+          <p class="time-preview"></p>
+        </div>
+      </div>
+      <button type="button" class="submit">Submit</button>
+    </div>
+  
+    <div id="confirmation">
+      <p>Are you sure you want to delete this post?</p>
+      <button class="yes">Yes</button><button class="no">No</button>
+    </div>
+  </div>
+  </div>
+  `
+
+//Append for to HTML 
+$("#edit-posting").append(editModal);
+
+const edit_post_card = document.querySelector(".edit_card_container");
+const edit_post_close = document.querySelector(".edit_card_container .close");
+const edit_post_back = document.querySelector(".edit_card_container .back");
+const edit_post_form = document.querySelector("#edit-posting .post_form");
+const edit_post_preview = document.getElementById("edit-card-post");
+const edit_post_confirm = document.querySelector("#edit-posting #confirmation");
+const radioButtons = document.querySelectorAll('#edit-posting div input[name="unit"]');
+const labelforDropdown = document.querySelector('#edit-posting label[for="weightOptions"]');
+const dropDown = document.querySelector('#edit-posting select[name="weightOptions"]');
+
+edit_post_back.addEventListener("click", (e) => {
+  console.log("Hello");
+  edit_post_preview.style.display = "none";
+  edit_post_form.style.display = "block";
+  edit_post_back.style.display = "none";
+})
+
 /**
  * This adds an click event listner to post  future use. 
  * @author Ravinder Shokar 
@@ -106,16 +192,6 @@ function hideConfirm() {
   })
 };
 
-/**
- * This function will reset the modal to its original state
- * @author Ravinder Shokar 
- * @version 1.0 
- * @date May 13 2021
- */
-function resetEditModal() {
-  $("#edit-posting .edit_card_container").remove();
-  $("#edit-posting").append(editModal)
-}
 
 /**
  * This function will close the confirmation page
@@ -194,89 +270,24 @@ function nextPageEventListner(post) {
     $(element + " #edit-card-post").css({
       "display": "block"
     })
+
+    $(element + " .back").css({
+      "display": "block",
+    })
     submitEditEventListner(post, obj);
 
   })
 }
 
-const editModal =
-  `
-  <div class="edit_card_container">
-  <div class="create-post">
-    <button class="close"><i class="fas fa-times"></i></button>
-    <button class="delete"><i class="fas fa-trash-alt"></i></button>
-  
-    <form class="post_form" enctype="multipart/form-data" action="/update_post" method="POST">
-      <legend>Edit Post</legend>
-      <label class="title_label" for="title">Post title:</label>
-      <input type="text" id="title" name="title" required>
-      <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" min="1" max="100" name="quantity" required>
-      <label for="price">Price:</label>
-      <input type="number" id="price" min="1" max="100" step="0.01" name="price" required>
-      <div class="radio-container">
-        <label for="bundle">Bundle</label>
-        <input id="bundle" type="radio" name="unit" value="bundle" checked="checked">
-        <label for="weight">Weight</label>
-        <input id="weight" type="radio" name="unit" value="weight">
-      </div>
-      <label for="weightOptions">Choose Weight Option:</label>
-      <select name="weightOptions" id="weightOptions">
-        <option value="gram">gram</option>
-        <option value="kilogram">kilogram</option>
-      </select>
-      <input accept="image/*" type="file" name="editedImage" id="editImage">
-      <label for="description">Description:</label>
-      <textarea id="description" name="description" required></textarea>
-      <button type="button" class="next">Next</button>
-      <input type="hidden" name="postId" id="post_id_container">
-      <p class="error"></p>
-    </form>
-  
-    <div class="center-user" id="edit-card-post">
-      <h3>Preview Post</h3>
-      <div class="property-card">
-        <div class=".property-card-image">
-          <img id="img-goes-here">
-        </div>
-        <div class="property-card-description">
-          <div id="name">
-            <h3 class="title-preview"></h3>
-            <h5 class="name-preview"></h5>
-          </div>
-          <div id="bio"><span class="bio-preview">
-              <p>{{ new_post.description }}</p>
-            </span></div>
-          <span class="price-preview"></span>
-          <span class="quantity-preview"></span>
-          <span class="units-preview"></span>
-          <p class="time-preview"></p>
-        </div>
-      </div>
-      <button type="button" class="submit">Submit</button>
-    </div>
-  
-    <div id="confirmation">
-      <p>Are you sure you want to delete this post?</p>
-      <button class="yes">Yes</button><button class="no">No</button>
-    </div>
-  </div>
-  </div>
-  `
 
-//Append for to HTML 
-$("#edit-posting").append(editModal);
 
-const edit_post_card = document.querySelector(".edit_card_container");
-const edit_post_close = document.querySelector("#edit-posting .close");
-const delete_post = document.querySelector("#edit-posting .delete");
 
-const edit_image = document.querySelector("#editImage"); 
+const edit_image = document.querySelector("#editImage");
 const edit_img_container = document.querySelector("#edit-posting #img-goes-here");
 
 const edit_form = document.querySelector('.edit_card_container .post_form');
 
-edit_image.addEventListener('change', function() {
+edit_image.addEventListener('change', function () {
   const file = this.files[0];
   if (file) {
     edit_img_container.src = URL.createObjectURL(file);
@@ -284,15 +295,14 @@ edit_image.addEventListener('change', function() {
 })
 
 /**
- * This event listner is responsible for updating the Post object and 
- * then calling the update method of the Post object. In this event
- * listner the modal window will also be closed. 
+ * This post the edit post form to the server. The server then updates the post 
+ * and reloads the page. 
  * @author Ravinder Shokar 
  * @version 1.0 
  * @date May 12 2021 
  * @param {Post} post is the post we are updating 
  */
- function submitEditEventListner(post, values) {
+function submitEditEventListner(post, values) {
   const element = "#edit-posting .edit_card_container"
   let query = element + " .submit";
   console.log("Ready to submit")
@@ -301,7 +311,7 @@ edit_image.addEventListener('change', function() {
   //console.log(query);
 
   $(query).on('click', (e) => {
-    edit_form.submit(function(e) {
+    edit_form.submit(function (e) {
       e.preventDefault();
     });
     resetEditModal();
@@ -310,15 +320,13 @@ edit_image.addEventListener('change', function() {
 
 edit_post_close.addEventListener("click", function () {
   console.log("Closed");
+  edit_post_confirm.style.display = "none";
+  edit_post_preview.style.display = "none";
+  edit_post_back.style.display = "none";
+  edit_post_form.style.display = "display";
   edit_post_card.style.display = "none";
-  hideConfirm();
-  hidePreview();
-  showForm();
-});
 
-const radioButtons = document.querySelectorAll('#edit-posting div input[name="unit"]');
-const labelforDropdown = document.querySelector('#edit-posting label[for="weightOptions"]');
-const dropDown = document.querySelector('#edit-posting select[name="weightOptions"]');
+});
 
 radioButtons[0].addEventListener('click', () => {
   labelforDropdown.style.display = "none";
@@ -329,3 +337,17 @@ radioButtons[1].addEventListener('click', () => {
   labelforDropdown.style.display = "block";
   dropDown.style.display = "block";
 });
+
+/**
+ * This function will reset the modal to its original state
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 13 2021
+ */
+function resetEditModal() {
+  edit_post_confirm.style.display = "none";
+  edit_post_preview.style.display = "none";
+  edit_post_form.style.display = "block";
+  edit_post_back.style.display = "none";
+  edit_post_card.style.display = "none";
+}

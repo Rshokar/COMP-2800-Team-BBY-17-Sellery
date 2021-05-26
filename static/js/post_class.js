@@ -186,8 +186,8 @@ class Post {
         <div class="property-card-image">
       `
 
-    let html2 = 
-    `
+    let html2 =
+      `
     </div>
     <div class="property-card-description">
       <div class="name">
@@ -206,7 +206,7 @@ class Post {
       html += `<img id="img-goes-here" src="data:${this.contentType};charset=utf-8;base64,${this.base64}">`;
       html += html2;
     }
-         
+
     if (this.uID == this.currentUserID) {
       html += '<i class="edit fas fa-edit"></i></div>'
     } else {
@@ -330,7 +330,11 @@ function createChatRoom(post) {
     url: "create_chat_room",
     type: "POST",
     dataType: "JSON",
-    data: post,
+    data: {
+      uID: post.userID,
+      un: post.userName,
+      currentUserID: post.currentUser
+    },
     success: (data) => {
       console.log(data);
       if (data.status == "error") {
@@ -346,3 +350,5 @@ function createChatRoom(post) {
     }
   })
 }
+
+

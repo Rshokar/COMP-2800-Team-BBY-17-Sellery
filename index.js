@@ -1054,6 +1054,8 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
   var contentType;
   var imageBase64;
 
+  console.log(typeof req.body.price);
+
   if (req.body.unit == 'weight') {
     post_unit = req.body.weightOptions;
   } else {
@@ -1083,7 +1085,7 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
       .then((data) => {
         const user = data;
         db.collection("post").insertOne({
-          description: req.body.description,
+          description: req.body.description.trim(),
           price: req.body.price,
           quantity: req.body.quantity,
           time: time,
@@ -1099,7 +1101,7 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
           }
         }).then(() => {
           db.collection("post").createIndex({ location: "2dsphere" });
-          res.redirect('/feed');
+          res.redirect('back');
         })
       })
   })
