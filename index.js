@@ -877,7 +877,6 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
  */
 app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
-  let result;
 
   console.log("server: ", req);
 
@@ -938,7 +937,7 @@ app.post("/update_bio", requireLogin, async (req, res) => {
         $set: {
           location: {
             type: "Point",
-            coordinates: [post.longitude, post.latitude]
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
           }
         }
       }
@@ -947,6 +946,21 @@ app.post("/update_bio", requireLogin, async (req, res) => {
       .db("sellery")
       .collection("users")
       .updateOne(query, updateLoc, options);
+
+      const locQuery = {
+        "user_id": userId
+      }
+
+      const updateLocMany = {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
+          }
+        }
+      }
+  
+      client.db("sellery").collection("post").updateMany(locQuery, updateLocMany);
     }
     
     
