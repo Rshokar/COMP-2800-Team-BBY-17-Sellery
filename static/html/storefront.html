@@ -32,24 +32,27 @@
   <!-- Custom CSS for edit modal popup  -->
   <link href="css/edit_bio.css" rel="stylesheet">
 
+  <!-- Custom CSS for pop-up -->
+  <link href="css/pop_up.css" rel="stylesheet">
+
 </head>
 
 <body>
-  <!-- <header id="mobile_head">
-    <h1>Sellery</h1>
-    <input type="test" placeholder="Search" id="feed_search">
-  </header> -->
+  <!-- Pop up -->
+  <div id="pop-up-background">
+
+  </div>
+  <div id="pop-up-menu">
+    <h1>Congrats!</h1>
+    <p>Your posting is successfully posted</p>
+    <button id="confirm">Confirm</button>
+  </div>
+
 
   <!-- Content goes here -->
   <!-- Content goes here -->
   <!-- Content goes here -->
   <div id="content_section">
-    <!-- ALL INFO RIGHT NOW HARD CODED -->
-    <!-- <div id="user-info">
-      <div id="profile-picture"><img id="img-goes-here"></div>
-      <div id="name"><span id="name-goes-here"></span></div>
-      <div id="bio"><span id="bio-goes-here"></span></div>
-    </div> -->
 
     <div id="image-div"><img id="kiwi" src="../pics/brocoli-background.jpg" /></div>
 
@@ -129,12 +132,8 @@
       </div>
     </div>
 
-
     <!-- </div> -->
     <button id="add_image">Add image</button>
-
-    <!-- </div> -->
-    <div id="Listings"></div>
 
     <h5>
       <div id="post-title">Here are your posts!</div>
@@ -203,10 +202,6 @@
 
   <!-- script for generating listing -->
   <script src="../js/generate_produce.js"></script>
-
-  <!-- Posts Listings to the node server to be created in DB. In this case use 
-function postOnePost() -->
-  <script src="js/post_post.js"></script>
 
   <!-- Store the data from Listing form into cosnt which can be used 
   to in different files. -->

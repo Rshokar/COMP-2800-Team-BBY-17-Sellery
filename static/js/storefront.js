@@ -23,7 +23,6 @@ $(document).ready(function () {
     dataType: "json",
     type: "GET",
     success: function (data) {
-      console.log(data);
       let name = data.result.name;
       let bio = data.result.bio;
       let profile_pic = data.result.profile_pic;
@@ -121,7 +120,6 @@ $(document).ready(function () {
       dataType: "json",
       type: "GET",
       success: function (data) {
-        console.log("Reviews are generated: ", data);
         reviewApp.reviews = data;
         return data
       },
@@ -177,9 +175,8 @@ $(document).ready(function () {
    * This function will update the bio with its new values. 
    * @return obj with either success or error. 
    */
-  function update(bioData) {
-    console.log("client bio data:", bioData);
-
+   function update(bioData) {
+     
     $.ajax({
       url: "/update_bio",
       type: "POST",
