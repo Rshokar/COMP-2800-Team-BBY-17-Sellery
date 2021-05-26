@@ -11,15 +11,6 @@
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-#edit-cards {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  width: 80%;
-  height: 80%;
-}
-
 #edit-close {
   cursor: pointer;
   position: absolute;
@@ -30,10 +21,6 @@
   font-size: 2em;
   z-index: 1;
   margin: auto;
-}
-
-#edit-holder {
-  margin-top: 15%;
 }
 
 .property-card-edit {
@@ -56,8 +43,3 @@
   box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
 }
 
-#edits {
-  float: left;
-  margin-top: 2%;
-  margin-left: 9%;
-}

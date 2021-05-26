@@ -10,6 +10,7 @@ $(document).ready(function () {
   //Check if User Id exist.
   if (userID) {
     genStoreFrontListing(userID);
+    buildYourStorefront();
   } else {
     genMyStoreFrontListing();
     genReviews();
@@ -201,5 +202,21 @@ $(document).ready(function () {
 
 })
 
+/**
+ * This function will edit the storefront DOM so it is appropriate for a
+ * visitor visiting a storefront
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 26 2021 
+ */
+function buildYourStorefront() {
+  const form = document.getElementById("upload_image");
+  const review = document.getElementById("add-reviews");
+  const edit = document.getElementById("edit");
+
+  form.style.display = "none";
+  review.style.display = "none";
+  edit.style.display = "none";
+}
 
 
