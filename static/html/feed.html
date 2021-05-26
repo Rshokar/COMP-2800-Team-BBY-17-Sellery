@@ -70,6 +70,14 @@
 
     <button id="drop">View All</button>
 
+    <!-- Facebook like and Share button -->
+    <div class="fb-share-button" data-href="http://ec2-34-216-219-151.us-west-2.compute.amazonaws.com/feed"
+      data-layout="button_count" data-size="large"><a target="_blank"
+        href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fec2-34-216-219-151.us-west-2.compute.amazonaws.com%2Ffeed&amp;src=sdkpreparse"
+        class="fb-xfbml-parse-ignore">Share</a></div>
+    <!-- End of Facebook like and share button -->
+
+
     <div id="easter-egg-card">
       <div class="property-card">
         <div id="easter-egg-image">
@@ -91,73 +99,81 @@
       </div>
     </div>
 
-          <!-- this is where post filtered by proximity goes -->
-          <div id="proximity-card-listing"></div>
+    <!-- this is where post filtered by proximity goes -->
+    <div id="proximity-card-listing"></div>
 
-          <!-- This is where post start -->
-          <div id="card-listing"></div>
+    <!-- This is where post start -->
+    <div id="card-listing"></div>
 
-          <!-- Edit Post -->
-          <div id="edit-posting">
-          </div>
+    <!-- Edit Post -->
+    <div id="edit-posting">
+    </div>
 
-          <!-- New post -->
-          <div id="new-post">
-          </div>
-        </div>
-        <!-- Content Ends -->
+    <!-- New post -->
+    <div id="new-post">
+    </div>
+  </div>
+  <!-- Content Ends -->
 
-        <!--footer-->
-        <div id="new_post_container">
-          <a id="new_post" class="btn fas fa-plus fa-2x px-auto" href="#"></a>
-        </div>
-        <!-- Content Ends -->
+  <!--footer-->
+  <div id="new_post_container">
+    <a id="new_post" class="btn fas fa-plus fa-2x px-auto" href="#"></a>
+  </div>
+  <!-- Content Ends -->
 
-        <footer id="mobile_nav" class="navbar justify-content-evenly fixed-bottom">
-          <div class="container py-1">
-            <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
+  <footer id="mobile_nav" class="navbar justify-content-evenly fixed-bottom">
+    <div class="container py-1">
+      <a id="storefront" class="btn fas fa-home fa-2x px-auto" href="/storefront"></a>
 
-            <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
-          </div>
-        </footer>
+      <a id="feed" class="btn fas fa-carrot fa-2x px-auto" href="/feed"></a>
+    </div>
+  </footer>
 
-        <!-- production version, optimized for size and speed  -->
-        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <!-- production version, optimized for size and speed  -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
-        <!-- Font Awsome -->
-        <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
+  <!-- Font Awsome -->
+  <script src="https://kit.fontawesome.com/26da0e4274.js" crossorigin="anonymous"></script>
 
-        <!-- Jquery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-        <!-- development version, includes helpful console warnings -->
-        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
-        <!-- This script is responsible for editing and deleting post. Must drop in-->
-        <script src="../js/edit_post.js"></script>
+  <!-- This script is responsible for editing and deleting post. Must drop in-->
+  <script src="../js/edit_post.js"></script>
 
-        <!-- This is the post class -->
-        <script src="../js/post_class.js"></script>
+  <!-- This is the post class -->
+  <script src="../js/post_class.js"></script>
 
-        <!-- script for generating listing -->
-        <script src="../js/generate_produce.js"></script>
+  <!-- script for generating listing -->
+  <script src="../js/generate_produce.js"></script>
 
-        <!-- Posts Listings to the node server to be created in DB. In this case use 
+  <!-- Posts Listings to the node server to be created in DB. In this case use 
 function postOnePost() -->
-        <script src="js/post_post.js"></script>
+  <script src="js/post_post.js"></script>
 
-        <!-- Store the data from Listing form into cosnt which can be used 
+  <!-- Store the data from Listing form into cosnt which can be used 
   to in different files. -->
-        <script src="js/new_post.js"></script>
+  <script src="js/new_post.js"></script>
 
-        <!-- dropdown menu for proximity search bar -->
-        <script src="js/search_bar_hide_show.js"></script>
+  <!-- dropdown menu for proximity search bar -->
+  <script src="js/search_bar_hide_show.js"></script>
 
-        <script>
-          $(document).ready(async function () {
-            let listing = await genListing();
-          })
-        </script>
+  <script>
+    $(document).ready(async function () {
+      let listing = await genListing();
+    })
+  </script>
+
+  <!-- Start Facebook Share & Like button -->
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0&appId=500867687721420&autoLogAppEvents=1"
+    nonce="N1DbmYNI"></script>
+  <!-- End Facebook Share & Like button -->
+
 
 </body>
 
