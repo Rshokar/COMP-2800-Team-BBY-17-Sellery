@@ -83,13 +83,10 @@ $(document).ready(function () {
  
    edit_close.addEventListener("click", function () {
      console.log("edit x working");
+     resetEditModal()
      edit_card.style.display = "none";
    });
 
-   edit_submit.addEventListener("click", function () {
-      edit_card.style.display = "none";
-      window.location.reload();
-   });
 
 
   /**
@@ -97,6 +94,7 @@ $(document).ready(function () {
    */
   window.onclick = function (event) {
     if (event.target == edit_card) {
+      resetEditModal()
       console.log("window close");
       edit_card.style.display = "none";
     }
@@ -164,18 +162,40 @@ $(document).ready(function () {
    * Listens to the edit bio submit button and runs update() with the data.
    */
   $("#submit").on("click", function (event) {
+    var isValid = true;
     event.preventDefault();
     var newName = document.getElementById("newName").value;
     var newBio = document.getElementById("newBio").value;
     var newLat = document.getElementById("latitude").value;
     var newLong = document.getElementById("longitude").value;
+    var newAddress = document.getElementById("autocomplete").value;
+
+    if (newName.length > 24) {
+      const nameError = document.getElementById('name-error');
+      nameError.textContent = "Name is maximum 24 characters";
+      isValid = false;
+    }
+    if (newBio.length > 180) {
+      const bioError = document.getElementById('bio-error');
+      bioError.textContent = "Bio is maximum 180 characters";
+      isValid = false;
+    }
+    if (newAddress.length > 0 && newLat.length == 0) {
+      const addressError = document.getElementById('address-error');
+      addressError.textContent = "Invalid Address";
+      isValid = false;
+    }
+    console.log("addy: ", newLat, newLong);
 
     var myObj = {name: newName, bio: newBio, longitude: newLong, latitude: newLat};
 
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
 
-
-    update(myObj);
+    if (isValid) {
+      update(myObj);
+      edit_card.style.display = "none";
+      window.location.reload();
+    }
 
 
   })
@@ -230,10 +250,22 @@ function editForStorefrontVisitor() {
  * @version 1.0 
  * @date May 26 2021 
  */
- function editForStorefrontOwner() {
+function editForStorefrontOwner() {
   const addReview = document.getElementById("add-reviews");
 
   addReview.style.display = "none";
+}
+
+function resetEditModal() {
+  const nameErrorReset = document.getElementById('name-error');
+  const bioErrorReset = document.getElementById('bio-error');
+  const addressErrorReset = document.getElementById('address-error');
+  document.getElementById("newName").value = "";
+  document.getElementById("newBio").value = "";
+  document.getElementById("autocomplete").value = "";
+  nameErrorReset.textContent = "";
+  bioErrorReset.textContent = "";
+  addressErrorReset.textContent = "";
 }
 
 
