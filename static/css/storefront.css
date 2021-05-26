@@ -165,3 +165,9 @@ p {
   font-size: 16pt;
   font-weight: bold;
 }
+
+.error {
+  margin-top: 15px;
+  font-size: 0.5em;
+  color: red;
+}
