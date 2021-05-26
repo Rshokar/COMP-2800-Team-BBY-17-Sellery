@@ -3,13 +3,13 @@
  * @date May 06 2021
  */
 
-console.log("new_post.js")
 
 const newPostModal =
   `
 <div class="new_card_container">
 <div class="create-post">
  <button class="close"><i class="fas fa-times"></i></button>
+ <button class="back"><i class="fas fa-arrow-left"></i></button>
 
  <form class="post_form" enctype="multipart/form-data" action="/uploadPost" method="POST">
    <legend>Create Post</legend>
@@ -61,6 +61,7 @@ const newPostModal =
  </div>
 </div>
 </div>
+
 `
 $("#new-post").append(newPostModal);
 
@@ -73,8 +74,9 @@ const next_button = document.querySelector("#new-post .next");
 const plus_button = document.querySelector("#new_post_container");
 const new_post_card = document.querySelector(".new_card_container");
 const close_new_post = document.querySelector("#new-post .close");
+const back_new_post = document.querySelector("#new-post .back");
 
-const image = document.querySelector("#new-post #image"); 
+const image = document.querySelector("#new-post #image");
 const img_container = document.querySelector("#new-card-post #img-goes-here");
 
 
@@ -84,9 +86,12 @@ plus_button.addEventListener("click", function () {
 
 close_new_post.addEventListener("click", function () {
   new_post_card.style.display = "none";
+  preview.style.display = "none";
+  form.style.display = "block"
+  form.reset();
 });
 
-image.addEventListener('change', function() {
+image.addEventListener('change', function () {
   const file = this.files[0];
   if (file) {
     img_container.src = URL.createObjectURL(file);
@@ -112,6 +117,7 @@ next_button.addEventListener('click', function () {
 
     form.style.display = "none";
     preview.style.display = "block";
+    back_new_post.style.display = "block"
 
     if (bundle) {
       unit = "bundle(s)";
@@ -137,6 +143,19 @@ next_button.addEventListener('click', function () {
 })
 
 /**
+ * This event listner allows users to take a step back when making a post 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 25 2021
+ * @param {} post 
+ */
+back_new_post.addEventListener("click", (e) => {
+  preview.style.display = "none";
+  form.style.display = "block";
+
+})
+
+/**
  * This event listner is responsible for filling out preview HTML then submitting 
  * to MongoDB
  * @author Ravinder Shokar
@@ -155,8 +174,8 @@ function submitNewEventListner(post) {
   $("#new-post .units-preview").text(post.units);
 
   /**
-  * This function gathers listing data from HTML and sends it to PostOnePost
-  * component to be submitted to DB
+  * This function gathers listing data from HTML and sends a post with the use
+  * of the form.submit() meathod. 
   * @author Jimun Jang 
   * @author Ravinder Shokar 
   * @date May 07 2021
@@ -164,14 +183,19 @@ function submitNewEventListner(post) {
   */
   $("#confirm").click((e) => {
     console.log("I have been clicked");
-    form.submit(function(e) {
+    form.submit(function (e) {
       e.preventDefault();
     });
     resetNewPostModal();
   })
 };
 
+
+/**
+ * This will pop up a modal allowing users to confirma a post. 
+ */
 $('#new-post .submit').click(() => {
+  console.log("Jello")
   $('#pop-up-background').css("visibility", "visible");
   $('#pop-up-menu').css("visibility", "visible");
 })

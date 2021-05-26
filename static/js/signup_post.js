@@ -14,11 +14,12 @@ form.addEventListener('submit', async (e) => {
 
     error.textContent = '';
 
-    const email = form.email.value;
+    const email = form.email.value.strip();
     const password = form.password.value;
-    const name = form.name.value;
+    const name = form.name.value.strip();
     const longitude = form.longitude.value;
     const latitude = form.latitude.value;
+
 
     $.ajax({
         url: '/signup',
