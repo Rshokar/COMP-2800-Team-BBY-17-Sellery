@@ -164,6 +164,7 @@ $(document).ready(function () {
     var newLat = document.getElementById("latitude").value;
     var newLong = document.getElementById("longitude").value;
 
+    var myObj = {name: newName, bio: newBio, longitude: newLong, latitude: newLat};
 
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
 
