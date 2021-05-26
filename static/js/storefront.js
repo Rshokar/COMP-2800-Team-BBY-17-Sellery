@@ -14,6 +14,7 @@ $(document).ready(function () {
   } else {
     genMyStoreFrontListing();
     genReviews();
+    editForStorefrontOwner();
   }
 
   /**
@@ -163,8 +164,6 @@ $(document).ready(function () {
     var newLat = document.getElementById("latitude").value;
     var newLong = document.getElementById("longitude").value;
 
-    //hard coded id for now.
-    var myObj = { ID: "60956e66db7bf207dbc33255", name: newName, bio: newBio, longitude: newLong, latitude: newLat };
 
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
 
@@ -216,6 +215,18 @@ function editForStorefrontVisitor() {
   form.style.display = "none";
   review.style.display = "none";
   edit.style.display = "none";
+}
+
+/**
+ * This function makes the DOM look appropriate for an owner 
+ * @author Mike Lim 
+ * @version 1.0 
+ * @date May 26 2021 
+ */
+ function editForStorefrontOwner() {
+  const addReview = document.getElementById("add-reviews");
+
+  addReview.style.display = "none";
 }
 
 

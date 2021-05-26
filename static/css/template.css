@@ -77,11 +77,13 @@
 }
 
 #chat_link {
+    right: 2%;
+    top: 2%;
     margin: .5em .5em .5em .5em;
     padding: .5em .5em .5em .5em;
-    float: right;
     background-color: white;
     border-radius: 50%;
+    position: absolute;
 }
 
 #chat_link i{
