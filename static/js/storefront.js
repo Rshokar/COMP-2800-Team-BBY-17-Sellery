@@ -71,19 +71,25 @@ $(document).ready(function () {
   /**
    * Event listeners for the edit modal.
    */
-  const edit_button = document.querySelector("#edit");
-  const edit_card = document.querySelector("#edit-modal");
-  const edit_close = document.querySelector("#edit-close");
+   const edit_button = document.querySelector("#edit");
+   const edit_card = document.querySelector("#edit-modal");
+   const edit_close = document.querySelector("#edit-close");
+   const edit_submit = document.querySelector("#submit");
+ 
+   edit_button.addEventListener("click", function () {
+     console.log("Clicked reviews");
+     edit_card.style.display = "block";
+   });
+ 
+   edit_close.addEventListener("click", function () {
+     console.log("edit x working");
+     edit_card.style.display = "none";
+   });
 
-  edit_button.addEventListener("click", function () {
-    console.log("Clicked reviews");
-    edit_card.style.display = "block";
-  });
-
-  edit_close.addEventListener("click", function () {
-    console.log("edit x working");
-    edit_card.style.display = "none";
-  });
+   edit_submit.addEventListener("click", function () {
+      edit_card.style.display = "none";
+      window.location.reload();
+   });
 
 
   /**
