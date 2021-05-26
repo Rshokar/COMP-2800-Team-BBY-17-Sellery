@@ -10,6 +10,7 @@ $(document).ready(function () {
   //Check if User Id exist.
   if (userID) {
     genStoreFrontListing(userID);
+    editForStorefrontVisitor();
   } else {
     genMyStoreFrontListing();
     genReviews();
@@ -200,5 +201,21 @@ $(document).ready(function () {
 
 })
 
+
+/**
+ * This function makes the DOM look appropriate for a visitor 
+ * @author Ravidner Shokar 
+ * @version 1.0 
+ * @date May 26 2021 
+ */
+function editForStorefrontVisitor() {
+  const form = document.getElementById("upload_image");
+  const review = document.getElementById("reviews");
+  const edit = document.getElementById("edit");
+
+  form.style.display = "none";
+  review.style.display = "none";
+  edit.style.display = "none";
+}
 
 
