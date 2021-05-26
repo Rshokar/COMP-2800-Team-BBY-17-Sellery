@@ -34,7 +34,7 @@
 
   <!-- Custom CSS for pop-up -->
   <link href="css/pop_up.css" rel="stylesheet">
-  
+
   <!-- Custom CSS for add review modal popup  -->
   <link href="css/add_review.css" rel="stylesheet">
 
@@ -57,25 +57,29 @@
   <!-- Content goes here -->
   <div id="content_section">
 
+    <div id="chat_link">
+      <a href="/chats"><i class="fas fa-comments"></i></a>
+    </div>
+
     <div id="image-div"><img id="kiwi" src="../pics/brocoli-background.jpg" /></div>
 
     <div class="center-user">
-        <div class="image-user">
-          <img id="img-goes-here">
+      <div class="image-user">
+        <img id="img-goes-here">
+      </div>
+      <div class="description-user">
+        <div id="name">
+          <div id="name-title"><span id="name-goes-here"></span><span>'s Storefront</span></div>
         </div>
-        <div class="description-user">
-          <div id="name">
-            <div id="name-title"><span id="name-goes-here"></span><span>'s Storefront</span></div>
-          </div>
-          <div id="bio"><span id="bio-goes-here"></span></div>
-          <form action="/uploadImage" enctype="multipart/form-data" id="upload_image" method="POST">
-            <input type="file" name="images">
-            <button>Upload Image</button>
-          </form>
-          <div id="reviews"><a id="check_reviews" href="#">Reviews</a></div>
-          <div id="edit"><a id="edit" class="btn fas fa-edit fa-2x px-auto"></a></div>
-          <div id="add-reviews"><a id="add-reviews" href="#">Add a Review</a></div>
-        </div>
+        <div id="bio"><span id="bio-goes-here"></span></div>
+        <form action="/uploadImage" enctype="multipart/form-data" id="upload_image" method="POST">
+          <input type="file" name="images">
+          <button>Upload Image</button>
+        </form>
+        <div id="reviews"><a id="check_reviews" href="#">Reviews</a></div>
+        <div id="edit"><a class="btn fas fa-edit fa-2x px-auto"></a></div>
+        <div id="add-reviews"><a href="#">Add a Review</a></div>
+      </div>
     </div>
     <!-- <div id="Listings"></div> -->
 
@@ -108,46 +112,46 @@
             <div id="review">
               <h1 class="display-4">We Appreciate Your Review!</h1>
               <p class="lead">
-                  Your review will help this seller to provide more fresh
-                  produce.
+                Your review will help this seller to provide more fresh
+                produce.
               </p>
-          </div>
-          
-          <form method="POST" action="/createReviews" id="r">
+            </div>
+
+            <form method="POST" action="/createReviews" id="r">
               <div class="row mb-3">
-                  <div class="form-floating">
-                      <textarea class="form-control" name="reviewComment" placeholder="Leave a comment here"
-                          id="floatingTextarea2" style="height: 100px"></textarea>
-                      <label for="floatingTextarea2">Leave a review for this seller</label>
-                  </div>
+                <div class="form-floating">
+                  <textarea class="form-control" name="reviewComment" placeholder="Leave a comment here"
+                    id="floatingTextarea2" style="height: 100px"></textarea>
+                  <label for="floatingTextarea2">Leave a review for this seller</label>
+                </div>
               </div>
               <fieldset class="row mb-3">
-                  <legend class="col-form-label col-sm-2 pt-0">Leave a rating out of 5</legend>
-                  <div class="col-sm-10">
-                      <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="1">
-                          <label class="form-check-label" for="inlineRadio1">1</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="2">
-                          <label class="form-check-label" for="inlineRadio2">2</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="3">
-                          <label class="form-check-label" for="inlineRadio3">3</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="rating" id="inlineRadio4" value="4">
-                          <label class="form-check-label" for="inlineRadio4">4</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="rating" id="inlineRadio5" value="5">
-                          <label class="form-check-label" for="inlineRadio5">5</label>
-                      </div>
+                <legend class="col-form-label col-sm-2 pt-0">Leave a rating out of 5</legend>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="1">
+                    <label class="form-check-label" for="inlineRadio1">1</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="2">
+                    <label class="form-check-label" for="inlineRadio2">2</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="3">
+                    <label class="form-check-label" for="inlineRadio3">3</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rating" id="inlineRadio4" value="4">
+                    <label class="form-check-label" for="inlineRadio4">4</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="rating" id="inlineRadio5" value="5">
+                    <label class="form-check-label" for="inlineRadio5">5</label>
+                  </div>
+                </div>
               </fieldset>
               <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
+            </form>
           </div>
         </div>
       </div>
@@ -178,7 +182,7 @@
 
             <button id="submit">submit</button>
 
-              <!-- <label id="picture-label" for="picture">Profile Picture:</label>
+            <!-- <label id="picture-label" for="picture">Profile Picture:</label>
               <input type="file" onchange="showPic(this);" name="picture" >
               <img id="preview" src="#" alt=""> -->
 
@@ -188,8 +192,6 @@
       </div>
     </div>
 
-    <!-- </div> -->
-    <button id="add_image">Add image</button>
 
     <!-- </div> -->
 
