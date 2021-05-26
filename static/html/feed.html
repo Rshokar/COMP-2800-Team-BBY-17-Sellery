@@ -75,8 +75,12 @@
 
     <button id="drop">View All</button>
 
-
-
+    <!-- Facebook like and Share button -->
+    <div class="fb-share-button" data-href="http://ec2-34-216-219-151.us-west-2.compute.amazonaws.com/feed"
+      data-layout="button_count" data-size="large"><a target="_blank"
+        href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fec2-34-216-219-151.us-west-2.compute.amazonaws.com%2Ffeed&amp;src=sdkpreparse"
+        class="fb-xfbml-parse-ignore">Share</a></div>
+    <!-- End of Facebook like and share button -->
 
 
     <div id="easter-egg-card">
@@ -163,6 +167,14 @@
       let listing = await genListing();
     })
   </script>
+
+  <!-- Start Facebook Share & Like button -->
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v10.0&appId=500867687721420&autoLogAppEvents=1"
+    nonce="N1DbmYNI"></script>
+  <!-- End Facebook Share & Like button -->
+
 
 </body>
 
