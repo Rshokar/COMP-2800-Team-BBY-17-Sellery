@@ -16,9 +16,9 @@ form.addEventListener('submit', async (e) => {
 
     error.textContent = '';
 
-    const email = form.email.value.strip();
+    const email = form.email.value.trim();
     const password = form.password.value;
-    const name = form.name.value.strip();
+    const name = form.name.value.trim();
     const longitude = form.longitude.value;
     const latitude = form.latitude.value;
 

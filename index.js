@@ -248,22 +248,51 @@ app.get("/storefront", requireLogin, (req, res) => {
 
 /**
  * This route sends a single users info to the bio section of storefront
+ * Ravinder Shokar: I added an if check to see if a user ID has passed in. If it 
+ * has it will query that user.
  * @author Mike Lim
+ * @author Ravinder Shokar 
  * @version 1.0
- * @date May 06 2021
+ * @date May 26 2021
  */
 app.get("/storefront-data", requireLogin, (req, res) => {
   const token = req.cookies.jwt;
+  const userID = req.query.id;
 
   jwt.verify(token, 'gimp', (err, decodedToken) => {
-    console.log(decodedToken);
 
-    client.db("sellery").collection("users")
-      .findOne({ "_id": ObjectId(decodedToken.id) })
-      .then((data) => {
-        res.send({ result: data });
-      })
+    if (userID) {
+      console.log("You user", userID)
+      client.db("sellery").collection("users")
+        .findOne({ "_id": ObjectId(userID) })
+        .then((data) => {
+          res.send({ result: data });
+        })
+    } else {
+      console.log("Current User", decodedToken)
+      client.db("sellery").collection("users")
+        .findOne({ "_id": ObjectId(decodedToken.id) })
+        .then((data) => {
+          res.send({ result: data });
+        })
+    }
   })
+})
+
+/**
+ * This route returns a single usrs docuemnt. The user is dependent on which ID
+ * is sent in req.body;
+ * @author Ravinder Shokar 
+ * @version 1.0
+ * @date May 24 2021
+ */
+app.get("/get_your_storefront", requireLogin, (req, res) => {
+  console.log(req.query.id);
+  client.db("sellery").collection("users")
+    .findOne({ "_id": ObjectId("60a801413c579615c234b306") })
+    .then((data) => {
+      res.send({ result: data });
+    })
 })
 
 /**
@@ -304,7 +333,6 @@ app.post("/delete_post", requireLogin, (req, res) => {
   }
 })
 
-
 /**
  * This route gets all post from the DB 
  * @author Gurshawn Sehkon
@@ -330,8 +358,6 @@ app.get("/generate_produce", requireLogin, (req, res) => {
         res.send(obj);
       });
   })
-
-
   // console.log(data);
   // res.send(data);
 
@@ -885,7 +911,7 @@ app.post("/update_bio", requireLogin, async (req, res) => {
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     let userId = decodedToken.id;
-    
+
 
     const query = {
       "_id": ObjectId(userId)
@@ -894,7 +920,7 @@ app.post("/update_bio", requireLogin, async (req, res) => {
     const options = {
       upsert: true
     };
-  
+
     if (post.name) {
       const updateName = {
         $set: {
@@ -903,20 +929,20 @@ app.post("/update_bio", requireLogin, async (req, res) => {
       }
 
       await client
-      .db("sellery")
-      .collection("users")
-      .updateOne(query, updateName, options);
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateName, options);
 
       const postQuery = {
         "user_id": userId
       }
-  
+
       const updatePostDoc = {
         $set: {
           poster_name: post.name
         }
       }
-  
+
       client.db("sellery").collection("post").updateMany(postQuery, updatePostDoc);
     }
 
@@ -928,9 +954,9 @@ app.post("/update_bio", requireLogin, async (req, res) => {
       }
 
       await client
-      .db("sellery")
-      .collection("users")
-      .updateOne(query, updateBio, options);
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateBio, options);
     }
 
     if (post.latitude) {
@@ -944,12 +970,12 @@ app.post("/update_bio", requireLogin, async (req, res) => {
       }
 
       await client
-      .db("sellery")
-      .collection("users")
-      .updateOne(query, updateLoc, options);
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateLoc, options);
     }
-    
-    
+
+
 
   })
 
