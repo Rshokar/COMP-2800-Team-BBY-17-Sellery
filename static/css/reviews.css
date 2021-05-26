@@ -2,7 +2,7 @@
 /* Review Pop Up */
 
 
-#review-modal {
+#review-modal, #add-review-modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   left: 0;
