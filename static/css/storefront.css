@@ -73,6 +73,7 @@ p {
 .image-user {
   position: relative;
   overflow: hidden;
+  justify-content: center;
   margin-left: auto;
   margin-right: auto;
   width: 150px;
