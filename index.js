@@ -976,7 +976,7 @@ app.get('/proximity_search', (req, res) => {
  * @author Jimun Jang
  * @date May 25 2021
  */
- app.post('/update_post', store.array('editedImage'), (req, res, next) => {
+app.post('/update_post', store.array('editedImage'), (req, res, next) => {
   const token = req.cookies.jwt;
   const files = req.files;
   const db = client.db('sellery');
@@ -1012,7 +1012,7 @@ app.get('/proximity_search', (req, res) => {
     })
   }
 
-  console.log (req.body);
+  console.log(req.body);
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     client.db("sellery").collection("post").findOneAndUpdate(
@@ -1097,11 +1097,11 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
             contentType,
             imageBase64
           }
-      }).then(() => {
+        }).then(() => {
           db.collection("post").createIndex({ location: "2dsphere" });
           res.redirect('/feed');
         })
-    })
+      })
   })
 })
 
