@@ -82,7 +82,7 @@ p {
 .property-card-description {
     background-color: #FAFAFC;
     width: 100%;
-    position: relative;
+    position: absolute;
     bottom: 0em;
     padding: 0.5em 1em;
     text-align: center;
