@@ -54,6 +54,7 @@ p {
     overflow: hidden;
     -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
     box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
+    z-index: 0;
 }
 
 /* ^-- The margin bottom is necessary for the drop shadow otherwise it gets clipped in certain cases. */
@@ -63,8 +64,7 @@ p {
 .property-card-image {
     height: 15em;
     width: 100%;
-    padding: 1em 2em;
-    position: Absolute;
+    position: relative;
     top: 0px;
     background-size: cover;
     background-repeat: no-repeat;
@@ -76,8 +76,12 @@ p {
 .property-card-description {
     background-color: #FAFAFC;
     width: 100%;
-    position: absolute;
+    position: relative;
     bottom: 0em;
     padding: 0.5em 1em;
     text-align: center;
+}
+
+#img-goes-here {
+    width: 100%;
 }
