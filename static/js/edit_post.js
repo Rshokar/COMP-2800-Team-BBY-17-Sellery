@@ -3,7 +3,7 @@
  * @author Ravinder Shokar 
  * @version 1.0 
  * @date Mat 11 2021
- * @param index is the index where it located in the post list.
+ * @param id is the index where it located in the post list.
  */
 
 "use strict";
@@ -26,8 +26,6 @@ function editPostEventListner(id, posting) {
 function editPosting(post) {
   const element = "#edit-posting .edit_card_container"
 
-  console.log(post);
-
   $(element).css({
     "display": "block"
   })
@@ -36,6 +34,8 @@ function editPosting(post) {
   $(element + " #quantity").val(post.q);
   $(element + " #price").val(post.pri);
   $(element + " #description").val(post.d);
+
+  $(element + " #post_id_container").val(post.ID);
 
   nextPageEventListner(post);
   deletePostEventListner(post);
@@ -76,7 +76,6 @@ function deletePostEventListner(post) {
 
     no.removeEventListener("click", noEvent, false);
     no.addEventListener("click", noEvent, false);
-
   })
 }
 
@@ -147,7 +146,6 @@ function showForm() {
   })
 };
 
-
 /**
  * This event listner will switch modal page to preview
  * by updating CSS properties.  
@@ -201,32 +199,6 @@ function nextPageEventListner(post) {
   })
 }
 
-/**
- * This event listner is responsible for updating the Post object and 
- * then calling the update method of the Post object. In this event
- * listner the modal window will also be closed. 
- * @author Ravinder Shokar 
- * @version 1.0 
- * @date May 12 2021 
- * @param {Post} post is the post we are updating 
- */
-function submitEditEventListner(post, values) {
-  const element = "#edit-posting .edit_card_container"
-  let query = element + " .submit";
-  console.log("Ready to submit")
-
-  //console.log(query);
-
-  $(query).on('click', (e) => {
-    post.updateWithJSON(values);
-    let result = post.update();
-    post.updateHTML();
-    resetEditModal();
-  })
-}
-
-
-
 const editModal =
   `
   <div class="edit_card_container">
@@ -234,14 +206,14 @@ const editModal =
     <button class="close"><i class="fas fa-times"></i></button>
     <button class="delete"><i class="fas fa-trash-alt"></i></button>
   
-    <form class="post_form">
+    <form class="post_form" enctype="multipart/form-data" action="/update_post" method="POST">
       <legend>Edit Post</legend>
       <label class="title_label" for="title">Post title:</label>
       <input type="text" id="title" name="title" required>
       <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" min="1" max="100" required>
+      <input type="number" id="quantity" min="1" max="100" name="quantity" required>
       <label for="price">Price:</label>
-      <input type="number" id="price" min="1" max="100" step="0.01" required>
+      <input type="number" id="price" min="1" max="100" step="0.01" name="price" required>
       <div class="radio-container">
         <label for="bundle">Bundle</label>
         <input id="bundle" type="radio" name="unit" value="bundle" checked="checked">
@@ -253,9 +225,11 @@ const editModal =
         <option value="gram">gram</option>
         <option value="kilogram">kilogram</option>
       </select>
+      <input accept="image/*" type="file" name="editedImage" id="editImage">
       <label for="description">Description:</label>
       <textarea id="description" name="description" required></textarea>
       <button type="button" class="next">Next</button>
+      <input type="hidden" name="postId" id="post_id_container">
       <p class="error"></p>
     </form>
   
@@ -286,8 +260,6 @@ const editModal =
       <p>Are you sure you want to delete this post?</p>
       <button class="yes">Yes</button><button class="no">No</button>
     </div>
-  
-  
   </div>
   </div>
   `
@@ -298,6 +270,43 @@ $("#edit-posting").append(editModal);
 const edit_post_card = document.querySelector(".edit_card_container");
 const edit_post_close = document.querySelector("#edit-posting .close");
 const delete_post = document.querySelector("#edit-posting .delete");
+
+const edit_image = document.querySelector("#editImage"); 
+const edit_img_container = document.querySelector("#edit-posting #img-goes-here");
+
+const edit_form = document.querySelector('.edit_card_container .post_form');
+
+edit_image.addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    edit_img_container.src = URL.createObjectURL(file);
+  }
+})
+
+/**
+ * This event listner is responsible for updating the Post object and 
+ * then calling the update method of the Post object. In this event
+ * listner the modal window will also be closed. 
+ * @author Ravinder Shokar 
+ * @version 1.0 
+ * @date May 12 2021 
+ * @param {Post} post is the post we are updating 
+ */
+ function submitEditEventListner(post, values) {
+  const element = "#edit-posting .edit_card_container"
+  let query = element + " .submit";
+  console.log("Ready to submit")
+  console.log(edit_form);
+
+  //console.log(query);
+
+  $(query).on('click', (e) => {
+    edit_form.submit(function(e) {
+      e.preventDefault();
+    });
+    resetEditModal();
+  })
+}
 
 edit_post_close.addEventListener("click", function () {
   console.log("Closed");
