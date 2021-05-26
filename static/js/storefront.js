@@ -26,7 +26,6 @@ $(document).ready(function () {
       let name = data.result.name;
       let bio = data.result.bio;
       let profile_pic = data.result.profile_pic;
-      // url data:image/jpeg;charset=utf-8;base64,/9j/4QAWRXhpZgAATU0AKgAAAAgAAAAAAAD/4Q...
       if (!profile_pic) {
         let url = '/pics/about.png';
         $("#name-goes-here").html(name);
@@ -175,8 +174,8 @@ $(document).ready(function () {
    * This function will update the bio with its new values. 
    * @return obj with either success or error. 
    */
-   function update(bioData) {
-     
+  function update(bioData) {
+
     $.ajax({
       url: "/update_bio",
       type: "POST",
