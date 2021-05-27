@@ -106,7 +106,6 @@ async function main() {
 
 main().catch(console.error);
 
-
 io.on('connection', (socket) => {
 
   const chatBot = {
@@ -590,6 +589,10 @@ app.post('/signup', async (req, res) => {
     password
   } = req.body;
 
+  if (password.length < 8) {
+    let error = "password must be longer than 7 characters long";
+    res.status(400).json({ error });
+  }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -599,36 +602,37 @@ app.post('/signup', async (req, res) => {
   const latInNum = Number(latitude);
 
   if (latitude != '' && longitude != '') {
-    db.collection("users").insertOne({
-      name,
-      location: {
-        type: "Point",
-        coordinates: [longInNum, latInNum]
-      },
-      email, // validate it
-      password: hashedPassword,
-    }).then((data) => {
-      console.log(data);
-      const user = data;
-      const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
-        expiresIn: 24 * 60 * 60
-      });
-      console.log(user.ops[0]._id);
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000
-      });
-      res.status(200).json({
-        user: user._id
-      });
-    }).catch((err) => {
-      let error = "password must be longer than 7 characters long";
-      if (err.code === 11000) {
-        error = "email is already registered";
+    db.collection("users").findOne({ email: email }, function (err, user) {
+      if (err) {
+        console.log(err);
       }
-      res.status(400).json({
-        error
-      });
+      if (user) {
+        let error = "email already exists, try to sign up with different email";
+        res.status(400).json({ error });
+      } else {
+        db.collection("users").insertOne({
+          name,
+          location: {
+            type: "Point",
+            coordinates: [longInNum, latInNum]
+          },
+          email,
+          password: hashedPassword,
+        }).then((data) => {
+          const user = data;
+          const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
+            expiresIn: 24 * 60 * 60
+          });
+          console.log(user.ops[0]._id);
+          res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+          });
+          res.status(200).json({
+            user: user._id
+          });
+        })
+      }
     });
   } else {
     let error = "Invalid Address: try to choose an address from the drop down menu";
@@ -733,20 +737,22 @@ app.get("/generate_my_produce", (req, res) => {
 app.post("/generate_user_produce", (req, res) => {
 
   userId = req.body.id
+  const token = req.cookies.jwt;
 
-  client
-    .db("sellery")
-    .collection("post")
-    .find({ "user_id": userId })
-    .toArray(function (err, result) {
-      if (err) throw err;
-      let obj = {
-        userId: userId,
-        results: result
-      }
-      res.send(obj);
-    });
-
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    client
+      .db("sellery")
+      .collection("post")
+      .find({ "user_id": userId })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        let obj = {
+          userId: decodedToken.id,
+          results: result
+        }
+        res.send(obj);
+      });
+  })
 })
 
 /**

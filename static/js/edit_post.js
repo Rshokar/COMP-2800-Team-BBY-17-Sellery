@@ -36,9 +36,9 @@ const editModal =
   
     <div class="center-user" id="edit-card-post">
       <h3>Preview Post</h3>
-      <div class="property-card">
+      <div class="property-card" id="edit-property-card">
         <div class=".property-card-image">
-          <img id="img-goes-here">
+          <img id="img-goes-here" src="/pics/the_sellery.jpg">
         </div>
         <div class="property-card-description">
           <div id="name">
@@ -48,7 +48,7 @@ const editModal =
           <div id="bio"><span class="bio-preview">
               <p>{{ new_post.description }}</p>
             </span></div>
-          <span class="price-preview"></span>
+          <div class="price-preview"></div>
           <span class="quantity-preview"></span>
           <span class="units-preview"></span>
           <p class="time-preview"></p>
@@ -263,8 +263,8 @@ function nextPageEventListner(post) {
     $(element + " .title-preview").html(obj.title)
     $(element + " .name-preview").html(post.un)
     $(element + " .bio-preview").html(obj.description)
-    $(element + " .price-preview").html(obj.price)
-    $(element + " .quantity-preview").html(obj.quantity)
+    $(element + " .price-preview").html(`Price: $${obj.price}`)
+    $(element + " .quantity-preview").html(`Quantity: ${obj.quantity}`)
     $(element + " .units-preview").html(obj.units)
     $(element + " .time-preview").html(now)
 
@@ -329,7 +329,7 @@ edit_post_close.addEventListener("click", function () {
   edit_post_confirm.style.display = "none";
   edit_post_preview.style.display = "none";
   edit_post_back.style.display = "none";
-  edit_post_form.style.display = "display";
+  edit_post_form.style.display = "block";
   edit_post_card.style.display = "none";
 
 });

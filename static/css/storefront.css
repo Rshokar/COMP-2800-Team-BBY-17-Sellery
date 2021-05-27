@@ -71,6 +71,7 @@ p {
 .image-user {
   position: relative;
   overflow: hidden;
+  justify-content: center;
   margin-left: auto;
   margin-right: auto;
   width: 150px;
@@ -165,4 +166,15 @@ p {
 
 #confirmation_add_review {
   display: none;
+}
+
+.error {
+  margin-top: 15px;
+  font-size: 0.5em;
+  color: red;
+}
+
+#default-value-holder {
+  text-align: center;
+  margin-top: 5vh;
 }

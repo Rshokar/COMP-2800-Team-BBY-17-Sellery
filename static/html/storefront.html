@@ -90,6 +90,10 @@
       <div id="review-listing">
         <div class="center-reviews">
           <div class="property-card-reviews">
+            <div id="default-value-holder">
+              <h3>No Reviews</h3>
+              <h5>Go sell some produce to and ask customers to review.</h5>
+            </div>
             <div id="review-holder">
               <div id="reviews" v-for="review in reviews" :key="review.data">
                 <h3>{{review.rating}}/5</h3>
@@ -123,6 +127,7 @@
                     id="floatingTextarea2" style="height: 100px"></textarea>
                   <label for="floatingTextarea2">Leave a review for this seller</label>
                 </div>
+                <p id="review-comment-error" class="error"></p>
               </div>
               <fieldset class="row mb-3">
                 <legend class="col-form-label col-sm-2 pt-0">Leave a rating out of 5</legend>
@@ -177,14 +182,19 @@
             <legend>Edit Profile</legend>
             <label id="name-label" for="name">Name:</label>
             <input type="text" id="newName" name="name" placeholder="Enter your name">
+            <p id="name-error" class="error"></p>
 
             <label id="bio-label" for="bio">Bio:</label>
             <textarea id="newBio" name="bio" placeholder="Enter your bio"></textarea>
+            <p id="bio-error" class="error"></p>
 
             <label id="address-label" for="address">Address:</label>
             <input name="address" id="autocomplete" type="text">
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
+            <p id="address-error" class="error"></p>
+
+
 
             <button id="submit">submit</button>
 

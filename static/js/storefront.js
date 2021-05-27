@@ -75,6 +75,7 @@ $(document).ready(function () {
   const edit_button = document.querySelector("#edit");
   const edit_card = document.querySelector("#edit-modal");
   const edit_close = document.querySelector("#edit-close");
+  const edit_submit = document.querySelector("#submit");
 
   edit_button.addEventListener("click", function () {
     console.log("Clicked reviews");
@@ -83,8 +84,10 @@ $(document).ready(function () {
 
   edit_close.addEventListener("click", function () {
     console.log("edit x working");
+    resetEditModal()
     edit_card.style.display = "none";
   });
+
 
 
   /**
@@ -92,6 +95,7 @@ $(document).ready(function () {
    */
   window.onclick = function (event) {
     if (event.target == edit_card) {
+      resetEditModal()
       console.log("window close");
       edit_card.style.display = "none";
     }
@@ -116,9 +120,12 @@ $(document).ready(function () {
   })
 
   /**
-   * This function will request reviews from the server.
+   * This function will request reviews from the server and if it returns an array 
+   * with a lenght greater than one it will remove the default review message and 
+   * fill it in with reviews. 
    * @author Mike Lim
-   * @date May-13-2021
+   * @author Ravinder Shokar 
+   * @date May-27-2021
    */
   function genReviews() {
     console.log("Im getting the reviews. Give me a second");
@@ -127,9 +134,16 @@ $(document).ready(function () {
       dataType: "json",
       type: "GET",
       success: function (data) {
-        console.log("I got data", data);
-        reviewApp.reviews = data;
-        return data
+        console.log(data);
+        if (data.length > 0) {
+          const default_review_message = document.getElementById("default-value-holder");
+          default_review_message.style.display = "none";
+          console.log("I got data", data);
+          reviewApp.reviews = data;
+          return data
+        } else {
+          console.log("No reviews returned");
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         $("#p1").text(jqXHR.statusText);
@@ -162,19 +176,40 @@ $(document).ready(function () {
    * Listens to the edit bio submit button and runs update() with the data.
    */
   $("#submit").on("click", function (event) {
+    var isValid = true;
     event.preventDefault();
     var newName = document.getElementById("newName").value;
     var newBio = document.getElementById("newBio").value;
     var newLat = document.getElementById("latitude").value;
     var newLong = document.getElementById("longitude").value;
+    var newAddress = document.getElementById("autocomplete").value;
 
-    //hard coded id for now.
-    var myObj = { ID: "60956e66db7bf207dbc33255", name: newName, bio: newBio, longitude: newLong, latitude: newLat };
+    if (newName.length > 24) {
+      const nameError = document.getElementById('name-error');
+      nameError.textContent = "Name is maximum 24 characters";
+      isValid = false;
+    }
+    if (newBio.length > 180) {
+      const bioError = document.getElementById('bio-error');
+      bioError.textContent = "Bio is maximum 180 characters";
+      isValid = false;
+    }
+    if (newAddress.length > 0 && newLat.length == 0) {
+      const addressError = document.getElementById('address-error');
+      addressError.textContent = "Invalid Address";
+      isValid = false;
+    }
+    console.log("addy: ", newLat, newLong);
+
+    var myObj = { name: newName, bio: newBio, longitude: newLong, latitude: newLat };
 
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
 
-
-    update(myObj);
+    if (isValid) {
+      update(myObj);
+      edit_card.style.display = "none";
+      window.location.reload();
+    }
 
 
   })
@@ -222,6 +257,7 @@ $(document).ready(function () {
   const add_review = document.getElementById("add-reviews");
   const add_review_modal = document.getElementById("add-review-modal");
   const add_review_modal_close = document.getElementById('add-review-close');
+  const review_error = document.getElementById("review-comment-error");
 
   submitReview.addEventListener("click", (e) => {
     let obj = {
@@ -236,24 +272,28 @@ $(document).ready(function () {
       }
     }
 
-    $.ajax({
-      url: "/create_reviews",
-      dataType: "JSON",
-      type: "POST",
-      data: obj,
-      success: (data) => {
-        if (data.status == "success") {
-          reviewPage.style.display = "none"
-          confirmationMessage.innerHTML = data.message;
-          confirmationBox.style.display = "block";
+    if (obj.comment.length >= 180) {
+      console.log("error");
+      review_error.innerHTML = "Review must be lest than 180 characters";
+    } else {
+      $.ajax({
+        url: "/create_reviews",
+        dataType: "JSON",
+        type: "POST",
+        data: obj,
+        success: (data) => {
+          if (data.status == "success") {
+            reviewPage.style.display = "none"
+            confirmationMessage.innerHTML = data.message;
+            confirmationBox.style.display = "block";
+          }
+          console.log(data)
+        },
+        error: (err) => {
+          console.log(err);
         }
-        console.log(data)
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-
+      })
+    }
   })
 
   /**
@@ -296,7 +336,6 @@ $(document).ready(function () {
     confirmationBox.style.display = "none";
     reviewPage.style.display = "block";
     textBox.value = "";
-
   }
 
 })
@@ -321,12 +360,28 @@ function editForStorefrontVisitor() {
 /**
  * This function makes the DOM look appropriate for a storefront owner 
  * @author Ravidner Shokar 
+ * This function makes the DOM look appropriate for an owner 
+ * @author Mike Lim 
  * @version 1.0 
  * @date May 26 2021 
  */
 function editForStorefrontOwner() {
   const add_review = document.getElementById("add-reviews");
   add_review.style.display = "none";
+  const addReview = document.getElementById("add-reviews");
+  addReview.style.display = "none";
+}
+
+function resetEditModal() {
+  const nameErrorReset = document.getElementById('name-error');
+  const bioErrorReset = document.getElementById('bio-error');
+  const addressErrorReset = document.getElementById('address-error');
+  document.getElementById("newName").value = "";
+  document.getElementById("newBio").value = "";
+  document.getElementById("autocomplete").value = "";
+  nameErrorReset.textContent = "";
+  bioErrorReset.textContent = "";
+  addressErrorReset.textContent = "";
 }
 
 

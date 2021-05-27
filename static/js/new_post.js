@@ -42,7 +42,7 @@ const newPostModal =
 
  <div class="center-user preview" id="new-card-post">
    <h3>Preview Post</h3>
-   <div class="property-card">
+   <div class="property-card" id="preview-property-card">
      <div class=".property-card-image">
        <img id="img-goes-here" src="/pics/the_sellery.jpg">
      </div>
@@ -54,7 +54,7 @@ const newPostModal =
        <div id="bio"><span class="bio-preview">
            <p class="description-preview"></p>
          </span></div>
-       <span class="price-preview"></span>
+       <div class="price-preview"></div>
        <span class="quantity-preview"></span>
        <span class="units-preview"></span>
        <p class="time-preview"></p>
@@ -179,8 +179,8 @@ function submitNewEventListner(post) {
   $("#new-post .title-preview").text(post.title)
   $("#new-post .name-preview").text()
   $("#new-post .description-preview").text(post.description)
-  $("#new-post .price-preview").text(post.price)
-  $("#new-post .quantity-preview").text(post.quantity)
+  $("#new-post .price-preview").text(`Price: $${post.price}`)
+  $("#new-post .quantity-preview").text(`Quantity: ${post.quantity}`)
   $("#new-post .time-preview").text(post.time)
   $("#new-post .units-preview").text(post.units);
 
