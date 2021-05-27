@@ -147,6 +147,8 @@ function deletePostEventListner(post) {
     let yesEvent = () => {
       console.log("I Have Been Shot Dead", post);
       post.delete((results) => {
+        edit_post_card.style.display = "none";
+        hideConfirm();
         post.removeFromHTML();
         resetEditModal();
         console.log(results)

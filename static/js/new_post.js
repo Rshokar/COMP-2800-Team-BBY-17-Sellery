@@ -115,8 +115,6 @@ next_button.addEventListener('click', function () {
   const quantity = document.querySelector("#new-post #quantity").value;
   const price = document.querySelector("#new-post #price").value;
   const desc = document.querySelector("#new-post #description").value;
-
-
   
   // boolean value
   const bundle = document.querySelector('#new-post #bundle').checked;
