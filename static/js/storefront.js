@@ -256,6 +256,12 @@ function editForStorefrontOwner() {
   addReview.style.display = "none";
 }
 
+/**
+ * This function resets the edit modal after the user clicks off of it 
+ * @author Mike Lim 
+ * @version 1.0 
+ * @date May 26 2021 
+ */
 function resetEditModal() {
   const nameErrorReset = document.getElementById('name-error');
   const bioErrorReset = document.getElementById('bio-error');
