@@ -116,6 +116,8 @@ next_button.addEventListener('click', function () {
   const price = document.querySelector("#new-post #price").value;
   const desc = document.querySelector("#new-post #description").value;
 
+
+  
   // boolean value
   const bundle = document.querySelector('#new-post #bundle').checked;
 
@@ -124,7 +126,7 @@ next_button.addEventListener('click', function () {
 
   const img_src = img_container.src;
 
-  if (title == '' && desc != '' && quantity != '' && price != '') {
+  if (title != '' && desc != '' && quantity != '' && price != '') {
 
     form.style.display = "none";
     preview.style.display = "block";
