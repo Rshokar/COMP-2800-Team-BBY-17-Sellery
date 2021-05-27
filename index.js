@@ -191,7 +191,7 @@ requireLogin = (req, res, next) => {
  * @atuhor Ravinder Shokar 
  * @date April-29-2021
  */
-app.get("/", requireLogin, (req, res) => {
+app.get("/", (req, res) => {
   readFile("static/html/index.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("sorry, out of order");
@@ -433,8 +433,10 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
 
   jwt.verify(token, "gimp", async (err, decodedToken) => {
     console.log("Token", decodedToken);
-    let userOne = post.currentUserID;
+    console.log("Posting", post);
+    let userOne = decodedToken.id;
     let userTwo = post.uID
+
     let obj;
 
     const db = client.db("sellery").collection('chat');
@@ -442,47 +444,42 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
     //Check if a chat room exist. 
     const chatRoom = await db.findOne({
       ID: { "$all": [userOne, userTwo] }
-    });
+    }, (err, chatRoom) => {
+      if (chatRoom) {
+        console.log("Chat room exist");
 
-    if (chatRoom) {
-      console.log("Chat room exist");
-
-      //Redirect to chatroom
-      console.log(chatRoom);
-      res.send({
-        status: "success",
-        message: "Chat room found",
-        id: chatRoom._id
-      })
-    } else {
-      console.log("Chat room does not exist");
-
-      // Create Chat room
-      db.insertOne({
-        names: [decodedToken.userName, post.un],
-        ID: [userOne, userTwo],
-        messages: []
-      },
-        (err, doc) => {
-          if (err) {
-            res.send({
-              status: "error",
-              message: "Erro finding chatroom",
-            })
-          } else {
-            res.send({
-              status: "success",
-              message: "chat room found",
-              id: doc.insertedId
-            })
-          }
+        //Redirect to chatroom
+        res.send({
+          status: "success",
+          message: "Chat room found",
+          id: chatRoom._id
         })
-    }
+      } else {
+        console.log("Chat room does not exist");
 
-
+        // Create Chat room
+        db.insertOne({
+          names: [decodedToken.userName, post.un],
+          ID: [userOne, userTwo],
+          messages: []
+        },
+          (err, doc) => {
+            if (err) {
+              res.send({
+                status: "error",
+                message: "Error finding chatroom",
+              })
+            } else {
+              res.send({
+                status: "success",
+                message: "chat room found",
+                id: doc.insertedId
+              })
+            }
+          })
+      }
+    });
   })
-
-
 })
 
 
