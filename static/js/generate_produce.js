@@ -73,7 +73,7 @@ function genMyStoreFrontListing() {
 
       // search bar to filter cards by title in storefront
       const namelist = document.querySelectorAll('#card-listing h3.title');
-      const searchBar = document.forms['search'].querySelector('input');
+      const searchBar = document.getElementById("feed_search");
 
       console.log(namelist);
 
