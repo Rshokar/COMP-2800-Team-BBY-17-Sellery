@@ -65,12 +65,36 @@ function genMyStoreFrontListing() {
     type: "GET",
     success: function (data) {
       console.log("Listing is generated: ", data);
+
       newData = buildPostList(data.results, data.userId);
       for (let post in newData) {
         newData[post].appendHTML();
       }
-      // app.posts = data;
-      return data
+
+      // search bar to filter cards by title in storefront
+      const namelist = document.querySelectorAll('#card-listing h3.title');
+      const searchBar = document.getElementById("feed_search");
+
+      console.log(namelist);
+
+      searchBar.addEventListener('keyup', function (e) {
+        const term = e.target.value.toLowerCase();
+
+        namelist.forEach(function (card) {
+          const nameTitle = card.parentElement.querySelector('h3').textContent
+          if (nameTitle.toLowerCase().indexOf(term) != -1) {
+            card.parentElement.parentElement.parentElement.style.display = 'block';
+          } else {
+            card.parentElement.parentElement.parentElement.style.display = 'none';
+          }
+        });
+      });
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+      return data;
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
@@ -100,8 +124,16 @@ function genStoreFrontListing(userId) {
       for (let post in newData) {
         newData[post].appendHTML();
       }
-      // app.posts = data;
-      return data
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+
+      return {
+        data: data,
+        status: "success"
+      }
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);

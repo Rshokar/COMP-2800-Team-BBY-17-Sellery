@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,11 +8,12 @@
     <link rel="stylesheet" href="css/signup_login.css">
     <title>Sign Up</title>
     <!-- favicon -->
-    <link rel="shorcut icon" type="image/png" href="pics/about.jpg">
+    <link rel="shorcut icon" type="image/png" href="pics/the_sellery.jpg">
 
     <!-- when signup is done, modal pop-up tells that you are successfully signed up -->
     <link rel="stylesheet" href="css/pop_up.css">
 </head>
+
 <body>
     <div id="pop-up-background">
 
@@ -40,19 +42,21 @@
         <hr>
         <div>
             <p>Already have an account? <a href="/login">Log in</a></p>
+            <p><a href="/">Home</a></p>
         </div>
     </div>
 
     <!-- Jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+
     <script src="js/signup_post.js"></script>
 
     <!-- autocomplete using google maps api
         @author Jimun Jang
         @date May-13, 2021
     -->
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrfs5cFhP7_7f_I2BTdcwp4JnXY5tHeU"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrfs5cFhP7_7f_I2BTdcwp4JnXY5tHeU"></script>
     <script>
         $(document).ready(function () {
             var autocomplete;
@@ -62,7 +66,7 @@
                     country: "ca"
                 }
             });
-            
+
             google.maps.event.addListener(autocomplete, 'place_changed', function () {
                 var userAddress = autocomplete.getPlace();
                 document.getElementById('latitude').value = userAddress.geometry.location.lat();
@@ -71,4 +75,5 @@
         });
     </script>
 </body>
+
 </html>

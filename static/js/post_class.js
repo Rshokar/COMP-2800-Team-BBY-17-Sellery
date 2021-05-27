@@ -326,6 +326,7 @@ function createChatRoomEventListner(post) {
  * @param {*} post 
  */
 function createChatRoom(post) {
+  console.log(post);
   $.ajax({
     url: "create_chat_room",
     type: "POST",
@@ -333,7 +334,6 @@ function createChatRoom(post) {
     data: {
       uID: post.userID,
       un: post.userName,
-      currentUserID: post.currentUser
     },
     success: (data) => {
       console.log(data);
