@@ -2,6 +2,7 @@
 
 
 $(document).ready(function () {
+  let result
   const url = new URL(window.location.href);
 
   //Get user ID from URL
@@ -12,10 +13,12 @@ $(document).ready(function () {
     genStoreFrontListing(userID);
     editForStorefrontVisitor();
   } else {
-    genMyStoreFrontListing();
-    genReviews();
+    result = genMyStoreFrontListing();
     editForStorefrontOwner();
+    genReviews();
   }
+
+
 
   /**
    * AJAX call to request the user info from the server
@@ -58,12 +61,10 @@ $(document).ready(function () {
   const review_close = document.querySelector("#review-close");
 
   reviews_button.addEventListener("click", function () {
-    console.log("Clicked reviews");
     review_card.style.display = "block";
   });
 
   review_close.addEventListener("click", function () {
-    console.log("review x working");
     review_card.style.display = "none";
   });
 
@@ -71,21 +72,21 @@ $(document).ready(function () {
   /**
    * Event listeners for the edit modal.
    */
-   const edit_button = document.querySelector("#edit");
-   const edit_card = document.querySelector("#edit-modal");
-   const edit_close = document.querySelector("#edit-close");
-   const edit_submit = document.querySelector("#submit");
- 
-   edit_button.addEventListener("click", function () {
-     console.log("Clicked reviews");
-     edit_card.style.display = "block";
-   });
- 
-   edit_close.addEventListener("click", function () {
-     console.log("edit x working");
-     resetEditModal()
-     edit_card.style.display = "none";
-   });
+  const edit_button = document.querySelector("#edit");
+  const edit_card = document.querySelector("#edit-modal");
+  const edit_close = document.querySelector("#edit-close");
+  const edit_submit = document.querySelector("#submit");
+
+  edit_button.addEventListener("click", function () {
+    console.log("Clicked reviews");
+    edit_card.style.display = "block";
+  });
+
+  edit_close.addEventListener("click", function () {
+    console.log("edit x working");
+    resetEditModal()
+    edit_card.style.display = "none";
+  });
 
 
 
@@ -103,13 +104,14 @@ $(document).ready(function () {
     }
   };
 
+
+
   /**
    * This Vue app is used to add and remove data from HTML 
    * Data will be inputed in div with ID review-listing
    * @author Mike Lim
    * @date May 13 2021
    */
-  console.log("made it to reviewlisting component");
   const reviewApp = new Vue({
     el: '#review-listing',
     data: {
@@ -118,18 +120,30 @@ $(document).ready(function () {
   })
 
   /**
-   * This function will request reviews from the server.
+   * This function will request reviews from the server and if it returns an array 
+   * with a lenght greater than one it will remove the default review message and 
+   * fill it in with reviews. 
    * @author Mike Lim
-   * @date May-13-2021
+   * @author Ravinder Shokar 
+   * @date May-27-2021
    */
   function genReviews() {
+    console.log("Im getting the reviews. Give me a second");
     $.ajax({
       url: "/generate_reviews",
       dataType: "json",
       type: "GET",
       success: function (data) {
-        reviewApp.reviews = data;
-        return data
+        console.log(data);
+        if (data.length > 0) {
+          const default_review_message = document.getElementById("default-value-holder");
+          default_review_message.style.display = "none";
+          console.log("I got data", data);
+          reviewApp.reviews = data;
+          return data
+        } else {
+          console.log("No reviews returned");
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         $("#p1").text(jqXHR.statusText);
@@ -187,7 +201,7 @@ $(document).ready(function () {
     }
     console.log("addy: ", newLat, newLong);
 
-    var myObj = {name: newName, bio: newBio, longitude: newLong, latitude: newLat};
+    var myObj = { name: newName, bio: newBio, longitude: newLong, latitude: newLat };
 
     console.log("clicked and saved: " + newName + newBio + newLat + newLong);
 
@@ -225,6 +239,105 @@ $(document).ready(function () {
     })
   }
 
+  /**
+   * This event listner is responsible for making an ajax call to the node server. 
+   * @author Ravinder Shokar 
+   * @version 1.0 
+   * @date May 26 2021
+   */
+  const submitReview = document.getElementById("submit_review");
+
+  const radios = document.querySelectorAll(".form-check-input");
+  const textBox = document.getElementById("floatingTextarea2");
+
+  const confirmationBox = document.getElementById("confirmation_add_review");
+  const confirmationMessage = document.getElementById("add_review_message");
+  const confirmationButton = document.getElementById("add_review_confirm");
+  const reviewPage = document.getElementById("review_form_shell");
+  const add_review = document.getElementById("add-reviews");
+  const add_review_modal = document.getElementById("add-review-modal");
+  const add_review_modal_close = document.getElementById('add-review-close');
+  const review_error = document.getElementById("review-comment-error");
+
+  submitReview.addEventListener("click", (e) => {
+    let obj = {
+      comment: textBox.value,
+      rating: 0,
+      storefrontOwner: userID,
+    }
+
+    for (let i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        obj.rating = radios[i].value;
+      }
+    }
+
+    if (obj.comment.length >= 180) {
+      console.log("error");
+      review_error.innerHTML = "Review must be lest than 180 characters";
+    } else {
+      $.ajax({
+        url: "/create_reviews",
+        dataType: "JSON",
+        type: "POST",
+        data: obj,
+        success: (data) => {
+          if (data.status == "success") {
+            reviewPage.style.display = "none"
+            confirmationMessage.innerHTML = data.message;
+            confirmationBox.style.display = "block";
+          }
+          console.log(data)
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    }
+  })
+
+  /**
+   * This event listner will close all pages and restore the review modal 
+   * to its original state
+   * @author Ravinder Shokar 
+   * @version 1.0
+   * @date May 26 2021 
+   */
+  confirmationButton.addEventListener("click", (e) => {
+    add_review_modal.style.display = "none";
+    resetReviewModal();
+  })
+
+
+  /**
+ * These event listner will be responsible for operning up the reviews model 
+ * @authors Ravinder Shokar 
+ * @version 1.0 
+ * @date May 26th 2021 
+ */
+  //Dispplays Add_review
+  add_review.addEventListener("click", (e) => {
+    add_review_modal.style.display = "block";
+  })
+
+  // CLoses add_review
+  add_review_modal_close.addEventListener("click", (e) => {
+    add_review_modal.style.display = "none";
+  })
+
+  /**
+   * This function is responsible for reseting the review modal to its 
+   * original state
+   * @author Ravinder Shokar 
+   * @version 1.0 
+   * @date May 26 2021
+   */
+  function resetReviewModal() {
+    confirmationBox.style.display = "none";
+    reviewPage.style.display = "block";
+    textBox.value = "";
+  }
+
 })
 
 
@@ -245,14 +358,17 @@ function editForStorefrontVisitor() {
 }
 
 /**
+ * This function makes the DOM look appropriate for a storefront owner 
+ * @author Ravidner Shokar 
  * This function makes the DOM look appropriate for an owner 
  * @author Mike Lim 
  * @version 1.0 
  * @date May 26 2021 
  */
 function editForStorefrontOwner() {
+  const add_review = document.getElementById("add-reviews");
+  add_review.style.display = "none";
   const addReview = document.getElementById("add-reviews");
-
   addReview.style.display = "none";
 }
 
