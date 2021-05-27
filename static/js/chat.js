@@ -32,7 +32,6 @@ submit.addEventListener('click', (e) => {
   e.preventDefault();
   if (input.value) {
     let msg = buildMsgObj();
-    console.log(msg);
     socket.emit('chat message', msg, roomID);
     input.value = '';
     input.focus()
@@ -49,7 +48,6 @@ submit.addEventListener('click', (e) => {
  * @param {string} msg 
  */
 function outputMessage(msg, me, you) {
-  console.log(msg);
   var div = document.createElement("div");
   div.classList.add("message");
 

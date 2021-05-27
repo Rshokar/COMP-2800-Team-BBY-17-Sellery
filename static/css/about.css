@@ -39,3 +39,14 @@ body {
 .title {
     color: grey;
 }
+
+
+#back_about {
+    height: 7.5vh
+}
+
+#back_about i {
+    line-height: 7.5vh;
+    font-size: 20pt;
+    color: black;
+}
