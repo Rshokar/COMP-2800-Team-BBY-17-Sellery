@@ -65,6 +65,7 @@ function genMyStoreFrontListing() {
     type: "GET",
     success: function (data) {
       console.log("Listing is generated: ", data);
+
       newData = buildPostList(data.results, data.userId);
       for (let post in newData) {
         newData[post].appendHTML();
@@ -88,8 +89,12 @@ function genMyStoreFrontListing() {
           }
         });
       });
-      // app.posts = data;
-      return data
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+      return data;
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
@@ -119,8 +124,16 @@ function genStoreFrontListing(userId) {
       for (let post in newData) {
         newData[post].appendHTML();
       }
-      // app.posts = data;
-      return data
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+
+      return {
+        data: data,
+        status: "success"
+      }
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);

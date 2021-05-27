@@ -19,15 +19,13 @@ body {
   margin-right: 4%;
 }
 
-
-
-#content_section {
-  margin-bottom: 1em;
+#default_message {
+  padding: 1em;
+  margin-top: .5em;
+  margin-bottom: .5em;
+  text-align: center;
+  border-radius: 2.5%;
 }
-
-
-
-
 
 
 * {
@@ -164,4 +162,19 @@ p {
   margin-top: 5%;
   font-size: 16pt;
   font-weight: bold;
+}
+
+#confirmation_add_review {
+  display: none;
+}
+
+.error {
+  margin-top: 15px;
+  font-size: 0.5em;
+  color: red;
+}
+
+#default-value-holder {
+  text-align: center;
+  margin-top: 5vh;
 }
