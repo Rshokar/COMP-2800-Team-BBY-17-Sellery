@@ -16,7 +16,7 @@ class Post {
    * @param {*} units of meassurement
    * @param {*} description of the produce being sold
    */
-  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID, currentUser) {
+  constructor(title, quantity, units, description, inID, userName, price, datePosted, htmlID, userID, currentUser, contentType, base64) {
     this.t = title;
     this.q = quantity;
     this.u = units;
@@ -28,6 +28,8 @@ class Post {
     this.HLID = htmlID;
     this.uID = userID;
     this.currentUserID = currentUser;
+    this.contentType = contentType;
+    this.base64 = base64;
   }
 
   /**
@@ -119,45 +121,6 @@ class Post {
   }
 
   /**
-   * This function will allow the post to be updated 
-   * with an obj.
-   * @param {JSON} obj 
-   */
-  updateWithJSON(obj) {
-    this.posted = obj.date_posted;
-    this.pri = obj.price;
-    this.d = obj.description;
-    this.u = obj.units;
-    this.q = obj.quantity;
-    this.t = obj.title;
-  }
-
-
-  /**
-   * This function will update the current object with its current values. 
-   * @return obj with either success or error. 
-   */
-  update() {
-    $.ajax({
-      url: "/update_post",
-      type: "POST",
-      dataType: "JSON",
-      data: this.getJSON(),
-      success: (data) => {
-        return data
-      },
-      error: (err) => {
-        let obj = {
-          status: "error",
-          message: "Error posting data",
-          error: err,
-        }
-        return obj;
-      }
-    })
-  }
-
-  /**
    * This meathod will delete the current object from the DB.
    * @returns obj with either success or error
    */
@@ -221,18 +184,29 @@ class Post {
     <div class="center-user listing" id=${this.HLID}>
       <div class="property-card">
         <div class="property-card-image">
-          <img id="img-goes-here">
-        </div>
-      <div class="property-card-description">
-        <div class="name">
-          <h3 class='title'>${this.t}</h3>
-          <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
-        </div>
-      <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
-        <span class='price'>Price: $${this.pri}</span>
-        <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
-        <p class='date-posted'>${this.posted}</p>
       `
+
+    let html2 =
+      `
+    </div>
+    <div class="property-card-description">
+      <div class="name">
+        <h3 class='title'>${this.t}</h3>
+        <a href="/storefront?user=${this.uID}"><h5 class='name'>${this.un}</h5></a>
+      </div>
+    <div id="bio"><span id="bio-goes-here"><p class='description'>${this.d}</p></span></div>
+      <span class='price'>Price: $${this.pri}</span>
+      <span class='quantity'>Quantity: ${this.q} ${this.u}</span>
+      <p class='date-posted'>${this.posted}</p>
+    `
+    if (this.contentType == null && this.base64 == null) {
+      html += `<img id="img-goes-here" src="/pics/the_sellery.jpg">`;
+      html += html2;
+    } else {
+      html += `<img id="img-goes-here" src="data:${this.contentType};charset=utf-8;base64,${this.base64}">`;
+      html += html2;
+    }
+
     if (this.uID == this.currentUserID) {
       html += '<i class="edit fas fa-edit"></i></div>'
     } else {
@@ -298,7 +272,8 @@ class Post {
 function buildPostList(posts, currentUserId) {
   let lst = []
   let post;
-
+  let contentType;
+  let base64;
 
   for (post in posts) {
     let newPost = posts[post];
@@ -313,7 +288,9 @@ function buildPostList(posts, currentUserId) {
       newPost.time,
       post,
       newPost.user_id,
-      currentUserId
+      currentUserId,
+      newPost.post_pic.contentType,
+      newPost.post_pic.imageBase64
     )
   }
   console.log(lst);
@@ -349,11 +326,15 @@ function createChatRoomEventListner(post) {
  * @param {*} post 
  */
 function createChatRoom(post) {
+  console.log(post);
   $.ajax({
     url: "create_chat_room",
     type: "POST",
     dataType: "JSON",
-    data: post,
+    data: {
+      uID: post.userID,
+      un: post.userName,
+    },
     success: (data) => {
       console.log(data);
       if (data.status == "error") {
@@ -369,3 +350,5 @@ function createChatRoom(post) {
     }
   })
 }
+
+

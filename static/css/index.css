@@ -1,0 +1,30 @@
+body {
+    background-image: url("../pics/the_sellery.jpg");
+    background-color: #cccccc;
+    width: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+  }
+
+#index {
+    display: grid;
+    align-content: center;
+    align-items: center;
+}
+
+button {
+    font-size: 45pt;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+    margin-top: 1em;
+    width: 30vh;
+}
+
+a {
+    text-decoration: none;
+}

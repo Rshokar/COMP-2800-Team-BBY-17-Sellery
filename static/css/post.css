@@ -5,12 +5,18 @@
     z-index: 1;
     left: 0;
     top: 0;
-    margin-left: 10vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
     margin-top: 10vw;
-    width: 80vw;
+    width: 90vw;
     background-color: rgb(227, 227, 227);
     justify-content: center;
-    height: 55%;
+    height: 75%;
+    overflow: auto;
+}
+
+.post_form {
+    height: 100%;
 }
 
 #confirmation {
@@ -23,15 +29,21 @@
 }
 
 .create-post {
-    margin-top: 10px;
+    padding-top: 10px;
     display: flex;
     /* justify-content: center; */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    height: 100%;
+}
+
+.radio-container, #weightOptions {
+    margin-bottom: 10px;
 }
 
 .create-post form {
     margin: 0 auto;
     display: initial;
+    width: 90%;
 }
 
 .create-post textarea{
@@ -43,13 +55,16 @@
 }
 
 .create-post button.submit{
-    margin-top: 1em;
-    width: 50%;
-    margin: 10px;
+    background-color: #387A00;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    color: white;
     border-radius: 10px;
-    padding: 6px;
-    border: 0;
-    cursor: pointer;
+    padding: 5px;
+    display: block;
+    width: 100px;
+    margin: 10px auto;
 }
 
 .create-post button.close {
@@ -68,6 +83,15 @@
   background-color: white;
   border: none;
   font-size: 2em;
+}
+
+.create-post button.back {
+    cursor: pointer;
+    position: absolute;
+    right: 43%;
+    background-color: white;
+    border: none;
+    font-size: 2em;
 }
 
 .create-post label{
@@ -93,6 +117,10 @@
     width: 100%;
 }
 
+.back {
+    display: none;
+}
+
 .error {
     color: red;
     font-style: italic;
@@ -100,7 +128,7 @@
     margin-top: 10px;
 }
 
-.price, .quantity {
+.price, .quantity, .price-preview, .quantity-preview, .units-preview {
     margin-right: .5em;
     margin-left: .5em;
     font-weight: bold;
@@ -112,13 +140,14 @@
 }
 
 .next {
-    margin-bottom: 20px;
+    display: block;
     border: none;
     outline: none;
     color: white;
     background-color: #38A700;
     font-weight: 600;
     width: 100px;
+    margin: 0 auto;
     border-radius: 10px;
     padding: 5px;
 }

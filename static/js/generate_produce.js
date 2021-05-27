@@ -4,10 +4,13 @@
  * @date May-07-2021
  */
 
+"use strict";
+
 
 // might need to take in more arguments for filtering
 // no input required, gets data from user and displays to user
 function genListing() {
+  let newData;
   $.ajax({
     url: "/generate_produce",
     dataType: "json",
@@ -15,7 +18,7 @@ function genListing() {
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.user_id);
-      for (post in newData) {
+      for (let post in newData) {
         console.log(post)
         newData[post].appendHTML();
       }
@@ -55,18 +58,43 @@ function genListing() {
 // might need to take in more arguments for filtering
 // no input required, gets data from user and displays to user
 function genMyStoreFrontListing() {
+  let newData;
   $.ajax({
     url: "/generate_my_produce",
     dataType: "JSON",
     type: "GET",
     success: function (data) {
       console.log("Listing is generated: ", data);
+
       newData = buildPostList(data.results, data.userId);
-      for (post in newData) {
+      for (let post in newData) {
         newData[post].appendHTML();
       }
-      // app.posts = data;
-      return data
+
+      // search bar to filter cards by title in storefront
+      const namelist = document.querySelectorAll('#card-listing h3.title');
+      const searchBar = document.getElementById("feed_search");
+
+      console.log(namelist);
+
+      searchBar.addEventListener('keyup', function (e) {
+        const term = e.target.value.toLowerCase();
+
+        namelist.forEach(function (card) {
+          const nameTitle = card.parentElement.querySelector('h3').textContent
+          if (nameTitle.toLowerCase().indexOf(term) != -1) {
+            card.parentElement.parentElement.parentElement.style.display = 'block';
+          } else {
+            card.parentElement.parentElement.parentElement.style.display = 'none';
+          }
+        });
+      });
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+      return data;
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
@@ -82,6 +110,7 @@ function genMyStoreFrontListing() {
  * @param {*} userId if the owner of the post. 
  */
 function genStoreFrontListing(userId) {
+  let newData;
   $.ajax({
     url: "/generate_user_produce",
     dataType: "JSON",
@@ -92,11 +121,19 @@ function genStoreFrontListing(userId) {
     success: function (data) {
       console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
-      for (post in newData) {
+      for (let post in newData) {
         newData[post].appendHTML();
       }
-      // app.posts = data;
-      return data
+
+      if (newData.length > 0) {
+        const default_post = document.getElementById("default_message");
+        default_post.style.display = "none";
+      }
+
+      return {
+        data: data,
+        status: "success"
+      }
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);

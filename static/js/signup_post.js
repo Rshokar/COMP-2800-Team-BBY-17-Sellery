@@ -5,6 +5,8 @@
  * @date May 10, 2021
 */
 
+"use strict";
+
 const form = $('form')[0];
 const error = $('.error')[0];
 const confirm_button = $('#confirm');
@@ -14,11 +16,12 @@ form.addEventListener('submit', async (e) => {
 
     error.textContent = '';
 
-    const email = form.email.value;
+    const email = form.email.value.trim();
     const password = form.password.value;
-    const name = form.name.value;
+    const name = form.name.value.trim();
     const longitude = form.longitude.value;
     const latitude = form.latitude.value;
+
 
     $.ajax({
         url: '/signup',
@@ -43,5 +46,5 @@ form.addEventListener('submit', async (e) => {
 })
 
 confirm_button.click(() => {
-    window.location.href = '/template';
+    window.location.href = '/feed';
 })
