@@ -93,8 +93,8 @@
             <div id="review-holder">
               <div id="reviews" v-for="review in reviews" :key="review.data">
                 <h3>{{review.rating}}/5</h3>
-                <h5>{{review.reviewComment}}</h5>
-                <p>{{review.date}}</p>
+                <h5>{{review.comment}}</h5>
+                <p>{{review.datePosted}}</p>
               </div>
             </div>
             </a>
@@ -109,15 +109,14 @@
       <div id="add-review-listing">
         <div class="center-add-review">
           <div class="property-add-review">
-            <div id="review">
-              <h1 class="display-4">We Appreciate Your Review!</h1>
-              <p class="lead">
-                Your review will help this seller to provide more fresh
-                produce.
-              </p>
-            </div>
-
-            <form method="POST" action="/createReviews" id="r">
+            <div id="review_form_shell">
+              <div id="review">
+                <h1 class="display-4">We Appreciate Your Review!</h1>
+                <p class="lead">
+                  Your review will help this seller to provide more fresh
+                  produce.
+                </p>
+              </div>
               <div class="row mb-3">
                 <div class="form-floating">
                   <textarea class="form-control" name="reviewComment" placeholder="Leave a comment here"
@@ -150,12 +149,19 @@
                   </div>
                 </div>
               </fieldset>
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+              <button id="submit_review" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+
+            <div id="confirmation_add_review">
+              <span id="add_review_message"></span>
+              <button id=add_review_confirm>Okay</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+
 
     <!-- script for previewing image -->
     <script src="../js/preview_image_storefront.js"></script>
@@ -195,7 +201,7 @@
 
     <!-- </div> -->
 
-<br>
+    <br>
 
     <!-- Facebook like and Share button -->
     <div class="fb-share-button" data-href="http://ec2-34-216-219-151.us-west-2.compute.amazonaws.com/storefront"
@@ -203,10 +209,6 @@
         href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fec2-34-216-219-151.us-west-2.compute.amazonaws.com%2Fstorefront&amp;src=sdkpreparse"
         class="fb-xfbml-parse-ignore">Share</a></div>
     <!-- End of Facebook like and share button -->
-
-
-
-    <div id="Listings"></div>
 
     <div id="post-title-h5">
       <div id="post-title">Here are your posts!</div>
@@ -220,6 +222,10 @@
 
     <!-- This is where post start -->
     <div id="card-listing">
+      <div id="default_message">
+        <h1>No post here.</h1>
+        <p>Click the plus button to add a new post.</p>
+      </div>
     </div>
 
     <!-- Edit Post -->

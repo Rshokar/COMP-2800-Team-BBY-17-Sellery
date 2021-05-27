@@ -2,6 +2,7 @@
 
 
 $(document).ready(function () {
+  let result
   const url = new URL(window.location.href);
 
   //Get user ID from URL
@@ -12,9 +13,12 @@ $(document).ready(function () {
     genStoreFrontListing(userID);
     editForStorefrontVisitor();
   } else {
-    genMyStoreFrontListing();
+    result = genMyStoreFrontListing();
+    editForStorefrontOwner();
     genReviews();
   }
+
+
 
   /**
    * AJAX call to request the user info from the server
@@ -57,12 +61,10 @@ $(document).ready(function () {
   const review_close = document.querySelector("#review-close");
 
   reviews_button.addEventListener("click", function () {
-    console.log("Clicked reviews");
     review_card.style.display = "block";
   });
 
   review_close.addEventListener("click", function () {
-    console.log("review x working");
     review_card.style.display = "none";
   });
 
@@ -98,13 +100,14 @@ $(document).ready(function () {
     }
   };
 
+
+
   /**
    * This Vue app is used to add and remove data from HTML 
    * Data will be inputed in div with ID review-listing
    * @author Mike Lim
    * @date May 13 2021
    */
-  console.log("made it to reviewlisting component");
   const reviewApp = new Vue({
     el: '#review-listing',
     data: {
@@ -118,11 +121,13 @@ $(document).ready(function () {
    * @date May-13-2021
    */
   function genReviews() {
+    console.log("Im getting the reviews. Give me a second");
     $.ajax({
       url: "/generate_reviews",
       dataType: "json",
       type: "GET",
       success: function (data) {
+        console.log("I got data", data);
         reviewApp.reviews = data;
         return data
       },
@@ -199,6 +204,101 @@ $(document).ready(function () {
     })
   }
 
+  /**
+   * This event listner is responsible for making an ajax call to the node server. 
+   * @author Ravinder Shokar 
+   * @version 1.0 
+   * @date May 26 2021
+   */
+  const submitReview = document.getElementById("submit_review");
+
+  const radios = document.querySelectorAll(".form-check-input");
+  const textBox = document.getElementById("floatingTextarea2");
+
+  const confirmationBox = document.getElementById("confirmation_add_review");
+  const confirmationMessage = document.getElementById("add_review_message");
+  const confirmationButton = document.getElementById("add_review_confirm");
+  const reviewPage = document.getElementById("review_form_shell");
+  const add_review = document.getElementById("add-reviews");
+  const add_review_modal = document.getElementById("add-review-modal");
+  const add_review_modal_close = document.getElementById('add-review-close');
+
+  submitReview.addEventListener("click", (e) => {
+    let obj = {
+      comment: textBox.value,
+      rating: 0,
+      storefrontOwner: userID,
+    }
+
+    for (let i = 0; i < radios.length; i++) {
+      if (radios[i].checked) {
+        obj.rating = radios[i].value;
+      }
+    }
+
+    $.ajax({
+      url: "/create_reviews",
+      dataType: "JSON",
+      type: "POST",
+      data: obj,
+      success: (data) => {
+        if (data.status == "success") {
+          reviewPage.style.display = "none"
+          confirmationMessage.innerHTML = data.message;
+          confirmationBox.style.display = "block";
+        }
+        console.log(data)
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+
+  })
+
+  /**
+   * This event listner will close all pages and restore the review modal 
+   * to its original state
+   * @author Ravinder Shokar 
+   * @version 1.0
+   * @date May 26 2021 
+   */
+  confirmationButton.addEventListener("click", (e) => {
+    add_review_modal.style.display = "none";
+    resetReviewModal();
+  })
+
+
+  /**
+ * These event listner will be responsible for operning up the reviews model 
+ * @authors Ravinder Shokar 
+ * @version 1.0 
+ * @date May 26th 2021 
+ */
+  //Dispplays Add_review
+  add_review.addEventListener("click", (e) => {
+    add_review_modal.style.display = "block";
+  })
+
+  // CLoses add_review
+  add_review_modal_close.addEventListener("click", (e) => {
+    add_review_modal.style.display = "none";
+  })
+
+  /**
+   * This function is responsible for reseting the review modal to its 
+   * original state
+   * @author Ravinder Shokar 
+   * @version 1.0 
+   * @date May 26 2021
+   */
+  function resetReviewModal() {
+    confirmationBox.style.display = "none";
+    reviewPage.style.display = "block";
+    textBox.value = "";
+
+  }
+
 })
 
 
@@ -216,6 +316,17 @@ function editForStorefrontVisitor() {
   form.style.display = "none";
   review.style.display = "none";
   edit.style.display = "none";
+}
+
+/**
+ * This function makes the DOM look appropriate for a storefront owner 
+ * @author Ravidner Shokar 
+ * @version 1.0 
+ * @date May 26 2021 
+ */
+function editForStorefrontOwner() {
+  const add_review = document.getElementById("add-reviews");
+  add_review.style.display = "none";
 }
 
 

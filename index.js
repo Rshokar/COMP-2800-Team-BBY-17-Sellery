@@ -756,20 +756,27 @@ app.post("/generate_user_produce", (req, res) => {
  */
 app.get("/generate_reviews", (req, res) => {
 
-  user_id = '60956e66db7bf207dbc33255';
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, "gimp", (err, decodedToken) => {
+    const userID = decodedToken.id;
+    client
+      .db("sellery")
+      .collection("reviews")
+      .find({
+        "storefrontOwner": userID
+      })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+      });
+
+  })
+
 
   //console.log("Generate reviews server");
-  client
-    .db("sellery")
-    .collection("reviews")
-    .find({
-      "user_id": ObjectId(user_id)
-    })
-    .toArray(function (err, result) {
-      if (err) throw err;
-      //console.log(result);
-      res.send(result);
-    });
+
 })
 
 
@@ -809,42 +816,56 @@ app.get("/review_form", (req, res) => {
 
 /**
  * This route will write reviews to the database.
+ * Ravinder: This route will get rating, comment from req.body and create a 
+ * review in the reviews collection is sellery db. 
  * @author Gurshawn Sekhon
+ * @author Ravinder Shokar . 
  * @date May-10-2021
  */
-app.post("/createReviews", (req, res) => {
+app.post("/create_reviews", (req, res) => {
+  const token = req.cookies.jwt;
 
-  const {
-    rating,
-    reviewComment
-  } = req.body;
 
-  const db = client.db("sellery");
+  jwt.verify(token, "gimp", (err, decodedToken) => {
 
-  const date = new Date().toDateString();
+    const date = new Date().toDateString();
 
-  db.collection("reviews").insertOne({
-    rating,
-    reviewComment,
-    date
-  }).then(() => {
-    let obj = {
-      status: "success",
-      message: "created reviews successfully",
+    const comment = {
+      comment: req.body.comment,
+      rating: req.body.rating,
+      storefrontOwner: req.body.storefrontOwner,
+      reviewOwner: decodedToken.id,
+      datePosted: date
     }
-    console.log(obj);
-    res.send(obj);
-  })
-    .catch((err) => {
-      let obj = {
-        result: {},
-        status: "error",
-        message: ""
-      }
-      console.log(obj);
-      res.send(obj);
-    })
-});
+    const db = client.db("sellery");
+
+    console.log(comment);
+
+
+
+    db.collection("reviews")
+      .insertOne(comment)
+      .then(() => {
+        let obj = {
+          status: "success",
+          message: "Successfully Created Review",
+        }
+        console.log(obj);
+        res.send(obj);
+      })
+      .catch((err) => {
+        let obj = {
+          result: {},
+          status: "error",
+          message: "error uploading comment."
+        }
+        console.log(obj);
+        res.send(obj);
+      })
+  });
+})
+
+
 
 /**
  * This route will upload profile picture
@@ -903,7 +924,6 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
  */
 app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
-  let result;
 
   console.log("server: ", req);
 
@@ -964,7 +984,7 @@ app.post("/update_bio", requireLogin, async (req, res) => {
         $set: {
           location: {
             type: "Point",
-            coordinates: [post.longitude, post.latitude]
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
           }
         }
       }
@@ -973,6 +993,21 @@ app.post("/update_bio", requireLogin, async (req, res) => {
         .db("sellery")
         .collection("users")
         .updateOne(query, updateLoc, options);
+
+      const locQuery = {
+        "user_id": userId
+      }
+
+      const updateLocMany = {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
+          }
+        }
+      }
+
+      client.db("sellery").collection("post").updateMany(locQuery, updateLocMany);
     }
 
 

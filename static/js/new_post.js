@@ -124,7 +124,7 @@ next_button.addEventListener('click', function () {
 
   const img_src = img_container.src;
 
-  if (title != '' && desc != '' && quantity != '' && price != '') {
+  if (title == '' && desc != '' && quantity != '' && price != '') {
 
     form.style.display = "none";
     preview.style.display = "block";
