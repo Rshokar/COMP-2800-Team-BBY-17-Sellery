@@ -49,7 +49,7 @@ $(document).ready(function () {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
-      console.log("ERROR:", jqXHR, textStatus, errorThrown);
+      //console.log("ERROR:", jqXHR, textStatus, errorThrown);
     }
   })
 
@@ -78,12 +78,12 @@ $(document).ready(function () {
   const edit_submit = document.querySelector("#submit");
 
   edit_button.addEventListener("click", function () {
-    console.log("Clicked reviews");
+    //console.log("Clicked reviews");
     edit_card.style.display = "block";
   });
 
   edit_close.addEventListener("click", function () {
-    console.log("edit x working");
+    //console.log("edit x working");
     resetEditModal()
     edit_card.style.display = "none";
   });
@@ -96,7 +96,7 @@ $(document).ready(function () {
   window.onclick = function (event) {
     if (event.target == edit_card) {
       resetEditModal()
-      console.log("window close");
+      //console.log("window close");
       edit_card.style.display = "none";
     }
     if (event.target == review_card) {
@@ -128,21 +128,21 @@ $(document).ready(function () {
    * @date May-27-2021
    */
   function genReviews() {
-    console.log("Im getting the reviews. Give me a second");
+    //console.log("Im getting the reviews. Give me a second");
     $.ajax({
       url: "/generate_reviews",
       dataType: "json",
       type: "GET",
       success: function (data) {
-        console.log(data);
+        //console.log(data);
         if (data.length > 0) {
           const default_review_message = document.getElementById("default-value-holder");
           default_review_message.style.display = "none";
-          console.log("I got data", data);
+          //console.log("I got data", data);
           reviewApp.reviews = data;
           return data
         } else {
-          console.log("No reviews returned");
+          //console.log("No reviews returned");
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -199,11 +199,11 @@ $(document).ready(function () {
       addressError.textContent = "Invalid Address";
       isValid = false;
     }
-    console.log("addy: ", newLat, newLong);
+    //console.log("addy: ", newLat, newLong);
 
     var myObj = { name: newName, bio: newBio, longitude: newLong, latitude: newLat };
 
-    console.log("clicked and saved: " + newName + newBio + newLat + newLong);
+    ("clicked and saved: " + newName + newBio + newLat + newLong);
 
     if (isValid) {
       update(myObj);
@@ -225,7 +225,7 @@ $(document).ready(function () {
       dataType: "JSON",
       data: bioData,
       success: (data) => {
-        console.log("success in update in client");
+        //console.log("success in update in client");
         return data
       },
       error: (err) => {
@@ -273,7 +273,7 @@ $(document).ready(function () {
     }
 
     if (obj.comment.length >= 180) {
-      console.log("error");
+      //console.log("error");
       review_error.innerHTML = "Review must be lest than 180 characters";
     } else {
       $.ajax({
@@ -287,10 +287,10 @@ $(document).ready(function () {
             confirmationMessage.innerHTML = data.message;
             confirmationBox.style.display = "block";
           }
-          console.log(data)
+          //console.log(data)
         },
         error: (err) => {
-          console.log(err);
+          //console.log(err);
         }
       })
     }

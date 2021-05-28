@@ -1219,4 +1219,4 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
   })
 })
 
-server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });
+server.listen(80, () => { console.log('listening on http://localhost:8000/'); });

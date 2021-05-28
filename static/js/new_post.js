@@ -5,7 +5,7 @@
 
 "use strict";
 
-console.log("new_post.js")
+//console.log("new_post.js")
 
 const newPostModal =
   `
@@ -175,7 +175,7 @@ back_new_post.addEventListener("click", (e) => {
  * @param {post} post being submited to DB
  */
 function submitNewEventListner(post) {
-  console.log(post);
+  //console.log(post);
   $("#new-post .title-preview").text(post.title)
   $("#new-post .name-preview").text()
   $("#new-post .description-preview").text(post.description)
@@ -193,7 +193,7 @@ function submitNewEventListner(post) {
   * @version 1.0 
   */
   $("#confirm").click((e) => {
-    console.log("I have been clicked");
+    //console.log("I have been clicked");
     form.submit(function (e) {
       e.preventDefault();
     });
@@ -206,7 +206,7 @@ function submitNewEventListner(post) {
  * This will pop up a modal allowing users to confirma a post. 
  */
 $('#new-post .submit').click(() => {
-  console.log("Jello")
+  //console.log("Jello")
   $('#pop-up-background').css("visibility", "visible");
   $('#pop-up-menu').css("visibility", "visible");
 })
