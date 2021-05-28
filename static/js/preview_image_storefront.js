@@ -4,7 +4,9 @@
    * @date May-20-2021
    * https://stackoverflow.com/questions/5802580/html-input-type-file-get-the-image-before-submitting-the-form
    */
- function showPic(input) {
+
+"use strict";
+function showPic(input) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     reader.onload = function (e) {

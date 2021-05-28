@@ -3,9 +3,11 @@
     height: 10vh;
     border: 1px solid black;
     margin: .5em .5em .5em .5em;
-    border-radius: 2%;
+    border-radius: 5px;
     display: grid;
     grid-template-columns: 25% 75%;
+    -webkit-box-shadow: 3px 3px 5px 6px #ccc; /*safari*/
+    box-shadow:         3px 3px 5px 6px #ccc; /*chrome*/
 }
 
 .chat span {
@@ -29,3 +31,12 @@
 .chat :hover{
     background-color: grey;
 }
+
+#title {
+    font-size: 16pt;
+    text-align: center;
+    margin-top: 3em;
+    font-weight: bold;
+    text-shadow: 4px 4px #ccc;
+    margin-bottom: 3em;
+  }

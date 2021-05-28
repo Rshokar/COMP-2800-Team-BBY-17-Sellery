@@ -1,5 +1,5 @@
 /* Edit Pop Up */
-#edit-modal {
+#add-review-modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   left: 0;
@@ -9,10 +9,9 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  z-index: 1;
 }
 
-#edit-close {
+#add-review-close {
   cursor: pointer;
   position: absolute;
   right: 16%;
@@ -20,11 +19,11 @@
   background-color: white;
   border: none;
   font-size: 2em;
-  z-index: 1001;
+  z-index: 1;
   margin: auto;
 }
 
-.property-card-edit {
+.property-add-review {
   background-color: #5fd543;
   width: 80%;
   margin: 15% auto;
@@ -42,8 +41,4 @@
   overflow: hidden;
   -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
   box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #ffffff;
-  z-index: 1000;
 }
-
-
-

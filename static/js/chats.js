@@ -5,6 +5,8 @@
  * @version 1.0 
  * @date May 20 2021 
  */
+"use strict";
+
 
 $(document).ready(async () => {
   renderChats()
@@ -32,7 +34,7 @@ function renderChats() {
 
     },
     error: (err) => {
-      console.log(err);
+      //console.log(err);
       return {
         status: "error",
         message: "Error"
@@ -53,8 +55,8 @@ function renderChats() {
  * @param UserID is used to verify who the message is from.
  */
 function appendToHTML(chats, userID) {
-  for (chat in chats) {
-    html = buildHTML(chats[chat], userID);
+  for (let chat in chats) {
+    let html = buildHTML(chats[chat], userID);
     $("#chats").prepend(html);
   }
 }
@@ -69,8 +71,7 @@ function appendToHTML(chats, userID) {
  * the user ID of the message to find out who "YOU" is
  */
 function buildHTML(chat, userID) {
-
-
+  let html;
   if (userID == chat.ID[0]) {
     html = `
     

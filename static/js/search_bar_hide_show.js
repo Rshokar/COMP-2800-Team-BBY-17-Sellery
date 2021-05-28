@@ -1,3 +1,5 @@
+"use strict";
+
 const proxDropDown = document.querySelector('#dropdown');
 const status = document.querySelector('#dropdown i');
 const search_bar = document.querySelector('#proximity-search-bar');
@@ -37,7 +39,7 @@ proximityBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const distance = document.querySelector('input[id="proximity-search"]').value;
     if (distance.toLowerCase() == "superhuman beeing") {
-        console.log('typed successfully');
+        //console.log('typed successfully');
         easterCard.style.display = "initial";
     }
     const distanceInNum = Number(distance);
@@ -54,6 +56,7 @@ proximityBtn.addEventListener('click', (e) => {
                 distance: distanceInNum
             },
             success: function (data) {
+                let newData;
                 easterCard.style.display = "none";
                 const allData = document.querySelector('#card-listing');
                 proximityCards.forEach((card) => {
@@ -62,8 +65,8 @@ proximityBtn.addEventListener('click', (e) => {
                 if (data.result.length > 0) {
                     allData.style.display = "none";
                     newData = buildPostList(data.result, data.user_id);
-                    for (post in newData) {
-                        console.log(post)
+                    for (let post in newData) {
+                        //console.log(post)
                         newData[post].displayInProximityContainer();
                     }
                     container.style.display = "initial";
@@ -94,7 +97,7 @@ proximityBtn.addEventListener('click', (e) => {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $("#p1").text(jqXHR.statusText);
-                console.log("ERROR:", jqXHR, textStatus, errorThrown);
+                //console.log("ERROR:", jqXHR, textStatus, errorThrown);
             }
         })
     }

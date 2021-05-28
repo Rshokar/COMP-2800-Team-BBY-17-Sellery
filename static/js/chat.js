@@ -1,3 +1,5 @@
+"use strict";
+
 var socket = io();
 
 const submit = document.getElementById("submit");
@@ -28,12 +30,8 @@ socket.on('message', (msg) => {
 
 submit.addEventListener('click', (e) => {
   e.preventDefault();
-
-
-
   if (input.value) {
     let msg = buildMsgObj();
-    console.log(msg);
     socket.emit('chat message', msg, roomID);
     input.value = '';
     input.focus()
@@ -50,14 +48,14 @@ submit.addEventListener('click', (e) => {
  * @param {string} msg 
  */
 function outputMessage(msg, me, you) {
-  console.log(msg);
   var div = document.createElement("div");
   div.classList.add("message");
 
   //This will needed to be filled with either sender or reciever
   //div.classList.add(person)
   let html;
-  if (msg.owner.ID === me.ID) {
+  if (isMine(msg.owner.id)) {
+    //console.log("Me");
     div.classList.add("me");
     html =
       `
@@ -66,7 +64,8 @@ function outputMessage(msg, me, you) {
       </p>
          <span class="meta">${msg.owner.name} ${msg.timeStamp}</span>
       `;
-  } else if (msg.owner.ID == -1) {
+  } else if (msg.owner.id == -1) {
+    //console.log("Chatbot");
     div.classList.add("chatbot");
     html = `
         <p class="text">
@@ -75,6 +74,7 @@ function outputMessage(msg, me, you) {
         <span class="meta">Chat Bot ${msg.timeStamp}</span>
         `;
   } else {
+    //console.log("You");
     div.classList.add("you");
     html = `
         <p class="text">
@@ -84,8 +84,15 @@ function outputMessage(msg, me, you) {
         `;
   }
   div.innerHTML = html
+  div.classList.add("message");
 
-  messages.append(div);
+  var divContainer = document.createElement("div");
+
+  divContainer.classList.add("message_container");
+
+  divContainer.append(div);
+
+  messages.append(divContainer);
 }
 
 
@@ -99,13 +106,14 @@ function outputMessage(msg, me, you) {
  * @param room is the room ID
  */
 function loadChat(room) {
-  console.log(room);
+  //console.log(room);
   $.ajax({
     url: "/get_chat",
     type: "GET",
     dataType: "JSON",
     data: { room },
     success: (data) => {
+      console.log(data);
       $("#input span").attr("id", data.me.ID);
       $("#input p").text(data.me.name);
       $("#you").text(data.you.name)
@@ -115,7 +123,7 @@ function loadChat(room) {
       }
     },
     error: (err) => {
-      console.log(err);
+      //console.log(err);
     }
   })
 }
@@ -179,6 +187,6 @@ function formatAMPM(date) {
   minutes = minutes < 10 ? '0' + minutes : minutes;
   var strTime = hours + ':' + minutes + ' ' + ampm;
 
-  console.log(strTime);
+  //console.log(strTime);
   return strTime;
 }

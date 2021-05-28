@@ -21,11 +21,10 @@ const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 
+"use strict";
+
 // set storage
 var storage = multer.diskStorage({
-  // destination: function (req, res, cb) {
-  //   cb(null, 'uploads');
-  // },
   filename: function (req, file, cb) {
     var ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
     cb(null, file.fieldname + '-' + Date.now() + ext);
@@ -44,12 +43,7 @@ const { format } = require('util');
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
-// for about page pics and favicon
 app.use("/pics", express.static("static/pics"));
-
-app.use("/views", express.static("static/views"));
-
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -97,18 +91,14 @@ async function main() {
   } catch (e) {
     console.error(e);
   }
-  //finally {
-  //  await client.close();
-  //}
 }
 
 main().catch(console.error);
 
-
 io.on('connection', (socket) => {
 
   const chatBot = {
-    ID: -1,
+    id: -1,
     name: "Chat Bot"
   }
 
@@ -155,13 +145,6 @@ function addMessage(message, room) {
 
 }
 
-// async function listDatabases(client) {
-//   databasesList = await client.db().admin().listDatabases();
-
-//   console.log("Databases:");
-//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-// };
-
 /**
  * This is a middleware function that checks whether the user
  * has token. This token is used for verifying user.
@@ -190,7 +173,7 @@ requireLogin = (req, res, next) => {
  * @atuhor Ravinder Shokar 
  * @date April-29-2021
  */
-app.get("/", requireLogin, (req, res) => {
+app.get("/", (req, res) => {
   readFile("static/html/index.html", "utf-8", (err, html) => {
     if (err) {
       res.status(500).send("sorry, out of order");
@@ -244,123 +227,51 @@ app.get("/storefront", requireLogin, (req, res) => {
   })
 })
 
-
-
-/**
- * This route will post data to Mongo DB. 
- * @author Ravinder Shokar 
- * @date May-05-2021
- */
-app.post("/post_post", requireLogin, (req, res) => {
-  const db = client.db("sellery");
-  let post = req.body;
-  const token = req.cookies.jwt;
-  console.log(post);
-
-  /** added this component to get user's location using token, then saving a post to
-   *  our database
-   * @author Jimun Jang
-   * @date May-13, 2021
-   */
-  jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
-    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
-      .then((data) => {
-        const user = data;
-        db.collection("post").insertOne({
-          description: post.description,
-          price: post.price,
-          quantity: post.quantity,
-          time: post.time,
-          title: post.title,
-          units: post.units,
-          location: user.location,
-          poster_name: user.name,
-          user_id: decodedToken.id
-        }).then(() => {
-          db.collection("post").createIndex({ location: "2dsphere" });
-          let message = "success";
-          res.send({ message });
-        })
-      })
-  })
-})
-
 /**
  * This route sends a single users info to the bio section of storefront
+ * Ravinder Shokar: I added an if check to see if a user ID has passed in. If it 
+ * has it will query that user.
  * @author Mike Lim
+ * @author Ravinder Shokar 
  * @version 1.0
- * @date May 06 2021
+ * @date May 26 2021
  */
 app.get("/storefront-data", requireLogin, (req, res) => {
   const token = req.cookies.jwt;
+  const userID = req.query.id;
 
   jwt.verify(token, 'gimp', (err, decodedToken) => {
-    console.log(decodedToken);
 
-    client.db("sellery").collection("users")
-      .findOne({ "_id": ObjectId(decodedToken.id) })
-      .then((data) => {
-        res.send({ result: data });
-      })
+    if (userID) {
+      client.db("sellery").collection("users")
+        .findOne({ "_id": ObjectId(userID) })
+        .then((data) => {
+          res.send({ result: data });
+        })
+    } else {
+      client.db("sellery").collection("users")
+        .findOne({ "_id": ObjectId(decodedToken.id) })
+        .then((data) => {
+          res.send({ result: data });
+        })
+    }
   })
 })
 
 /**
- * This route is responsible for updating post in with post data. 
- * @author Ravinder Shokar
+ * This route returns a single usrs docuemnt. The user is dependent on which ID
+ * is sent in req.body;
+ * @author Ravinder Shokar 
  * @version 1.0
- * @date May 06 2021
+ * @date May 24 2021
  */
-app.post("/update_post", requireLogin, async (req, res) => {
-  let post = req.body;
-
-  console.log(post)
-
-  const query = {
-    "_id": ObjectId(post.ID)
-  }
-
-  const updateDoc = {
-    $set: {
-      title: post.title,
-      description: post.description,
-      units: post.units,
-      price: post.price,
-      quantity: post.quantity,
-    }
-  }
-
-  const options = {
-    upsert: true
-  };
-
-  result = await client.db("sellery").collection("post").updateOne(query, updateDoc, options);
-
-  if (result.modifiedCount === 1) {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    myObj = {
-      message: "Success Updating Post",
-      status: "sucess",
-    };
-    res.send(myObj);
-  } else {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    console.log("No documents matched the query. Deleted 0 documents.");
-    myObj = {
-      message: "Error Updating Post",
-      status: "error"
-    }
-    res.send(myObj)
-  }
-
-
-});
-
+app.get("/get_your_storefront", requireLogin, (req, res) => {
+  client.db("sellery").collection("users")
+    .findOne({ "_id": ObjectId("60a801413c579615c234b306") })
+    .then((data) => {
+      res.send({ result: data });
+    })
+})
 
 /**
  * This route is responsible for deleting post. 
@@ -400,7 +311,6 @@ app.post("/delete_post", requireLogin, (req, res) => {
   }
 })
 
-
 /**
  * This route gets all post from the DB 
  * @author Gurshawn Sehkon
@@ -410,7 +320,6 @@ app.get("/generate_produce", requireLogin, (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
     client
       .db("sellery")
       .collection("post")
@@ -426,11 +335,6 @@ app.get("/generate_produce", requireLogin, (req, res) => {
         res.send(obj);
       });
   })
-
-
-  // console.log(data);
-  // res.send(data);
-
 })
 
 /**
@@ -503,9 +407,9 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
   let post = req.body;
 
   jwt.verify(token, "gimp", async (err, decodedToken) => {
-    console.log("Token", decodedToken);
-    let userOne = post.currentUserID;
+    let userOne = decodedToken.id;
     let userTwo = post.uID
+
     let obj;
 
     const db = client.db("sellery").collection('chat');
@@ -513,42 +417,41 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
     //Check if a chat room exist. 
     const chatRoom = await db.findOne({
       ID: { "$all": [userOne, userTwo] }
-    });
+    }, (err, chatRoom) => {
+      if (chatRoom) {
+        console.log("Chat room exist");
 
-    if (chatRoom) {
-      console.log("Chat room exist");
-
-      //Redirect to chatroom
-      console.log(chatRoom);
-      res.send({
-        status: "success",
-        message: "Chat room found",
-        id: chatRoom._id
-      })
-    } else {
-      console.log("Chat room does not exist");
-
-      // Create Chat room
-      db.insertOne({
-        names: [decodedToken.userName, post.un],
-        ID: [userOne, userTwo],
-        messages: []
-      },
-        (err, doc) => {
-          if (err) {
-            res.send({
-              status: "error",
-              message: "Erro finding chatroom",
-            })
-          } else {
-            res.send({
-              status: "success",
-              message: "chat room found",
-              id: doc.insertedId
-            })
-          }
+        //Redirect to chatroom
+        res.send({
+          status: "success",
+          message: "Chat room found",
+          id: chatRoom._id
         })
-    }
+      } else {
+        console.log("Chat room does not exist");
+
+        // Create Chat room
+        db.insertOne({
+          names: [decodedToken.userName, post.un],
+          ID: [userOne, userTwo],
+          messages: []
+        },
+          (err, doc) => {
+            if (err) {
+              res.send({
+                status: "error",
+                message: "Error finding chatroom",
+              })
+            } else {
+              res.send({
+                status: "success",
+                message: "chat room found",
+                id: doc.insertedId
+              })
+            }
+          })
+      }
+    });
   })
 })
 
@@ -569,8 +472,6 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     let you;
     let userID = decodedToken.id;
     let roomID = req.query.room;
-    console.log(roomID);
-
 
     const database = client.db("sellery");
     const chats = database.collection("chat")
@@ -578,8 +479,6 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     const query = { "_id": ObjectId(roomID) }
 
     const chat = await chats.findOne(query);
-
-    console.log(chat);
 
     if (chat) {
 
@@ -619,7 +518,6 @@ app.get("/get_my_chats", requireLogin, async (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
     let userID = decodedToken.id;
 
     const database = client.db("sellery");
@@ -656,6 +554,10 @@ app.post('/signup', async (req, res) => {
     password
   } = req.body;
 
+  if (password.length < 8) {
+    let error = "password must be longer than 7 characters long";
+    res.status(400).json({ error });
+  }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -665,36 +567,36 @@ app.post('/signup', async (req, res) => {
   const latInNum = Number(latitude);
 
   if (latitude != '' && longitude != '') {
-    db.collection("users").insertOne({
-      name,
-      location: {
-        type: "Point",
-        coordinates: [longInNum, latInNum]
-      },
-      email, // validate it
-      password: hashedPassword,
-    }).then((data) => {
-      console.log(data);
-      const user = data;
-      const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
-        expiresIn: 24 * 60 * 60
-      });
-      console.log(user.ops[0]._id);
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000
-      });
-      res.status(200).json({
-        user: user._id
-      });
-    }).catch((err) => {
-      let error = "password must be longer than 7 characters long";
-      if (err.code === 11000) {
-        error = "email is already registered";
+    db.collection("users").findOne({ email: email }, function (err, user) {
+      if (err) {
+        console.log(err);
       }
-      res.status(400).json({
-        error
-      });
+      if (user) {
+        let error = "email already exists, try to sign up with different email";
+        res.status(400).json({ error });
+      } else {
+        db.collection("users").insertOne({
+          name,
+          location: {
+            type: "Point",
+            coordinates: [longInNum, latInNum]
+          },
+          email,
+          password: hashedPassword,
+        }).then((data) => {
+          const user = data;
+          const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
+            expiresIn: 24 * 60 * 60
+          });
+          res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+          });
+          res.status(200).json({
+            user: user._id
+          });
+        })
+      }
     });
   } else {
     let error = "Invalid Address: try to choose an address from the drop down menu";
@@ -724,7 +626,6 @@ app.post('/login', async (req, res) => {
   });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
-    console.log("login User", user);
     if (auth) {
       const token = jwt.sign({
         userName: user.name,
@@ -786,7 +687,6 @@ app.get("/generate_my_produce", (req, res) => {
           userId: userId,
           results: result
         }
-        console.log(result)
         res.send(obj);
       });
 
@@ -801,21 +701,22 @@ app.get("/generate_my_produce", (req, res) => {
 app.post("/generate_user_produce", (req, res) => {
 
   userId = req.body.id
+  const token = req.cookies.jwt;
 
-  client
-    .db("sellery")
-    .collection("post")
-    .find({ "user_id": userId })
-    .toArray(function (err, result) {
-      if (err) throw err;
-      let obj = {
-        userId: userId,
-        results: result
-      }
-      console.log("generate_user_produce", obj);
-      res.send(obj);
-    });
-
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    client
+      .db("sellery")
+      .collection("post")
+      .find({ "user_id": userId })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        let obj = {
+          userId: decodedToken.id,
+          results: result
+        }
+        res.send(obj);
+      });
+  })
 })
 
 /**
@@ -825,20 +726,22 @@ app.post("/generate_user_produce", (req, res) => {
  */
 app.get("/generate_reviews", (req, res) => {
 
-  user_id = '60956e66db7bf207dbc33255';
+  const token = req.cookies.jwt;
 
-  //console.log("Generate reviews server");
-  client
-    .db("sellery")
-    .collection("reviews")
-    .find({
-      "user_id": ObjectId(user_id)
-    })
-    .toArray(function (err, result) {
-      if (err) throw err;
-      //console.log(result);
-      res.send(result);
-    });
+  jwt.verify(token, "gimp", (err, decodedToken) => {
+    const userID = decodedToken.id;
+    client
+      .db("sellery")
+      .collection("reviews")
+      .find({
+        "storefrontOwner": userID
+      })
+      .toArray(function (err, result) {
+        if (err) throw err;
+        res.send(result);
+      });
+
+  })
 })
 
 
@@ -878,42 +781,50 @@ app.get("/review_form", (req, res) => {
 
 /**
  * This route will write reviews to the database.
+ * Ravinder: This route will get rating, comment from req.body and create a 
+ * review in the reviews collection is sellery db. 
  * @author Gurshawn Sekhon
+ * @author Ravinder Shokar . 
  * @date May-10-2021
  */
-app.post("/createReviews", (req, res) => {
+app.post("/create_reviews", (req, res) => {
+  const token = req.cookies.jwt;
 
-  const {
-    rating,
-    reviewComment
-  } = req.body;
 
-  const db = client.db("sellery");
+  jwt.verify(token, "gimp", (err, decodedToken) => {
 
-  const date = new Date().toDateString();
+    const date = new Date().toDateString();
 
-  db.collection("reviews").insertOne({
-    rating,
-    reviewComment,
-    date
-  }).then(() => {
-    let obj = {
-      status: "success",
-      message: "created reviews successfully",
+    const comment = {
+      comment: req.body.comment,
+      rating: req.body.rating,
+      storefrontOwner: req.body.storefrontOwner,
+      reviewOwner: decodedToken.id,
+      datePosted: date
     }
-    console.log(obj);
-    res.send(obj);
-  })
-    .catch((err) => {
-      let obj = {
-        result: {},
-        status: "error",
-        message: ""
-      }
-      console.log(obj);
-      res.send(obj);
-    })
-});
+    const db = client.db("sellery");
+
+    db.collection("reviews")
+      .insertOne(comment)
+      .then(() => {
+        let obj = {
+          status: "success",
+          message: "Successfully Created Review",
+        }
+        res.send(obj);
+      })
+      .catch((err) => {
+        let obj = {
+          result: {},
+          status: "error",
+          message: "error uploading comment."
+        }
+        res.send(obj);
+      })
+  });
+})
+
+
 
 /**
  * This route will upload profile picture
@@ -973,55 +884,89 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
 app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
 
-  console.log("server: ", req);
+  const token = req.cookies.jwt;
 
-  const query = {
-    "_id": ObjectId(post.ID)
-  }
-
-  const updateBioDoc = {
-    $set: {
-      name: post.name,
-      bio: post.bio,
-      location: {
-        type: "Point",
-        coordinates: [post.longitude, post.latitude]
-      }
-      // image here
-    }
-  }
-
-  const options = {
-    upsert: true
-  };
-
-  // WILL NEED TO CHANGE COLLECTION
-  result = await client.db("sellery").collection("sample_data").updateOne(query, updateBioDoc, options);
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    let userId = decodedToken.id;
 
 
-
-  if (result.modifiedCount === 1) {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    myObj = {
-      message: "Success updating bio",
-      status: "sucess",
+    const query = {
+      "_id": ObjectId(userId)
     };
-    res.send(myObj);
-  } else {
-    console.log(
-      `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-    );
-    console.log("No documents matched the query. Deleted 0 documents.");
-    myObj = {
-      message: "Error updating bio",
-      status: "error"
+
+    const options = {
+      upsert: true
+    };
+
+    if (post.name) {
+      const updateName = {
+        $set: {
+          name: post.name
+        }
+      }
+
+      await client
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateName, options);
+
+      const postQuery = {
+        "user_id": userId
+      }
+
+      const updatePostDoc = {
+        $set: {
+          poster_name: post.name
+        }
+      }
+
+      client.db("sellery").collection("post").updateMany(postQuery, updatePostDoc);
     }
-    res.send(myObj)
-  }
 
+    if (post.bio) {
+      const updateBio = {
+        $set: {
+          bio: post.bio
+        }
+      }
 
+      await client
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateBio, options);
+    }
+
+    if (post.latitude) {
+      const updateLoc = {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
+          }
+        }
+      }
+
+      await client
+        .db("sellery")
+        .collection("users")
+        .updateOne(query, updateLoc, options);
+
+      const locQuery = {
+        "user_id": userId
+      }
+
+      const updateLocMany = {
+        $set: {
+          location: {
+            type: "Point",
+            coordinates: [parseFloat(post.longitude), parseFloat(post.latitude)]
+          }
+        }
+      }
+
+      client.db("sellery").collection("post").updateMany(locQuery, updateLocMany);
+    }
+  })
 });
 
 /**
@@ -1040,7 +985,6 @@ app.get('/proximity_search', (req, res) => {
       .then((data) => {
         const longitude = Number(data.location.coordinates[0]);
         const latitude = Number(data.location.coordinates[1]);
-        console.log(longitude, latitude, distance);
         db.collection("post").find(
           {
             location:
@@ -1066,5 +1010,135 @@ app.get('/proximity_search', (req, res) => {
   })
 })
 
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+app.post('/update_post', store.array('editedImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var date = new Date();
+  var time = date.toDateString();
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    client.db("sellery").collection("post").findOneAndUpdate(
+      { "_id": ObjectId(req.body.postId) },
+      {
+        $set: {
+          title: req.body.title,
+          quantity: req.body.quantity,
+          price: req.body.price,
+          description: req.body.description,
+          time: time,
+          units: post_unit,
+          "post_pic": {
+            filename,
+            contentType,
+            imageBase64
+          }
+        }
+      }
+    ).then((data) => {
+      res.redirect('back');
+    })
+  })
+})
+
+/**
+ * Post with an image
+ * @author Jimun Jang
+ * @date May 25 2021
+ */
+app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
+  const token = req.cookies.jwt;
+  const files = req.files;
+  const db = client.db('sellery');
+  var date = new Date();
+  var time = date.toDateString();
+  var post_unit;
+  var filename;
+  var contentType;
+  var imageBase64;
+
+  if (req.body.unit == 'weight') {
+    post_unit = req.body.weightOptions;
+  } else {
+    post_unit = req.body.unit;
+  }
+
+  if (!files) {
+    filename = null;
+    contentType = null;
+    imageBase64 = null;
+  } else {
+    // convert images into base64 encoding
+    let images = files.map((file) => {
+      let image = fs.readFileSync(file.path);
+
+      return encode_image = image.toString('base64');
+    });
+    images.map((src, index) => {
+      filename = files[index].originalname;
+      contentType = files[index].mimetype;
+      imageBase64 = src;
+    })
+  }
+
+  jwt.verify(token, 'gimp', async (err, decodedToken) => {
+    db.collection("users").findOne({ "_id": ObjectId(decodedToken.id) })
+      .then((data) => {
+        const user = data;
+        db.collection("post").insertOne({
+          description: req.body.description.trim(),
+          price: req.body.price,
+          quantity: req.body.quantity,
+          time: time,
+          title: req.body.title,
+          units: post_unit,
+          location: user.location,
+          poster_name: user.name,
+          user_id: decodedToken.id,
+          post_pic: {
+            filename,
+            contentType,
+            imageBase64
+          }
+        }).then(() => {
+          db.collection("post").createIndex({ location: "2dsphere" });
+          res.redirect('back');
+        })
+      })
+  })
+})
 
 server.listen(8000, () => { console.log('listening on http://localhost:8000/'); });

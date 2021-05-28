@@ -19,23 +19,14 @@ body {
   margin-right: 4%;
 }
 
-
-
-#content_section {
-  margin-bottom: 1em;
-}
-
-#img-goes-here {
-  border-radius: 40%;
-  display: block;
-  margin: auto;
-  width: 50%;
-}
-
-#post-title {
+#default_message {
+  padding: 1em;
+  margin-top: .5em;
+  margin-bottom: .5em;
   text-align: center;
-  margin-top: 10%;
+  border-radius: 2.5%;
 }
+
 
 * {
   -webkit-box-sizing: border-box;
@@ -64,72 +55,59 @@ p {
 /* Start of User Card */
 
 .center-user {
-  margin-top: 10%;
+  margin-top: 5%;
   width: 100%;
-  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 /* End Non-Essential  */
 
-.property-card-user {
-  background-color: #5fd543;
-  height: 18em;
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  position: relative;
-  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
-  border-radius: 16px;
-  overflow: hidden;
-  -webkit-box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
-  box-shadow: 15px 15px 27px #e1e1e3, -15px -15px 27px #9e9e9eb0;
-}
+
 /* ^-- The margin bottom is necessary for the drop shadow otherwise it gets clipped in certain cases. */
 
 /* Top Half of card, image. */
 
-.property-image-user {
-  height: 10em;
+.image-user {
+  position: relative;
+  overflow: hidden;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 150px;
+  height: 150px;
+  border-radius: 40%;
+}
+
+#img-goes-here {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   width: 100%;
-  position: Absolute;
-  top: 0px;
-  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
 }
 
 /* Bottom Card Section */
 
-.property-description-user {
-  background-color: #fafafc;
-  height: 10em;
+.description-user {
+  margin-top: 5%;
   width: 100%;
-  position: absolute;
-  bottom: 0em;
-  /* -webkit-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  -o-transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1); */
+  position: relative;
   padding: 0.5em 1em;
   text-align: center;
 }
 
-#add_image, #log_out {
+#log_out {
   margin-top: 10px;
   background-color: rgb(167, 51, 51);
   border-radius: 50px;
   cursor: pointer;
   color: white;
   font-size: 14px;
-  width: 100%;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
   outline: none;
   border: none;
   padding: 7px 0px;
@@ -138,10 +116,6 @@ p {
   margin-bottom: 30%;
 }
 
-#add_image {
-  margin-bottom: 0;
-  background-color: rgb(41, 41, 201);
-}
 
 #log_out a {
   color: white;
@@ -149,9 +123,58 @@ p {
 }
 
 #feed_search {
-  width: 100%;
-  border-radius: 5px;
-  margin-top: 5px;
-  outline: none;
+  margin-top: 2%;
+  width: 90%;
+  border-radius:10px;
+  border-width: 0.3em;
+  border-color:#ccc;
 }
 
+#search:before {
+  font-family: 'FontAwesome';
+  color:black;
+  position: relative;
+  content: "\f002";
+}
+
+#post-title-h5 {
+  text-align: center;
+  justify-content: center;
+  font-size: 16pt;
+  text-align: center;
+  margin-top: 1em;
+  font-weight: bold;
+  text-shadow: 4px 4px #ccc;
+}
+
+#post-title {
+  margin-top: 18%;
+}
+
+#name-title {
+  font-size: 20pt;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 4px 4px #ccc;
+}
+
+#bio {
+  margin-top: 5%;
+  font-size: 16pt;
+  font-weight: bold;
+}
+
+#confirmation_add_review {
+  display: none;
+}
+
+.error {
+  margin-top: 15px;
+  font-size: 0.5em;
+  color: red;
+}
+
+#default-value-holder {
+  text-align: center;
+  margin-top: 5vh;
+}
