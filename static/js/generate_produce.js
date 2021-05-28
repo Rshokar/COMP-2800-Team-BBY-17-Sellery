@@ -16,10 +16,10 @@ function genListing() {
     dataType: "json",
     type: "GET",
     success: function (data) {
-      console.log("Listing is generated: ", data);
+      //console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.user_id);
       for (let post in newData) {
-        console.log(post)
+        //console.log(post)
         newData[post].appendHTML();
       }
 
@@ -43,7 +43,7 @@ function genListing() {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
-      console.log("ERROR:", jqXHR, textStatus, errorThrown);
+      //console.log("ERROR:", jqXHR, textStatus, errorThrown);
 
     }
   })
@@ -64,7 +64,7 @@ function genMyStoreFrontListing() {
     dataType: "JSON",
     type: "GET",
     success: function (data) {
-      console.log("Listing is generated: ", data);
+      //console.log("Listing is generated: ", data);
 
       newData = buildPostList(data.results, data.userId);
       for (let post in newData) {
@@ -75,7 +75,7 @@ function genMyStoreFrontListing() {
       const namelist = document.querySelectorAll('#card-listing h3.title');
       const searchBar = document.getElementById("feed_search");
 
-      console.log(namelist);
+      //console.log(namelist);
 
       searchBar.addEventListener('keyup', function (e) {
         const term = e.target.value.toLowerCase();
@@ -98,7 +98,7 @@ function genMyStoreFrontListing() {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
-      console.log("ERROR:", jqXHR, textStatus, errorThrown);
+      //console.log("ERROR:", jqXHR, textStatus, errorThrown);
 
     }
   })
@@ -119,7 +119,7 @@ function genStoreFrontListing(userId) {
       id: userId
     },
     success: function (data) {
-      console.log("Listing is generated: ", data);
+      //console.log("Listing is generated: ", data);
       newData = buildPostList(data.results, data.userId);
       for (let post in newData) {
         newData[post].appendHTML();
@@ -137,7 +137,7 @@ function genStoreFrontListing(userId) {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       $("#p1").text(jqXHR.statusText);
-      console.log("ERROR:", jqXHR, textStatus, errorThrown);
+      //console.log("ERROR:", jqXHR, textStatus, errorThrown);
 
     }
   })

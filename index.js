@@ -25,9 +25,6 @@ const app = express();
 
 // set storage
 var storage = multer.diskStorage({
-  // destination: function (req, res, cb) {
-  //   cb(null, 'uploads');
-  // },
   filename: function (req, file, cb) {
     var ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
     cb(null, file.fieldname + '-' + Date.now() + ext);
@@ -46,12 +43,7 @@ const { format } = require('util');
 app.use("/js", express.static("static/js"));
 app.use("/css", express.static("static/css"));
 app.use("/html", express.static("static/html"));
-// for about page pics and favicon
 app.use("/pics", express.static("static/pics"));
-
-app.use("/views", express.static("static/views"));
-
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -99,9 +91,6 @@ async function main() {
   } catch (e) {
     console.error(e);
   }
-  //finally {
-  //  await client.close();
-  //}
 }
 
 main().catch(console.error);
@@ -155,13 +144,6 @@ function addMessage(message, room) {
   db.update({ "_id": ObjectId(room) }, { $push: { "messages": message } });
 
 }
-
-// async function listDatabases(client) {
-//   databasesList = await client.db().admin().listDatabases();
-
-//   console.log("Databases:");
-//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-// };
 
 /**
  * This is a middleware function that checks whether the user
@@ -261,14 +243,12 @@ app.get("/storefront-data", requireLogin, (req, res) => {
   jwt.verify(token, 'gimp', (err, decodedToken) => {
 
     if (userID) {
-      console.log("You user", userID)
       client.db("sellery").collection("users")
         .findOne({ "_id": ObjectId(userID) })
         .then((data) => {
           res.send({ result: data });
         })
     } else {
-      console.log("Current User", decodedToken)
       client.db("sellery").collection("users")
         .findOne({ "_id": ObjectId(decodedToken.id) })
         .then((data) => {
@@ -286,7 +266,6 @@ app.get("/storefront-data", requireLogin, (req, res) => {
  * @date May 24 2021
  */
 app.get("/get_your_storefront", requireLogin, (req, res) => {
-  console.log(req.query.id);
   client.db("sellery").collection("users")
     .findOne({ "_id": ObjectId("60a801413c579615c234b306") })
     .then((data) => {
@@ -341,7 +320,6 @@ app.get("/generate_produce", requireLogin, (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
     client
       .db("sellery")
       .collection("post")
@@ -357,9 +335,6 @@ app.get("/generate_produce", requireLogin, (req, res) => {
         res.send(obj);
       });
   })
-  // console.log(data);
-  // res.send(data);
-
 })
 
 /**
@@ -432,8 +407,6 @@ app.post("/create_chat_room", requireLogin, async (req, res) => {
   let post = req.body;
 
   jwt.verify(token, "gimp", async (err, decodedToken) => {
-    console.log("Token", decodedToken);
-    console.log("Posting", post);
     let userOne = decodedToken.id;
     let userTwo = post.uID
 
@@ -499,8 +472,6 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     let you;
     let userID = decodedToken.id;
     let roomID = req.query.room;
-    console.log(roomID);
-
 
     const database = client.db("sellery");
     const chats = database.collection("chat")
@@ -508,8 +479,6 @@ app.get("/get_chat", requireLogin, async (req, res) => {
     const query = { "_id": ObjectId(roomID) }
 
     const chat = await chats.findOne(query);
-
-    console.log(chat);
 
     if (chat) {
 
@@ -549,7 +518,6 @@ app.get("/get_my_chats", requireLogin, async (req, res) => {
   const token = req.cookies.jwt;
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
-    console.log(decodedToken);
     let userID = decodedToken.id;
 
     const database = client.db("sellery");
@@ -620,7 +588,6 @@ app.post('/signup', async (req, res) => {
           const token = jwt.sign({ id: user.ops[0]._id, userName: user.ops[0].name }, 'gimp', {
             expiresIn: 24 * 60 * 60
           });
-          console.log(user.ops[0]._id);
           res.cookie('jwt', token, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000
@@ -771,15 +738,10 @@ app.get("/generate_reviews", (req, res) => {
       })
       .toArray(function (err, result) {
         if (err) throw err;
-        console.log(result);
         res.send(result);
       });
 
   })
-
-
-  //console.log("Generate reviews server");
-
 })
 
 
@@ -842,10 +804,6 @@ app.post("/create_reviews", (req, res) => {
     }
     const db = client.db("sellery");
 
-    console.log(comment);
-
-
-
     db.collection("reviews")
       .insertOne(comment)
       .then(() => {
@@ -853,7 +811,6 @@ app.post("/create_reviews", (req, res) => {
           status: "success",
           message: "Successfully Created Review",
         }
-        console.log(obj);
         res.send(obj);
       })
       .catch((err) => {
@@ -862,7 +819,6 @@ app.post("/create_reviews", (req, res) => {
           status: "error",
           message: "error uploading comment."
         }
-        console.log(obj);
         res.send(obj);
       })
   });
@@ -927,8 +883,6 @@ app.post('/uploadImage', store.array('images'), (req, res, next) => {
  */
 app.post("/update_bio", requireLogin, async (req, res) => {
   let post = req.body;
-
-  console.log("server: ", req);
 
   const token = req.cookies.jwt;
 
@@ -1012,33 +966,7 @@ app.post("/update_bio", requireLogin, async (req, res) => {
 
       client.db("sellery").collection("post").updateMany(locQuery, updateLocMany);
     }
-
-
-
   })
-
-  // if (result.modifiedCount === 1) {
-  //   console.log(
-  //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-  //   );
-  //   myObj = {
-  //     message: "Success updating bio",
-  //     status: "sucess",
-  //   };
-  //   res.send(myObj);
-  // } else {
-  //   console.log(
-  //     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s).`,
-  //   );
-  //   console.log("No documents matched the query. Deleted 0 documents.");
-  //   myObj = {
-  //     message: "Error updating bio",
-  //     status: "error"
-  //   }
-  //   res.send(myObj)
-  // }
-
-
 });
 
 /**
@@ -1057,7 +985,6 @@ app.get('/proximity_search', (req, res) => {
       .then((data) => {
         const longitude = Number(data.location.coordinates[0]);
         const latitude = Number(data.location.coordinates[1]);
-        console.log(longitude, latitude, distance);
         db.collection("post").find(
           {
             location:
@@ -1094,7 +1021,6 @@ app.post('/update_post', store.array('editedImage'), (req, res, next) => {
   const db = client.db('sellery');
   var date = new Date();
   var time = date.toDateString();
-  console.log(time);
   var post_unit;
   var filename;
   var contentType;
@@ -1123,8 +1049,6 @@ app.post('/update_post', store.array('editedImage'), (req, res, next) => {
       imageBase64 = src;
     })
   }
-
-  console.log(req.body);
 
   jwt.verify(token, 'gimp', async (err, decodedToken) => {
     client.db("sellery").collection("post").findOneAndUpdate(
@@ -1165,8 +1089,6 @@ app.post('/uploadPost', store.array('postImage'), (req, res, next) => {
   var filename;
   var contentType;
   var imageBase64;
-
-  console.log(typeof req.body.price);
 
   if (req.body.unit == 'weight') {
     post_unit = req.body.weightOptions;
