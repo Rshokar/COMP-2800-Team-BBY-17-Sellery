@@ -34,7 +34,7 @@ function renderChats() {
 
     },
     error: (err) => {
-      console.log(err);
+      //console.log(err);
       return {
         status: "error",
         message: "Error"

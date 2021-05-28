@@ -39,7 +39,7 @@ proximityBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const distance = document.querySelector('input[id="proximity-search"]').value;
     if (distance.toLowerCase() == "superhuman beeing") {
-        console.log('typed successfully');
+        //console.log('typed successfully');
         easterCard.style.display = "initial";
     }
     const distanceInNum = Number(distance);
@@ -66,7 +66,7 @@ proximityBtn.addEventListener('click', (e) => {
                     allData.style.display = "none";
                     newData = buildPostList(data.result, data.user_id);
                     for (let post in newData) {
-                        console.log(post)
+                        //console.log(post)
                         newData[post].displayInProximityContainer();
                     }
                     container.style.display = "initial";
@@ -97,7 +97,7 @@ proximityBtn.addEventListener('click', (e) => {
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $("#p1").text(jqXHR.statusText);
-                console.log("ERROR:", jqXHR, textStatus, errorThrown);
+                //console.log("ERROR:", jqXHR, textStatus, errorThrown);
             }
         })
     }

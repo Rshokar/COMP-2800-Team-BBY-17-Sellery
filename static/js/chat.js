@@ -55,7 +55,7 @@ function outputMessage(msg, me, you) {
   //div.classList.add(person)
   let html;
   if (isMine(msg.owner.id)) {
-    console.log("Me");
+    //console.log("Me");
     div.classList.add("me");
     html =
       `
@@ -65,7 +65,7 @@ function outputMessage(msg, me, you) {
          <span class="meta">${msg.owner.name} ${msg.timeStamp}</span>
       `;
   } else if (msg.owner.id == -1) {
-    console.log("Chatbot");
+    //console.log("Chatbot");
     div.classList.add("chatbot");
     html = `
         <p class="text">
@@ -74,7 +74,7 @@ function outputMessage(msg, me, you) {
         <span class="meta">Chat Bot ${msg.timeStamp}</span>
         `;
   } else {
-    console.log("You");
+    //console.log("You");
     div.classList.add("you");
     html = `
         <p class="text">
@@ -106,7 +106,7 @@ function outputMessage(msg, me, you) {
  * @param room is the room ID
  */
 function loadChat(room) {
-  console.log(room);
+  //console.log(room);
   $.ajax({
     url: "/get_chat",
     type: "GET",
@@ -123,7 +123,7 @@ function loadChat(room) {
       }
     },
     error: (err) => {
-      console.log(err);
+      //console.log(err);
     }
   })
 }
@@ -187,6 +187,6 @@ function formatAMPM(date) {
   minutes = minutes < 10 ? '0' + minutes : minutes;
   var strTime = hours + ':' + minutes + ' ' + ampm;
 
-  console.log(strTime);
+  //console.log(strTime);
   return strTime;
 }

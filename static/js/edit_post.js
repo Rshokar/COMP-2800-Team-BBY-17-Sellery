@@ -188,7 +188,7 @@ function showConfirm() {
  * @date May 12 2021
  */
 function hideConfirm() {
-  console.log("hideConfirm");
+  //console.log("hideConfirm");
   const element = "#confirmation";
   $(element).css({
     "display": "none",
@@ -203,7 +203,7 @@ function hideConfirm() {
  * @date May 12 2021
  */
 function hidePreview() {
-  console.log("hidePreview");
+  //console.log("hidePreview");
   const element = "#edit-card-post";
   $(element).css({
     "display": "none",
@@ -218,7 +218,7 @@ function hidePreview() {
  * @date May 12 2021
  */
 function showForm() {
-  console.log("showForm");
+  //console.log("showForm");
   const element = "#edit-posting .post_form";
   $(element).css({
     "display": "block",
@@ -308,8 +308,8 @@ edit_image.addEventListener('change', function () {
 function submitEditEventListner(post, values) {
   const element = "#edit-posting .edit_card_container"
   let query = element + " .submit";
-  console.log("Ready to submit")
-  console.log(edit_form);
+  //console.log("Ready to submit")
+  //console.log(edit_form);
 
   //console.log(query);
 
@@ -327,7 +327,7 @@ function submitEditEventListner(post, values) {
 
 
 edit_post_close.addEventListener("click", function () {
-  console.log("Closed");
+  //console.log("Closed");
   edit_post_confirm.style.display = "none";
   edit_post_preview.style.display = "none";
   edit_post_back.style.display = "none";

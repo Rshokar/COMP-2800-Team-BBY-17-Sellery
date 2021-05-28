@@ -125,7 +125,7 @@ class Post {
    * @returns obj with either success or error
    */
   async delete(execute) {
-    console.log("They are trying to delete my", this.ID)
+    //console.log("They are trying to delete my", this.ID)
     $.ajax({
       url: "/delete_post",
       type: "POST",
@@ -246,7 +246,7 @@ class Post {
       userID: this.uID,
       ID: this.ID
     }
-    console.log(obj);
+    //console.log(obj);
     return obj
   }
 
@@ -293,7 +293,7 @@ function buildPostList(posts, currentUserId) {
       newPost.post_pic.imageBase64
     )
   }
-  console.log(lst);
+  //console.log(lst);
 
   return lst;
 
@@ -326,7 +326,7 @@ function createChatRoomEventListner(post) {
  * @param {*} post 
  */
 function createChatRoom(post) {
-  console.log(post);
+  //console.log(post);
   $.ajax({
     url: "create_chat_room",
     type: "POST",
@@ -346,7 +346,7 @@ function createChatRoom(post) {
       }
     },
     error: (err) => {
-      console.log(err);
+      //console.log(err);
     }
   })
 }
